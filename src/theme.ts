@@ -7,8 +7,8 @@ const theme = extendTheme({
   },
   colors: {
     black: "#180E19",
-    grey: "#B8B8B8",
-    lightGrey: "#F4F4F4",
+    gray: "#B8B8B8",
+    lightGray: "#F4F4F4",
     white: "#FFFFFF",
     darkBlue: "#003049",
     blue: "#00669B",

@@ -14,6 +14,7 @@ const AdminLayout = () => {
         base: "1fr",
         lg: "20% 1fr",
       }}
+      templateRows="auto 1fr"
     >
       <GridItem area="title">
         <AdminTitlebar />
