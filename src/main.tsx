@@ -4,10 +4,11 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./index.css";
 import router from "./routes.tsx";
+import theme from "./theme.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <RouterProvider router={router} />
     </ChakraProvider>
   </StrictMode>
