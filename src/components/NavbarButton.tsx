@@ -11,17 +11,17 @@ interface Props {
 
 const NavbarButton = ({ icon: Icon, label, url }: Props) => {
   const { pathname } = useLocation();
-  const path = `/admin/${url}`;
+  const path = url ? `/admin/${url}` : "/admin";
   const active = pathname === path;
 
   return (
     <Link to={path} style={{ width: "100%" }}>
       <HStack
         paddingX={2}
-        paddingY={2.5}
+        paddingY={{ base: 1, lg: 2.5 }}
         spacing={4}
         border="2px solid transparent"
-        borderRadius={6}
+        borderRadius={{ base: 0, lg: 6 }}
         bgColor={active ? "lightBlue" : "transparent"}
         _hover={{ borderColor: "lightBlue" }}
       >

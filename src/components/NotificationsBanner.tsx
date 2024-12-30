@@ -12,11 +12,11 @@ const NotificationsBanner = ({ heading, content }: Props) => {
     <HStack
       width="full"
       justifyContent="space-between"
-      spacing={4}
+      spacing={2}
       borderBottom="1px"
       borderColor="gray"
     >
-      <VStack alignItems="start" spacing={4}>
+      <VStack alignItems="start" spacing={2}>
         <Heading fontSize={20} color="red">
           {heading}
         </Heading>

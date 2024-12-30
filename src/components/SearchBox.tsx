@@ -15,6 +15,7 @@ const SearchBox = () => {
         border="2px"
         borderColor="lightBlue"
         borderRadius="full"
+        bgColor="white"
       />
     </InputGroup>
   );

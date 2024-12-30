@@ -23,9 +23,10 @@ const Notifications = () => {
       </PopoverTrigger>
       <PopoverContent
         width="fit-content"
+        maxWidth={{ base: "calc(100vw - 16px)", lg: "none" }}
         border="2px"
         borderColor="lightBlue"
-        marginRight={4}
+        marginX={{ base: 2, lg: 4 }}
       >
         <PopoverHeader borderBottom="2px" borderColor="lightBlue">
           <NotificationsPopupHeader />

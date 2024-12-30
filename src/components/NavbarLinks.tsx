@@ -8,7 +8,7 @@ import NavbarButton from "./NavbarButton";
 
 const NavbarLinks = () => {
   return (
-    <VStack width="100%" spacing={5}>
+    <VStack width="full" spacing={{ base: 2, lg: 5 }}>
       <NavbarButton icon={HiOutlineHome} label="Home" url="" />
       <NavbarButton icon={TbReportAnalytics} label="Analysis" url="analysis" />
       <NavbarButton icon={FaTruckFast} label="Inventory" url="inventory" />
