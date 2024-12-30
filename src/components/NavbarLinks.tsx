@@ -9,11 +9,11 @@ import NavbarButton from "./NavbarButton";
 const NavbarLinks = () => {
   return (
     <VStack width="100%" spacing={5}>
-      <NavbarButton icon={HiOutlineHome} label="Home" active={true} />
-      <NavbarButton icon={TbReportAnalytics} label="Analysis" active={false} />
-      <NavbarButton icon={FaTruckFast} label="Inventory" active={false} />
-      <NavbarButton icon={IoGiftSharp} label="Discounts" active={false} />
-      <NavbarButton icon={IoIosPeople} label="Employees" active={false} />
+      <NavbarButton icon={HiOutlineHome} label="Home" url="" />
+      <NavbarButton icon={TbReportAnalytics} label="Analysis" url="analysis" />
+      <NavbarButton icon={FaTruckFast} label="Inventory" url="inventory" />
+      <NavbarButton icon={IoGiftSharp} label="Discounts" url="discounts" />
+      <NavbarButton icon={IoIosPeople} label="Employees" url="employees" />
     </VStack>
   );
 };

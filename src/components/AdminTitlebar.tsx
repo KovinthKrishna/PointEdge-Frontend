@@ -1,10 +1,13 @@
 import { Heading, HStack } from "@chakra-ui/react";
-import { FaBell } from "react-icons/fa6";
-import theme from "../theme";
+import { useLocation } from "react-router-dom";
+import Notifications from "./Notifications";
 import ProfileButton from "./ProfileButton";
 import SearchBox from "./SearchBox";
 
 const AdminTitlebar = () => {
+  const { pathname } = useLocation();
+  const show = pathname !== "/admin/analysis";
+
   return (
     <HStack
       justifyContent="space-between"
@@ -17,8 +20,8 @@ const AdminTitlebar = () => {
         Dashboard
       </Heading>
       <HStack spacing={5}>
-        <SearchBox />
-        <FaBell color={theme.colors.lightBlue} size={30} />
+        {show && <SearchBox />}
+        <Notifications />
         <ProfileButton />
       </HStack>
     </HStack>
