@@ -1,15 +1,9 @@
 import { HStack, Text } from "@chakra-ui/react";
-import { IconType } from "react-icons";
 import { Link, useLocation } from "react-router-dom";
+import { NavigationData } from "../data/navigationData";
 import theme from "../theme";
 
-interface Props {
-  icon: IconType;
-  label: string;
-  url: string;
-}
-
-const NavbarButton = ({ icon: Icon, label, url }: Props) => {
+const NavbarButton = ({ icon: Icon, label, url }: NavigationData) => {
   const { pathname } = useLocation();
   const path = url ? `/admin/${url}` : "/admin";
   const active = pathname === path;
