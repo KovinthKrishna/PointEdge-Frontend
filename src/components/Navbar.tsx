@@ -1,31 +1,34 @@
-import { Heading, HStack, Image, VStack } from "@chakra-ui/react";
-import logo from "../assets/logo.png";
-import NavbarLinks from "./NavbarLinks";
+import { Table, Thead, Tbody, Tr, Th, Td, Button, VStack } from "@chakra-ui/react";
 
-const Navbar = () => {
+const DataTable = () => {
   return (
-    <VStack
-      padding={4}
-      borderRight="2px"
-      borderColor="lightBlue"
-      height="100vh"
-      spacing={8}
-    >
-      <HStack
-        padding={2}
-        border="2px"
-        borderColor="lightBlue"
-        borderRadius={10}
-        width="100%"
-      >
-        <Image src={logo} height={70} width={70} />
-        <Heading fontSize={24} color="lightBlue">
-          Point Edge
-        </Heading>
-      </HStack>
-      <NavbarLinks />
+    <VStack spacing={4} width="100%" padding={4}>
+      <Table variant="simple" width="100%">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Age</Th>
+            <Th>City</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          <Tr>
+            <Td>John Doe</Td>
+            <Td>28</Td>
+            <Td>New York</Td>
+          </Tr>
+          <Tr>
+            <Td>Jane Smith</Td>
+            <Td>32</Td>
+            <Td>Los Angeles</Td>
+          </Tr>
+        </Tbody>
+      </Table>
+      <Button colorScheme="lightBlue" width="full">
+        Add Record
+      </Button>
     </VStack>
   );
 };
 
-export default Navbar;
+export default DataTable;
