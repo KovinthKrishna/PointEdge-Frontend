@@ -1,6 +1,6 @@
 import { Text, VStack } from "@chakra-ui/react";
 import LogoutButton from "./LogoutButton";
-import ProfileMenuLinks from "./ProfileMenuLinks";
+import ProfileMenuLink from "./ProfileMenuLink";
 
 const ProfileMenu = () => {
   return (
@@ -8,7 +8,7 @@ const ProfileMenu = () => {
       <Text color="darkBlue" fontSize={20}>
         Naruto Uzumaki
       </Text>
-      <ProfileMenuLinks label="Account Settings" />
+      <ProfileMenuLink label="Account Settings" />
       <LogoutButton />
     </VStack>
   );

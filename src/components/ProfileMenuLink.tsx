@@ -4,7 +4,7 @@ interface Props {
   label: string;
 }
 
-const ProfileMenuLinks = ({ label }: Props) => {
+const ProfileMenuLink = ({ label }: Props) => {
   return (
     <Text as="button" fontSize={20} _hover={{ textDecoration: "underline" }}>
       {label}
@@ -12,4 +12,4 @@ const ProfileMenuLinks = ({ label }: Props) => {
   );
 };
 
-export default ProfileMenuLinks;
+export default ProfileMenuLink;

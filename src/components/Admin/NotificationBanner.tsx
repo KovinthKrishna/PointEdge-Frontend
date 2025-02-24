@@ -1,13 +1,13 @@
 import { Heading, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
 import { IoIosRemoveCircle, IoMdDoneAll } from "react-icons/io";
-import theme from "../theme";
+import theme from "../../theme";
 
 interface Props {
   heading: string;
   content: string;
 }
 
-const NotificationsBanner = ({ heading, content }: Props) => {
+const NotificationBanner = ({ heading, content }: Props) => {
   return (
     <HStack
       width="full"
@@ -38,4 +38,4 @@ const NotificationsBanner = ({ heading, content }: Props) => {
   );
 };
 
-export default NotificationsBanner;
+export default NotificationBanner;

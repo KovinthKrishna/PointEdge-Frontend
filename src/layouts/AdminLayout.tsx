@@ -1,7 +1,7 @@
 import { Grid, GridItem, Show } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import AdminTitlebar from "../components/AdminTitlebar";
-import Navbar from "../components/Navbar";
+import AdminTitlebar from "../components/Admin/AdminTitlebar";
+import Sidebar from "../components/Admin/Sidebar";
 
 const AdminLayout = () => {
   return (
@@ -16,12 +16,18 @@ const AdminLayout = () => {
       }}
       templateRows="auto 1fr"
     >
-      <GridItem area="title">
+      <GridItem
+        area="title"
+        position="sticky"
+        top={0}
+        bgColor="background"
+        zIndex={1050}
+      >
         <AdminTitlebar />
       </GridItem>
       <Show above="lg">
         <GridItem area="navbar">
-          <Navbar />
+          <Sidebar />
         </GridItem>
       </Show>
       <GridItem area="main">

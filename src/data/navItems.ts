@@ -5,13 +5,13 @@ import { IoIosPeople } from "react-icons/io";
 import { IoGiftSharp } from "react-icons/io5";
 import { TbReportAnalytics } from "react-icons/tb";
 
-export interface NavigationData {
+export interface NavItem {
   label: string;
   url: string;
   icon: IconType;
 }
 
-const navigationData: NavigationData[] = [
+const navItems: NavItem[] = [
   {
     label: "Dashboard",
     url: "",
@@ -39,4 +39,4 @@ const navigationData: NavigationData[] = [
   },
 ];
 
-export default navigationData;
+export default navItems;

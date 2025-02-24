@@ -1,14 +1,14 @@
 import { VStack } from "@chakra-ui/react";
-import NotificationsBanner from "./NotificationsBanner";
+import NotificationBanner from "./NotificationBanner";
 
-const NotificationsPopupBody = () => {
+const NotificationsPopoverBody = () => {
   return (
     <VStack spacing={2}>
-      <NotificationsBanner
+      <NotificationBanner
         heading="Low stock alert"
         content="There are only 25 items of Product X in stock."
       />
-      <NotificationsBanner
+      <NotificationBanner
         heading="Sold out alert"
         content="Product Y is sold out."
       />
@@ -16,4 +16,4 @@ const NotificationsPopupBody = () => {
   );
 };
 
-export default NotificationsPopupBody;
+export default NotificationsPopoverBody;

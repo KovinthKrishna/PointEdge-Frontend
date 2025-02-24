@@ -1,15 +1,14 @@
-import { HStack, Show, SimpleGrid } from "@chakra-ui/react";
-import { useLocation } from "react-router-dom";
+import { Hide, HStack, Show, SimpleGrid } from "@chakra-ui/react";
+import useExtractSecondPathSegment from "../../hooks/useExtractSecondPathSegment";
+import ProfileButton from "../ProfileButton";
+import SearchBox from "../SearchBox";
 import HamburgerMenu from "./HamburgerMenu";
 import Notifications from "./Notifications";
 import PageTitle from "./PageTitle";
-import ProfileButton from "./ProfileButton";
-import SearchBox from "./SearchBox";
 import SearchButton from "./SearchButton";
 
 const AdminTitlebar = () => {
-  const { pathname } = useLocation();
-  const show = pathname !== "/admin/analysis";
+  const show = useExtractSecondPathSegment() !== "analysis";
 
   return (
     <SimpleGrid
@@ -22,16 +21,19 @@ const AdminTitlebar = () => {
     >
       <HStack justifyContent="space-between" order={{ base: 2, lg: 1 }}>
         <PageTitle />
-        <Show below="lg">{show && <SearchButton />}</Show>
+        <Hide above="lg">{show && <SearchButton />}</Hide>
       </HStack>
       <HStack
         justifyContent={{ base: "space-between", lg: "end" }}
         order={{ base: 1, lg: 2 }}
       >
-        <Show below="lg">
+        <Hide above="lg">
           <HamburgerMenu />
-        </Show>
-        <HStack spacing={{ base: 2, lg: 5 }}>
+        </Hide>
+        <HStack
+          spacing={{ base: 2, lg: 5 }}
+          width={{ base: "auto", lg: "full" }}
+        >
           <Show above="lg">{show && <SearchBox />}</Show>
           <Notifications />
           <ProfileButton />

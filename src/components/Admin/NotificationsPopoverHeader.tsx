@@ -1,8 +1,8 @@
 import { Heading, HStack, IconButton } from "@chakra-ui/react";
 import { IoTrashBin } from "react-icons/io5";
-import theme from "../theme";
+import theme from "../../theme";
 
-const NotificationsPopupHeader = () => {
+const NotificationsPopoverHeader = () => {
   return (
     <HStack justifyContent="space-between">
       <Heading fontSize={24} color="darkBlue">
@@ -17,4 +17,4 @@ const NotificationsPopupHeader = () => {
   );
 };
 
-export default NotificationsPopupHeader;
+export default NotificationsPopoverHeader;
