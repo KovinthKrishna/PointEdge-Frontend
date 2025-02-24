@@ -23,16 +23,14 @@ const AdminTitlebar = () => {
         <PageTitle />
         <Hide above="lg">{show && <SearchButton />}</Hide>
       </HStack>
-      <HStack
-        justifyContent={{ base: "space-between", lg: "end" }}
-        order={{ base: 1, lg: 2 }}
-      >
+      <HStack justifyContent="space-between" order={{ base: 1, lg: 2 }}>
         <Hide above="lg">
           <HamburgerMenu />
         </Hide>
         <HStack
           spacing={{ base: 2, lg: 5 }}
           width={{ base: "auto", lg: "full" }}
+          justifyContent="end"
         >
           <Show above="lg">{show && <SearchBox />}</Show>
           <Notifications />

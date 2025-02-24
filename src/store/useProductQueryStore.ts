@@ -1,44 +1,50 @@
 import { create } from "zustand";
 
-interface ProductOrderQuery {
+interface ProductQuery {
   brandId?: number;
   categoryId?: number;
   timeFilter?: string;
 }
 
-interface ProductOrderQueryStore {
-  productOrderQuery: ProductOrderQuery;
+interface ProductQueryStore {
+  productQuery: ProductQuery;
   setBrandId: (id?: number) => void;
   setCategoryId: (id?: number) => void;
   setTimeFilter: (id?: string) => void;
+  resetAll: () => void;
 }
 
-const useProductOrderQueryStore = create<ProductOrderQueryStore>((set) => ({
-  productOrderQuery: {},
+const useProductQueryStore = create<ProductQueryStore>((set) => ({
+  productQuery: {},
 
   setBrandId: (id) =>
     set((store) => ({
-      productOrderQuery: {
-        ...store.productOrderQuery,
+      productQuery: {
+        ...store.productQuery,
         brandId: id,
       },
     })),
 
   setCategoryId: (id) =>
     set((store) => ({
-      productOrderQuery: {
-        ...store.productOrderQuery,
+      productQuery: {
+        ...store.productQuery,
         categoryId: id,
       },
     })),
 
   setTimeFilter: (id) =>
     set((store) => ({
-      productOrderQuery: {
-        ...store.productOrderQuery,
+      productQuery: {
+        ...store.productQuery,
         timeFilter: id,
       },
     })),
+
+  resetAll: () =>
+    set(() => ({
+      productQuery: {},
+    })),
 }));
 
-export default useProductOrderQueryStore;
+export default useProductQueryStore;
