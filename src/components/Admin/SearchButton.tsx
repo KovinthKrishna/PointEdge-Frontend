@@ -6,8 +6,8 @@ import {
   PopoverTrigger,
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
-import theme from "../theme";
-import SearchBox from "./SearchBox";
+import theme from "../../theme";
+import SearchBox from "../SearchBox";
 
 const SearchButton = () => {
   return (
@@ -22,7 +22,7 @@ const SearchButton = () => {
       <PopoverContent
         border="none"
         bgColor="transparent"
-        maxWidth="calc(100vw - 16px)"
+        width="calc(100vw - 16px)"
       >
         <PopoverBody padding={0}>
           <SearchBox />

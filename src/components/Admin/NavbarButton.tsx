@@ -1,15 +1,14 @@
 import { HStack, Text } from "@chakra-ui/react";
-import { Link, useLocation } from "react-router-dom";
-import { NavigationData } from "../data/navigationData";
-import theme from "../theme";
+import { Link } from "react-router-dom";
+import { NavItem } from "../../data/navItems";
+import useExtractSecondPathSegment from "../../hooks/useExtractSecondPathSegment";
+import theme from "../../theme";
 
-const NavbarButton = ({ icon: Icon, label, url }: NavigationData) => {
-  const { pathname } = useLocation();
-  const path = url ? `/admin/${url}` : "/admin";
-  const active = pathname === path;
+const NavbarButton = ({ icon: Icon, label, url }: NavItem) => {
+  const active = useExtractSecondPathSegment() === url;
 
   return (
-    <Link to={path} style={{ width: "100%" }}>
+    <Link to={url ? `/admin/${url}` : "/admin"} style={{ width: "100%" }}>
       <HStack
         paddingX={2}
         paddingY={{ base: 1, lg: 2.5 }}

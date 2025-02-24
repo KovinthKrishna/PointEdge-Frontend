@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
-import pic from "../assets/Naruto.jpg";
+import profilePicture from "../assets/profile-picture.jpg";
 import theme from "../theme";
 import ProfileMenu from "./ProfileMenu";
 
@@ -27,7 +27,7 @@ const ProfileButton = () => {
       spacing={0}
     >
       <Box height={12} width={12} borderRadius="full" overflow="hidden">
-        <Image src={pic} />
+        <Image src={profilePicture} />
       </Box>
       <Popover
         onOpen={() => setMenu(true)}

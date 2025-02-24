@@ -8,8 +8,8 @@ import {
 import { useEffect, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useLocation } from "react-router-dom";
-import theme from "../theme";
-import NavbarLinks from "./NavbarLinks";
+import theme from "../../theme";
+import Navbar from "./Navbar";
 
 const HamburgerMenu = () => {
   const [menu, setMenu] = useState(false);
@@ -44,7 +44,7 @@ const HamburgerMenu = () => {
         minWidth="240px"
       >
         <PopoverBody padding={0}>
-          <NavbarLinks />
+          <Navbar />
         </PopoverBody>
       </PopoverContent>
     </Popover>

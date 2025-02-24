@@ -1,8 +1,8 @@
 import { Heading, HStack, Image, VStack } from "@chakra-ui/react";
-import logo from "../assets/logo.png";
-import NavbarLinks from "./NavbarLinks";
+import logo from "../../assets/logo.png";
+import Navbar from "./Navbar";
 
-const Navbar = () => {
+const Sidebar = () => {
   return (
     <VStack
       padding={4}
@@ -10,6 +10,8 @@ const Navbar = () => {
       borderColor="lightBlue"
       height="100vh"
       spacing={8}
+      position="sticky"
+      top={0}
     >
       <HStack
         padding={2}
@@ -23,9 +25,9 @@ const Navbar = () => {
           Point Edge
         </Heading>
       </HStack>
-      <NavbarLinks />
+      <Navbar />
     </VStack>
   );
 };
 
-export default Navbar;
+export default Sidebar;

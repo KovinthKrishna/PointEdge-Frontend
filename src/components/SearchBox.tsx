@@ -4,7 +4,7 @@ import theme from "../theme";
 
 const SearchBox = () => {
   return (
-    <InputGroup size="lg" maxWidth={320}>
+    <InputGroup size="lg">
       <InputLeftElement pointerEvents="none">
         <IoSearch color={theme.colors.gray} />
       </InputLeftElement>

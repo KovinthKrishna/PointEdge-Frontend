@@ -7,9 +7,9 @@ import {
   PopoverTrigger,
 } from "@chakra-ui/react";
 import { FaBell } from "react-icons/fa6";
-import theme from "../theme";
-import NotificationsPopupBody from "./NotificationsPopupBody";
-import NotificationsPopupHeader from "./NotificationsPopupHeader";
+import theme from "../../theme";
+import NotificationsPopoverBody from "./NotificationsPopoverBody";
+import NotificationsPopoverHeader from "./NotificationsPopoverHeader";
 
 const Notifications = () => {
   return (
@@ -29,10 +29,10 @@ const Notifications = () => {
         marginX={{ base: 2, lg: 4 }}
       >
         <PopoverHeader borderBottom="2px" borderColor="lightBlue">
-          <NotificationsPopupHeader />
+          <NotificationsPopoverHeader />
         </PopoverHeader>
         <PopoverBody>
-          <NotificationsPopupBody />
+          <NotificationsPopoverBody />
         </PopoverBody>
       </PopoverContent>
     </Popover>
