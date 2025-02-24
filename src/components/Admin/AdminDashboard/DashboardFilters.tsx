@@ -2,19 +2,15 @@ import { SimpleGrid, Text } from "@chakra-ui/react";
 import timePeriods from "../../../data/timePeriods";
 import useBrands from "../../../hooks/useBrands";
 import useCategories from "../../../hooks/useCategories";
-import useProductOrderQueryStore from "../../../store/useProductOrderQueryStore";
+import useProductQueryStore from "../../../store/useProductQueryStore";
 import FilterMenu from "../../FilterMenu";
 
 const DashboardFilters = () => {
   const { data: brandsData } = useBrands();
   const { data: categoriesData } = useCategories();
 
-  const productOrderQuery = useProductOrderQueryStore(
-    (s) => s.productOrderQuery
-  );
-  const setBrandId = useProductOrderQueryStore((s) => s.setBrandId);
-  const setCategoryId = useProductOrderQueryStore((s) => s.setCategoryId);
-  const setTimeFilter = useProductOrderQueryStore((s) => s.setTimeFilter);
+  const { productQuery, setBrandId, setCategoryId, setTimeFilter } =
+    useProductQueryStore();
 
   return (
     <SimpleGrid
@@ -31,19 +27,19 @@ const DashboardFilters = () => {
         <FilterMenu
           filterType="Brand"
           options={brandsData ?? []}
-          selectedOptionId={productOrderQuery.brandId}
+          selectedOptionId={productQuery.brandId}
           setSelectedOptionId={setBrandId}
         />
         <FilterMenu
           filterType="Category"
           options={categoriesData ?? []}
-          selectedOptionId={productOrderQuery.categoryId}
+          selectedOptionId={productQuery.categoryId}
           setSelectedOptionId={setCategoryId}
         />
         <FilterMenu
           filterType="Time"
           options={timePeriods}
-          selectedOptionId={productOrderQuery.timeFilter}
+          selectedOptionId={productQuery.timeFilter}
           setSelectedOptionId={setTimeFilter}
         />
       </SimpleGrid>
