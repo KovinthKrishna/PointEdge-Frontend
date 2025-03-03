@@ -1,10 +1,16 @@
-import { Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
-import { IoSearch } from "react-icons/io5";
+import {
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+} from "@chakra-ui/react";
+import { IoClose, IoSearch } from "react-icons/io5";
 import useSearchStore from "../store/useSearchStore";
 import theme from "../theme";
 
 const SearchBox = () => {
-  const { search, setSearch } = useSearchStore();
+  const search = useSearchStore((s) => s.search);
+  const setSearch = useSearchStore((s) => s.setSearch);
 
   return (
     <InputGroup size="lg">
@@ -22,6 +28,11 @@ const SearchBox = () => {
         borderRadius="full"
         bgColor="white"
       />
+      {search && (
+        <InputRightElement cursor="pointer">
+          <IoClose color={theme.colors.gray} onClick={() => setSearch("")} />
+        </InputRightElement>
+      )}
     </InputGroup>
   );
 };

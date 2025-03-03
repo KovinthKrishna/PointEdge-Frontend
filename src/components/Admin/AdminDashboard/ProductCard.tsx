@@ -2,6 +2,7 @@ import { HStack, Image, Text } from "@chakra-ui/react";
 import productImage from "../../../assets/product-image.png";
 import { ProductOrderQuantity } from "../../../hooks/useProductOrderQuantities";
 import priceFormatter from "../../../utils/priceFormatter";
+import ProductListText from "./ProductListText";
 
 interface Props {
   data: ProductOrderQuantity;
@@ -18,27 +19,21 @@ const ProductCard = ({ data }: Props) => {
       cursor={"pointer"}
       _hover={{ borderColor: "lightBlue" }}
     >
-      <Image src={productImage} boxSize={10} />
-      <Text width="full">{data.productName}</Text>
-      <Text
-        minWidth={"18%"}
-        maxWidth={"20%"}
-        textAlign="center"
+      <Image
+        src={productImage}
+        boxSize={{ base: 8, md: 10 }}
+        aspectRatio={1}
+        objectFit="contain"
+      />
+      <Text width="full" noOfLines={2} fontSize={{ base: 12, md: 16 }}>
+        {data.productName}
+      </Text>
+      <ProductListText value={data.totalQuantity} fontWeight="bold" />
+      <ProductListText value={priceFormatter(data.pricePerUnit)} />
+      <ProductListText
+        value={priceFormatter(data.totalQuantity * data.pricePerUnit)}
         fontWeight="bold"
-      >
-        {data.totalQuantity}
-      </Text>
-      <Text minWidth={"18%"} maxWidth={"20%"} textAlign="center">
-        {priceFormatter(data.pricePerUnit)}
-      </Text>
-      <Text
-        minWidth={"18%"}
-        maxWidth={"20%"}
-        textAlign="center"
-        fontWeight="bold"
-      >
-        {priceFormatter(data.totalQuantity * data.pricePerUnit)}
-      </Text>
+      />
     </HStack>
   );
 };

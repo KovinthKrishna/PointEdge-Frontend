@@ -1,17 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
+import Product from "../models/Product";
 import APIClient from "../services/apiClient";
 import useProductQueryStore from "../store/useProductQueryStore";
 import useSearchStore from "../store/useSearchStore";
 
-export interface ProductOrderQuantity {
-  productId: number;
-  productName: string;
-  totalQuantity: number;
-  pricePerUnit: number;
-}
-
-const useProductOrderQuantities = () => {
+const useProducts = (hidden?: boolean) => {
   const productQuery = useProductQueryStore((s) => s.productQuery);
   const searchTerm = useSearchStore((s) => s.search)
     .trim()
@@ -19,19 +13,19 @@ const useProductOrderQuantities = () => {
     .toLowerCase();
 
   const { data, ...queryInfo } = useQuery({
-    queryKey: ["product-order-quantities", productQuery],
+    queryKey: ["products", { ...productQuery, hidden }],
     queryFn: () =>
-      new APIClient<ProductOrderQuantity>("/orders/summary").getAll({
-        params: productQuery,
+      new APIClient<Product>("/products").getAll({
+        params: { ...productQuery, hidden },
       }),
-    staleTime: ms("5m"),
+    staleTime: ms("1h"),
   });
 
   const filteredData = data?.filter((product) =>
-    product.productName.toLowerCase().includes(searchTerm)
+    product.name.toLowerCase().includes(searchTerm)
   );
 
   return { data: filteredData, ...queryInfo };
 };
 
-export default useProductOrderQuantities;
+export default useProducts;
