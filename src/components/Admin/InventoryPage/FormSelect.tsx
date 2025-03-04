@@ -1,25 +1,22 @@
 import { Button, HStack, Select } from "@chakra-ui/react";
 import { useState } from "react";
-import useBrands from "../../../hooks/useBrands";
-import useCategories from "../../../hooks/useCategories";
+import Brand from "../../../models/Brand";
+import Category from "../../../models/Category";
 import useProductFormStore from "../../../store/useProductFormStore";
 import AddNewOption from "./AddNewOption";
 
 interface Props {
   name: "brand" | "category";
+  fetchedOptions: (Brand | Category)[];
 }
 
-const FormSelect = ({ name }: Props) => {
+const FormSelect = ({ name, fetchedOptions }: Props) => {
   const [isAddNew, setIsAddNew] = useState(false);
   const [customOption, setCustomOption] = useState<{
     id: string;
     name: string;
   } | null>(null);
 
-  const { data: brandsData } = useBrands();
-  const { data: categoriesData } = useCategories();
-
-  const fetchedOptions = name === "brand" ? brandsData : categoriesData;
   const options = [
     ...(fetchedOptions || []),
     ...(customOption ? [customOption] : []),

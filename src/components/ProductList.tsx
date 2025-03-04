@@ -1,16 +1,18 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import useProducts from "../hooks/useProducts";
-import useHiddenItemsStore from "../store/useHiddenItemsStore";
+import useProductsVisibilityStore from "../store/useProductsVisibilityStore";
 import ProductCard from "./ProductCard";
 import StatusMessage from "./StatusMessage";
 
 const ProductList = () => {
-  const showHiddenItem = useHiddenItemsStore((s) => s.showHiddenItem);
+  const isShowingHiddenProducts = useProductsVisibilityStore(
+    (s) => s.isShowingHiddenProducts
+  );
   const {
     data: products,
     error,
     isLoading,
-  } = useProducts(showHiddenItem ? true : undefined);
+  } = useProducts(isShowingHiddenProducts ? true : undefined);
 
   if (error) return <StatusMessage message={error.message} />;
 

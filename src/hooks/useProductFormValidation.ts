@@ -13,42 +13,31 @@ const useProductFormValidation = () => {
 
   const validateForm = useCallback(() => {
     resetFormError();
-
     let hasError = false;
 
-    if (!name.trim()) {
-      setFormError("name", "Name is required");
+    const validateField = (key: string, value: string, message: string) => {
+      if (!value.trim()) {
+        setFormError(key, message);
+        hasError = true;
+      }
+    };
+    validateField("name", name, "Name is required");
+    validateField("quantity", quantity, "Quantity is required");
+    validateField("brand", brand, "Brand is required");
+    validateField("category", category, "Category is required");
+    validateField("price", price, "Price is required");
+
+    if (
+      quantity.trim() &&
+      (isNaN(Number(quantity)) ||
+        Number(quantity) < 0 ||
+        !Number.isInteger(Number(quantity)))
+    ) {
+      setFormError("quantity", "Quantity must be a positive integer");
       hasError = true;
     }
 
-    if (!quantity.trim()) {
-      setFormError("quantity", "Quantity is required");
-      hasError = true;
-    } else if (isNaN(Number(quantity))) {
-      setFormError("quantity", "Quantity must be a number");
-      hasError = true;
-    } else if (Number(quantity) <= 0) {
-      setFormError("quantity", "Quantity must be a positive number");
-      hasError = true;
-    }
-
-    if (!brand.trim()) {
-      setFormError("brand", "Brand is required");
-      hasError = true;
-    }
-
-    if (!category.trim()) {
-      setFormError("category", "Category is required");
-      hasError = true;
-    }
-
-    if (!price.trim()) {
-      setFormError("price", "Price is required");
-      hasError = true;
-    } else if (isNaN(Number(price))) {
-      setFormError("price", "Price must be a number");
-      hasError = true;
-    } else if (Number(price) < 0) {
+    if (price.trim() && (isNaN(Number(price)) || Number(price) < 0)) {
       setFormError("price", "Price must be a positive number");
       hasError = true;
     }

@@ -7,20 +7,21 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/react";
-import useAddProduct from "../../../hooks/useAddProduct";
+import useHandleAddProduct from "../../../hooks/useHandleAddProduct";
 import useProductFormErrorStore from "../../../store/useProductFormErrorStore";
 import useProductFormStore from "../../../store/useProductFormStore";
 import BarcodeButton from "../../BarcodeButton";
+import BrandSelector from "./BrandSelector";
+import CategorySelector from "./CategorySelector";
 import FormField from "./FormField";
 import FormInput from "./FormInput";
-import FormSelect from "./FormSelect";
 import ProductImageUpload from "./ProductImageUpload";
 
 const AddNewItemForm = () => {
   const resetFormData = useProductFormStore((s) => s.resetFormData);
   const resetFormError = useProductFormErrorStore((s) => s.resetFormError);
 
-  const addProduct = useAddProduct();
+  const addProduct = useHandleAddProduct();
 
   return (
     <Flex
@@ -53,10 +54,10 @@ const AddNewItemForm = () => {
           <FormInput name="quantity" />
         </FormField>
         <FormField name="brand">
-          <FormSelect name="brand" />
+          <BrandSelector />
         </FormField>
         <FormField name="category">
-          <FormSelect name="category" />
+          <CategorySelector />
         </FormField>
         <FormField name="price">
           <FormInput name="price" />

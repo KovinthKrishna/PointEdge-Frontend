@@ -1,25 +1,27 @@
 import { Button } from "@chakra-ui/react";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import useHiddenItemsStore from "../../../store/useHiddenItemsStore";
+import useProductsVisibilityStore from "../../../store/useProductsVisibilityStore";
 
 const ToggleHiddenButton = () => {
-  const showHiddenItem = useHiddenItemsStore((s) => s.showHiddenItem);
-  const toggleShowHiddenItem = useHiddenItemsStore(
-    (s) => s.toggleShowHiddenItem
+  const isShowingHiddenProducts = useProductsVisibilityStore(
+    (s) => s.isShowingHiddenProducts
+  );
+  const toggleProductsVisibility = useProductsVisibilityStore(
+    (s) => s.toggleProductsVisibility
   );
 
   return (
     <Button
-      leftIcon={showHiddenItem ? <BiSolidShow /> : <BiSolidHide />}
+      leftIcon={isShowingHiddenProducts ? <BiSolidShow /> : <BiSolidHide />}
       variant="outline"
       color="darkBlue"
       justifyContent="start"
       minWidth={200}
       border="2px"
       _hover={{ bg: "darkBlue", color: "white", borderColor: "darkBlue" }}
-      onClick={toggleShowHiddenItem}
+      onClick={toggleProductsVisibility}
     >
-      {showHiddenItem ? "Show All Items" : "Show Hidden Items"}
+      {isShowingHiddenProducts ? "Show All Items" : "Show Hidden Items"}
     </Button>
   );
 };
