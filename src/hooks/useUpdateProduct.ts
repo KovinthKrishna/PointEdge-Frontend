@@ -5,15 +5,17 @@ import useModalStore from "../store/useModalStore";
 import useProductMutationStore from "../store/useProductMutationStore";
 import useCustomToast from "./useCustomToast";
 
-const useAddProduct = () => {
+const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   const setLoading = useProductMutationStore((s) => s.setLoading);
-  const closeAddNewItemModal = useModalStore((s) => s.closeAddNewItemModal);
+  const closeUpdateProductModal = useModalStore(
+    (s) => s.closeUpdateProductModal
+  );
   const toast = useCustomToast();
 
   return useMutation({
-    mutationFn: (newProduct: Product) =>
-      new APIClient<Product>("/products").post(newProduct),
+    mutationFn: (updatedProduct: Product) =>
+      new APIClient<Product>("/products").put(updatedProduct),
     onMutate: () => {
       setLoading(true);
     },
@@ -28,8 +30,8 @@ const useAddProduct = () => {
         queryClient.invalidateQueries({ queryKey: ["categories"] });
       }
 
-      closeAddNewItemModal();
-      toast.success("Product added successfully!");
+      closeUpdateProductModal();
+      toast.success("Product updated successfully!");
     },
     onSettled: () => {
       setLoading(false);
@@ -40,4 +42,4 @@ const useAddProduct = () => {
   });
 };
 
-export default useAddProduct;
+export default useUpdateProduct;

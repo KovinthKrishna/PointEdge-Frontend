@@ -1,5 +1,6 @@
 import { Button, Input } from "@chakra-ui/react";
 import { useState } from "react";
+import useProductFormErrorStore from "../../../store/useProductFormErrorStore";
 import useProductFormStore from "../../../store/useProductFormStore";
 
 interface Props {
@@ -12,6 +13,7 @@ const AddNewOption = ({ name, setIsAddNew, setCustomOption }: Props) => {
   const [inputValue, setInputValue] = useState("");
 
   const setFormData = useProductFormStore((s) => s.setFormData);
+  const setFormError = useProductFormErrorStore((s) => s.setFormError);
 
   const handleAddOption = () => {
     if (inputValue.trim()) {
@@ -34,7 +36,7 @@ const AddNewOption = ({ name, setIsAddNew, setCustomOption }: Props) => {
         borderColor="darkBlue"
         bgColor="lightGray"
         _placeholder={{ color: "gray" }}
-        _invalid={{ borderColor: "red" }}
+        _invalid={{ borderColor: "darkBlue" }}
       />
       <Button
         variant="outline"
@@ -46,7 +48,10 @@ const AddNewOption = ({ name, setIsAddNew, setCustomOption }: Props) => {
           borderColor: "darkBlue",
         }}
         minWidth={16}
-        onClick={handleAddOption}
+        onClick={() => {
+          handleAddOption();
+          setFormError(name, "");
+        }}
       >
         Add
       </Button>

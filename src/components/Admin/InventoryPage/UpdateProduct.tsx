@@ -6,17 +6,24 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
+import Product from "../../../models/Product";
 import useModalStore from "../../../store/useModalStore";
-import AddNewItemForm from "./AddNewItemForm";
+import UpdateProductForm from "./UpdateProductForm";
 
-const AddNewItem = () => {
-  const isAddNewItemModalOpen = useModalStore((s) => s.isAddNewItemModalOpen);
-  const closeAddNewItemModal = useModalStore((s) => s.closeAddNewItemModal);
+interface Props {
+  product: Product;
+}
+
+const UpdateProduct = ({ product }: Props) => {
+  const openUpdateProductId = useModalStore((s) => s.openUpdateProductId);
+  const closeUpdateProductModal = useModalStore(
+    (s) => s.closeUpdateProductModal
+  );
 
   return (
     <Modal
-      onClose={closeAddNewItemModal}
-      isOpen={isAddNewItemModalOpen}
+      onClose={closeUpdateProductModal}
+      isOpen={openUpdateProductId === product.id}
       isCentered
       closeOnOverlayClick={false}
       scrollBehavior="inside"
@@ -30,15 +37,15 @@ const AddNewItem = () => {
         borderRadius={24}
       >
         <ModalHeader textAlign="center" fontSize={32}>
-          Add New Item
+          Update {product.name}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody paddingX={{ base: 2, lg: 16 }}>
-          <AddNewItemForm />
+          <UpdateProductForm product={product} />
         </ModalBody>
       </ModalContent>
     </Modal>
   );
 };
 
-export default AddNewItem;
+export default UpdateProduct;

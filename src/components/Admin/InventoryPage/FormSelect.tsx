@@ -2,6 +2,7 @@ import { Button, HStack, Select } from "@chakra-ui/react";
 import { useState } from "react";
 import Brand from "../../../models/Brand";
 import Category from "../../../models/Category";
+import useProductFormErrorStore from "../../../store/useProductFormErrorStore";
 import useProductFormStore from "../../../store/useProductFormStore";
 import AddNewOption from "./AddNewOption";
 
@@ -24,6 +25,7 @@ const FormSelect = ({ name, fetchedOptions }: Props) => {
 
   const value = useProductFormStore((s) => s[name]);
   const setFormData = useProductFormStore((s) => s.setFormData);
+  const setFormError = useProductFormErrorStore((s) => s.setFormError);
 
   return (
     <HStack>
@@ -33,12 +35,15 @@ const FormSelect = ({ name, fetchedOptions }: Props) => {
             name={name}
             placeholder={`Select a ${name}`}
             value={value}
-            onChange={(e) => setFormData(name, e.target.value)}
+            onChange={(e) => {
+              setFormData(name, e.target.value);
+              setFormError(name, "");
+            }}
             borderRadius="full"
             border="2px"
             borderColor="darkBlue"
             bgColor="lightGray"
-            _invalid={{ border: "2px", borderColor: "darkBlue" }}
+            _invalid={{ borderColor: "darkBlue" }}
           >
             {options?.map((option) => (
               <option key={option.id} value={option.id}>
@@ -56,7 +61,10 @@ const FormSelect = ({ name, fetchedOptions }: Props) => {
               borderColor: "darkBlue",
             }}
             minWidth={16}
-            onClick={() => setIsAddNew(true)}
+            onClick={() => {
+              setIsAddNew(true);
+              setFormData(name, "");
+            }}
           >
             New
           </Button>

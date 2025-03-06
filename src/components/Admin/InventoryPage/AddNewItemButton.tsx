@@ -1,8 +1,9 @@
-import { Button, useDisclosure } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
+import useModalStore from "../../../store/useModalStore";
 import AddNewItem from "./AddNewItem";
 
 const AddNewItemButton = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const openAddNewItemModal = useModalStore((s) => s.openAddNewItemModal);
 
   return (
     <>
@@ -12,11 +13,11 @@ const AddNewItemButton = () => {
         border="2px"
         _hover={{ bg: "darkBlue", color: "white", borderColor: "darkBlue" }}
         justifyContent="start"
-        onClick={onOpen}
+        onClick={openAddNewItemModal}
       >
         Add New Item
       </Button>
-      <AddNewItem isOpen={isOpen} onClose={onClose} />
+      <AddNewItem />
     </>
   );
 };

@@ -1,44 +1,16 @@
-import useProductFormStore from "../store/useProductFormStore";
 import useAddProduct from "./useAddProduct";
-import useBrands from "./useBrands";
-import useCategories from "./useCategories";
-import useProductFormValidation from "./useProductFormValidation";
+import useHandleProduct from "./useHandleProduct";
 
 const useHandleAddProduct = () => {
-  const validateForm = useProductFormValidation();
   const mutation = useAddProduct();
-
-  const name = useProductFormStore((s) => s.name)
-    .trim()
-    .replace(/\s+/g, " ");
-  const quantity = useProductFormStore((s) => s.quantity).trim();
-  const brand = useProductFormStore((s) => s.brand);
-  const category = useProductFormStore((s) => s.category);
-  const price = useProductFormStore((s) => s.price).trim();
-
-  const { data: brandsData } = useBrands();
-  const { data: categoriesData } = useCategories();
+  const getProductObject = useHandleProduct();
 
   const addProduct = (hidden: boolean) => {
-    if (!validateForm()) return;
+    const newProduct = getProductObject(0, hidden);
 
-    const selectedBrand = brandsData?.find((b) => b.id === Number(brand));
-    const selectedCategory = categoriesData?.find(
-      (c) => c.id === Number(category)
-    );
-    if (!selectedBrand || !selectedCategory) return;
-
-    const newProduct = {
-      id: 0,
-      name,
-      price: Number(price),
-      stockQuantity: Number(quantity),
-      hidden,
-      brand: selectedBrand,
-      category: selectedCategory,
-    };
-
-    mutation.mutate(newProduct);
+    if (newProduct) {
+      mutation.mutate(newProduct);
+    }
   };
 
   return addProduct;

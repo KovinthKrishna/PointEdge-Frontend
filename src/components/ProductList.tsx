@@ -1,10 +1,12 @@
 import { SimpleGrid } from "@chakra-ui/react";
+import useExtractSecondPathSegment from "../hooks/useExtractSecondPathSegment";
 import useProducts from "../hooks/useProducts";
 import useProductsVisibilityStore from "../store/useProductsVisibilityStore";
 import ProductCard from "./ProductCard";
 import StatusMessage from "./StatusMessage";
 
 const ProductList = () => {
+  const path = useExtractSecondPathSegment();
   const isShowingHiddenProducts = useProductsVisibilityStore(
     (s) => s.isShowingHiddenProducts
   );
@@ -25,7 +27,11 @@ const ProductList = () => {
       marginBottom={6}
     >
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          isAdmin={path === "inventory"}
+        />
       ))}
     </SimpleGrid>
   ) : (
