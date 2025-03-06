@@ -1,47 +1,29 @@
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import useProductOrderQuantities from "../../../hooks/useProductOrderQuantities";
+import StatusMessage from "../../StatusMessage";
 import ProductCard from "./ProductCard";
-
-const Message = ({ message }: { message: string }) => {
-  return (
-    <Text textAlign="center" fontSize={20} fontWeight="bold" my={8}>
-      {message}
-    </Text>
-  );
-};
+import ProductListText from "./ProductListText";
 
 const ProductList = () => {
   const { data: salesData, error, isLoading } = useProductOrderQuantities();
 
-  if (error) return <Message message={error.message} />;
+  if (error) return <StatusMessage message={error.message} />;
 
-  if (isLoading) return <Message message="Loading, please wait..." />;
+  if (isLoading) return <StatusMessage message="Loading, please wait..." />;
 
   return (
     <>
       <HStack fontWeight="bold" padding={{ base: 4, lg: 6 }}>
-        <Text width="full" marginLeft={12}>
+        <Text
+          width="full"
+          marginLeft={{ base: 10, md: 12 }}
+          fontSize={{ base: 12, md: 16 }}
+        >
           Item
         </Text>
-        <Text
-          minWidth={"18%"}
-          maxWidth={"20%"}
-          textAlign="center"
-          fontWeight="bold"
-        >
-          Orders
-        </Text>
-        <Text minWidth={"18%"} maxWidth={"20%"} textAlign="center">
-          PPU
-        </Text>
-        <Text
-          minWidth={"18%"}
-          maxWidth={"20%"}
-          textAlign="center"
-          fontWeight="bold"
-        >
-          Revenue
-        </Text>
+        <ProductListText value="Orders" />
+        <ProductListText value="PPU" />
+        <ProductListText value="Revenue" />
       </HStack>
       {salesData && salesData.length > 0 ? (
         <VStack spacing={2.5} paddingX={{ base: 2, lg: 4 }} marginBottom={6}>
@@ -50,7 +32,7 @@ const ProductList = () => {
           ))}
         </VStack>
       ) : (
-        <Message message="No sales data available" />
+        <StatusMessage message="No sales data available" />
       )}
     </>
   );
