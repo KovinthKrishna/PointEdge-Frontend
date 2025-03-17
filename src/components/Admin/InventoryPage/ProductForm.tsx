@@ -58,6 +58,9 @@ const ProductForm = ({ children }: Props) => {
         <FormField name="price">
           <FormInput name="price" />
         </FormField>
+        <FormField name="minimum">
+          <FormInput name="minimum" />
+        </FormField>
         <HStack color="white" width="full">
           {children}
         </HStack>

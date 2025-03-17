@@ -14,8 +14,10 @@ const AddNewItemForm = () => {
   const addProduct = useHandleAddProduct();
 
   useEffect(() => {
-    resetFormData();
-    resetFormError();
+    return () => {
+      resetFormData();
+      resetFormError();
+    };
   }, [resetFormData, resetFormError]);
 
   return (

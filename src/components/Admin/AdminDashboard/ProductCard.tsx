@@ -1,6 +1,7 @@
 import { HStack, Image, Text, Tooltip } from "@chakra-ui/react";
 import productImage from "../../../assets/product-image.png";
 import { ProductOrderQuantity } from "../../../hooks/useProductOrderQuantities";
+import { getProductImageUrl } from "../../../services/apiClient";
 import priceFormatter from "../../../utils/priceFormatter";
 import ProductListText from "./ProductListText";
 
@@ -22,7 +23,9 @@ const ProductCard = ({ data }: Props) => {
         _hover={{ borderColor: "lightBlue" }}
       >
         <Image
-          src={productImage}
+          src={
+            data.imageName ? getProductImageUrl(data.imageName) : productImage
+          }
           boxSize={{ base: 8, md: 10 }}
           aspectRatio={1}
           objectFit="contain"

@@ -6,7 +6,10 @@ interface ProductFormStore {
   quantity: string;
   brand: string;
   category: string;
-  setFormData: (name: string, value: string) => void;
+  minimum: string;
+  existingImageUrl: string | null;
+  newImageFile: File | null;
+  setFormData: (name: string, value: string | File | null) => void;
   resetFormData: () => void;
 }
 
@@ -16,6 +19,9 @@ const useProductFormStore = create<ProductFormStore>((set) => ({
   quantity: "",
   brand: "",
   category: "",
+  minimum: "",
+  existingImageUrl: null,
+  newImageFile: null,
   setFormData: (name, value) => set((store) => ({ ...store, [name]: value })),
   resetFormData: () =>
     set({
@@ -24,6 +30,9 @@ const useProductFormStore = create<ProductFormStore>((set) => ({
       quantity: "",
       brand: "",
       category: "",
+      minimum: "",
+      existingImageUrl: null,
+      newImageFile: null,
     }),
 }));
 

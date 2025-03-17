@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
-import Product from "../models/Product";
-import APIClient from "../services/apiClient";
+import productService from "../services/productService";
 import useProductQueryStore from "../store/useProductQueryStore";
 import useSearchStore from "../store/useSearchStore";
 
@@ -15,7 +14,7 @@ const useProducts = (hidden?: boolean) => {
   const { data, ...queryInfo } = useQuery({
     queryKey: ["products", { ...productQuery, hidden }],
     queryFn: () =>
-      new APIClient<Product>("/products").getAll({
+      productService.getAll({
         params: { ...productQuery, hidden },
       }),
     staleTime: ms("1h"),

@@ -1,8 +1,18 @@
 import axios, { AxiosRequestConfig } from "axios";
 
+const baseURL = "http://localhost:8080";
+
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL,
 });
+
+export const getProductImageUrl = (imageName: string) => {
+  return `${baseURL}/products/images/${imageName}`;
+};
+
+export const getProductImageActionUrl = (id: number) => {
+  return `${baseURL}/products/${id}/image`;
+};
 
 class APIClient<T> {
   endpoint: string;
@@ -11,18 +21,19 @@ class APIClient<T> {
     this.endpoint = endpoint;
   }
 
-  getAll = (config: AxiosRequestConfig) => {
-    return axiosInstance
-      .get<T[]>(this.endpoint, config)
-      .then((res) => res.data);
+  getAll = async (config: AxiosRequestConfig) => {
+    const res = await axiosInstance.get<T[]>(this.endpoint, config);
+    return res.data;
   };
 
-  post = (data: T) => {
-    return axiosInstance.post<T>(this.endpoint, data).then((res) => res.data);
+  post = async (data: T) => {
+    const res = await axiosInstance.post<T>(this.endpoint, data);
+    return res.data;
   };
 
-  put = (data: T) => {
-    return axiosInstance.put<T>(this.endpoint, data).then((res) => res.data);
+  put = async (data: T) => {
+    const res = await axiosInstance.put<T>(this.endpoint, data);
+    return res.data;
   };
 }
 

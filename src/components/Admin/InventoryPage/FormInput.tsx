@@ -3,7 +3,7 @@ import useProductFormErrorStore from "../../../store/useProductFormErrorStore";
 import useProductFormStore from "../../../store/useProductFormStore";
 
 interface Props {
-  name: "name" | "price" | "quantity";
+  name: "name" | "price" | "quantity" | "minimum";
 }
 
 const FormInput = ({ name }: Props) => {

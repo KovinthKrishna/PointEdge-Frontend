@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 import useProductFormErrorStore from "../../../store/useProductFormErrorStore";
 
 interface Props {
-  name: "name" | "price" | "quantity" | "brand" | "category";
+  name: "name" | "price" | "quantity" | "brand" | "category" | "minimum";
   children: ReactNode;
 }
 

@@ -6,6 +6,7 @@ interface ProductFormErrorStore {
   quantity: string;
   brand: string;
   category: string;
+  minimum: string;
   setFormError: (name: string, value: string) => void;
   resetFormError: () => void;
 }
@@ -16,6 +17,7 @@ const useProductFormErrorStore = create<ProductFormErrorStore>((set) => ({
   quantity: "",
   brand: "",
   category: "",
+  minimum: "",
   setFormError: (name, value) => set((store) => ({ ...store, [name]: value })),
   resetFormError: () =>
     set({
@@ -24,6 +26,7 @@ const useProductFormErrorStore = create<ProductFormErrorStore>((set) => ({
       quantity: "",
       brand: "",
       category: "",
+      minimum: "",
     }),
 }));
 

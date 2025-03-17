@@ -1,6 +1,7 @@
 import { Box, Card, Image, Text, Tooltip } from "@chakra-ui/react";
 import productImage from "../assets/product-image.png";
 import Product from "../models/Product";
+import { getProductImageUrl } from "../services/apiClient";
 import useModalStore from "../store/useModalStore";
 import priceFormatter from "../utils/priceFormatter";
 import UpdateProduct from "./Admin/InventoryPage/UpdateProduct";
@@ -30,7 +31,11 @@ const ProductCard = ({ product, isAdmin }: Props) => {
           }
         >
           <Image
-            src={productImage}
+            src={
+              product.imageName
+                ? getProductImageUrl(product.imageName)
+                : productImage
+            }
             aspectRatio={1}
             objectFit="contain"
             padding={2}
