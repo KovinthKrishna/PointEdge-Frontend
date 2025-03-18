@@ -9,6 +9,7 @@ const AdminLayout = () => {
       templateAreas={{
         base: `"title" "main"`,
         lg: `"navbar title" "navbar main"`,
+        // fhgfkjnkjkn
       }}
       templateColumns={{
         base: "1fr",
