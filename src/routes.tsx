@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminLayout from "./pages/AdminLayout";
-import AnalysisPage from "./pages/AnalysisPage";
-import DiscountsPage from "./pages/DiscountsPage";
-import EmployeesPage from "./pages/EmployeesPage";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AnalysisPage from "./pages/Admin/AnalysisPage";
+import DiscountsPage from "./pages/Admin/DiscountsPage";
+import EmployeesPage from "./pages/Admin/EmployeesPage";
+import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
-import InventoryPage from "./pages/InventoryPage";
 import SalesDashboard from "./pages/SalesDashboard";
 
 const router = createBrowserRouter([
