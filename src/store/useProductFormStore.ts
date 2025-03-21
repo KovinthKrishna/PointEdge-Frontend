@@ -3,6 +3,7 @@ import { create } from "zustand";
 interface ProductFormStore {
   name: string;
   price: string;
+  barcode: string | null;
   quantity: string;
   brand: string;
   category: string;
@@ -16,6 +17,7 @@ interface ProductFormStore {
 const useProductFormStore = create<ProductFormStore>((set) => ({
   name: "",
   price: "",
+  barcode: null,
   quantity: "",
   brand: "",
   category: "",
@@ -27,6 +29,7 @@ const useProductFormStore = create<ProductFormStore>((set) => ({
     set({
       name: "",
       price: "",
+      barcode: null,
       quantity: "",
       brand: "",
       category: "",
