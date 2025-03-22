@@ -39,7 +39,7 @@ const ProductForm = ({ children }: Props) => {
           >
             <FormLabel margin={0}>Barcode :</FormLabel>
             <Box width={{ lg: 300 }}>
-              <BarcodeButton />
+              <BarcodeButton isAdmin />
             </Box>
           </Flex>
         </FormControl>

@@ -10,11 +10,12 @@ import BarcodeDetector from "./BarcodeDetector";
 import BarcodeScanner from "./BarcodeScanner";
 
 interface Props {
+  isAdmin: boolean;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const BarcodeModal = ({ isOpen, onClose }: Props) => {
+const BarcodeModal = ({ isAdmin, isOpen, onClose }: Props) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -27,7 +28,7 @@ const BarcodeModal = ({ isOpen, onClose }: Props) => {
       <ModalContent border="4px" borderColor="darkBlue" borderRadius={10}>
         <ModalBody pt={4} pb={0}>
           <BarcodeScanner onClose={onClose} />
-          <BarcodeDetector label="Scan the barcode" onClose={onClose} />
+          <BarcodeDetector isAdmin={isAdmin} onClose={onClose} />
         </ModalBody>
         <ModalFooter justifyContent={"center"}>
           <Button

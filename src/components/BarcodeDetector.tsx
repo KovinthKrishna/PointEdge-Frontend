@@ -4,11 +4,11 @@ import useCustomToast from "../hooks/useCustomToast";
 import useProductFormStore from "../store/useProductFormStore";
 
 interface Props {
-  label?: string;
+  isAdmin: boolean;
   onClose: () => void;
 }
 
-const BarcodeDetector = ({ label, onClose }: Props) => {
+const BarcodeDetector = ({ isAdmin, onClose }: Props) => {
   const setFormData = useProductFormStore((s) => s.setFormData);
   const toast = useCustomToast();
   const barcodeBuffer = useRef("");
@@ -18,7 +18,7 @@ const BarcodeDetector = ({ label, onClose }: Props) => {
       if (event.key === "Enter" && barcodeBuffer.current) {
         setFormData("barcode", barcodeBuffer.current);
         barcodeBuffer.current = "";
-        if (label) {
+        if (isAdmin) {
           toast.success("Barcode detected successfully");
         }
         onClose();
@@ -29,9 +29,9 @@ const BarcodeDetector = ({ label, onClose }: Props) => {
 
     window.addEventListener("keypress", handleKeyPress);
     return () => window.removeEventListener("keypress", handleKeyPress);
-  }, [label, onClose, setFormData, toast]);
+  }, [isAdmin, onClose, setFormData, toast]);
 
-  return <Text textAlign="center">{label}</Text>;
+  return isAdmin && <Text textAlign="center">Scan the barcode</Text>;
 };
 
 export default BarcodeDetector;

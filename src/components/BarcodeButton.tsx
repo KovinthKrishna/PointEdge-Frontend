@@ -1,7 +1,7 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import BarcodeModal from "./BarcodeModal";
 
-const BarcodeButton = () => {
+const BarcodeButton = ({ isAdmin }: { isAdmin: boolean }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -10,6 +10,8 @@ const BarcodeButton = () => {
         variant="outline"
         color="darkBlue"
         border="2px"
+        height={isAdmin ? "40px" : "48px"}
+        minWidth={100}
         _hover={{
           bg: "darkBlue",
           color: "white",
@@ -19,7 +21,7 @@ const BarcodeButton = () => {
       >
         Barcode
       </Button>
-      <BarcodeModal isOpen={isOpen} onClose={onClose} />
+      <BarcodeModal isAdmin={isAdmin} isOpen={isOpen} onClose={onClose} />
     </>
   );
 };
