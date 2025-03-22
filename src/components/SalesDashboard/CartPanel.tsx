@@ -1,13 +1,30 @@
 import { Box, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { MdRemoveShoppingCart } from "react-icons/md";
+import useProducts from "../../hooks/useProducts";
 import useCartStore from "../../store/useCartStore";
+import useProductFormStore from "../../store/useProductFormStore";
 import theme from "../../theme";
 import CartList from "./CartList";
 import PayButton from "./PayButton";
 
 const CartPanel = () => {
+  const { data: products } = useProducts(false);
   const orderItems = useCartStore((s) => s.orderItems);
+  const addProduct = useCartStore((s) => s.addProduct);
   const clearCart = useCartStore((s) => s.clearCart);
+  const barcode = useProductFormStore((s) => s.barcode);
+  const setFormData = useProductFormStore((s) => s.setFormData);
+
+  useEffect(() => {
+    if (barcode) {
+      const product = products?.find((p) => p.barcode === barcode);
+      if (product) {
+        addProduct(product);
+        setFormData("barcode", null);
+      }
+    }
+  }, [addProduct, barcode, products, setFormData]);
 
   return (
     <Box height="100vh" paddingY={10} position="sticky" top={0}>
