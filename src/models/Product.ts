@@ -4,6 +4,7 @@ import Category from "./Category";
 export default interface Product {
   id: number;
   name: string;
+  barcode: string | null;
   price: number;
   stockQuantity: number;
   minimumQuantity: number;

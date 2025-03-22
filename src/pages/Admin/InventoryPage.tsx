@@ -7,7 +7,7 @@ const InventoryPage = () => {
     <>
       <InventoryPageTop />
       <Box paddingY={4} paddingX={{ base: 4, lg: 8, xl: 16 }}>
-        <ProductList />
+        <ProductList isAdmin />
       </Box>
     </>
   );

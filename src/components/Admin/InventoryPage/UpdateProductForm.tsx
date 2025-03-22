@@ -22,6 +22,7 @@ const UpdateProductForm = ({ product }: Props) => {
   const populateForm = useCallback(() => {
     setFormData("name", product.name);
     setFormData("price", product.price.toString());
+    setFormData("barcode", product.barcode);
     setFormData("quantity", product.stockQuantity.toString());
     setFormData("brand", product.brand.id.toString());
     setFormData("category", product.category.id.toString());
