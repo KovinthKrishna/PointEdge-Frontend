@@ -22,7 +22,13 @@ const router = createBrowserRouter([
       { index: true, element: <AdminDashboard /> },
       { path: "analysis", element: <AnalysisPage /> },
       { path: "inventory", element: <InventoryPage /> },
-      { path: "discounts", element: <DiscountsPage /> },
+      {
+        path: "discounts",
+        element: <DiscountsPage />, // Main discounts layout
+        children: [
+          
+        ],
+      },
       { path: "employees", element: <EmployeesPage /> },
     ],
   },
