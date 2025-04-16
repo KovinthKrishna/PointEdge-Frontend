@@ -1,30 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaStar, FaCrown, FaAward, FaMedal } from 'react-icons/fa';
+import { fetchLoyaltyThresholds, updateLoyaltyThresholds } from '../../services/discountService';
 
 interface DiscountLoyaltySettingsProps {
   onBack: () => void;
 }
 
 const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBack }) => {
-  const [points, setPoints] = useState({
-    gold: 10000,
-    silver: 10000,
-    bronze: 5000,
-    rupees: 5000
+  const [thresholds, setThresholds] = useState({
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+    points: 0
   });
+  const [loading, setLoading] = useState({
+    fetching: true,
+    saving: false
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const loadThresholds = async () => {
+      try {
+        setLoading(prev => ({ ...prev, fetching: true }));
+        setError(null);
+        const data = await fetchLoyaltyThresholds();
+        setThresholds(data);
+      } catch (err) {
+        console.error('Failed to load thresholds:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load loyalty thresholds');
+      } finally {
+        setLoading(prev => ({ ...prev, fetching: false }));
+      }
+    };
+
+    loadThresholds();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setPoints(prev => ({
+    setThresholds(prev => ({
       ...prev,
       [name]: parseInt(value) || 0
     }));
   };
 
-  const handleSave = () => {
-    console.log('Saving points settings:', points);
-    onBack();
+  const handleSave = async () => {
+    try {
+      setLoading(prev => ({ ...prev, saving: true }));
+      setError(null);
+      setSuccess(false);
+      
+      console.log('Attempting to save thresholds:', thresholds);
+      const updated = await updateLoyaltyThresholds(thresholds);
+      console.log('Update successful:', updated);
+      
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      console.error('Save error:', err);
+      setError(
+        (err instanceof Error && (err as any).response?.data?.message) ||
+        (err instanceof Error && err.message) ||
+        'Failed to save thresholds. Please try again.'
+      );
+    } finally {
+      setLoading(prev => ({ ...prev, saving: false }));
+    }
   };
+
+  if (loading.fetching) {
+    return (
+      <div style={{ 
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '200px'
+      }}>
+        <div>Loading loyalty thresholds...</div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '20px' }}>
@@ -38,6 +96,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
         <div style={{ display: 'flex', gap: '10px' }}>
           <button 
             onClick={onBack}
+            disabled={loading.saving}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -46,7 +105,8 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               border: '1px solid #ddd',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '14px'
+              fontSize: '14px',
+              opacity: loading.saving ? 0.7 : 1
             }}
           >
             <FaArrowLeft style={{ marginRight: '6px', fontSize: '12px' }} />
@@ -54,6 +114,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           </button>
           <button 
             onClick={handleSave}
+            disabled={loading.saving}
             style={{
               padding: '6px 12px',
               background: '#008ED8',
@@ -62,19 +123,46 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '14px',
-              fontWeight: '500'
+              fontWeight: '500',
+              opacity: loading.saving ? 0.7 : 1
             }}
           >
-            Save Settings
+            {loading.saving ? 'Saving...' : 'Save Settings'}
           </button>
         </div>
       </div>
+      
+      {error && (
+        <div style={{ 
+          color: 'red', 
+          marginBottom: '15px',
+          padding: '10px',
+          background: '#ffebee',
+          borderRadius: '4px'
+        }}>
+          {error}
+        </div>
+      )}
+      
+      {success && (
+        <div style={{ 
+          color: 'green', 
+          marginBottom: '15px',
+          padding: '10px',
+          background: '#e8f5e9',
+          borderRadius: '4px'
+        }}>
+          Loyalty thresholds updated successfully!
+        </div>
+      )}
       
       <div style={{ 
         background: '#fff', 
         border: '1px solid #eee', 
         borderRadius: '4px', 
-        padding: '20px' 
+        padding: '20px',
+        opacity: loading.saving ? 0.7 : 1,
+        pointerEvents: loading.saving ? 'none' : 'auto'
       }}>
         {/* Gold Membership */}
         <div style={{ marginBottom: '20px' }}>
@@ -100,8 +188,9 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
             <input
               type="number"
               name="gold"
-              value={points.gold}
+              value={thresholds.gold}
               onChange={handleChange}
+              disabled={loading.saving}
               style={{
                 width: '100%',
                 padding: '8px',
@@ -137,8 +226,9 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
             <input
               type="number"
               name="silver"
-              value={points.silver}
+              value={thresholds.silver}
               onChange={handleChange}
+              disabled={loading.saving}
               style={{
                 width: '100%',
                 padding: '8px',
@@ -174,8 +264,9 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
             <input
               type="number"
               name="bronze"
-              value={points.bronze}
+              value={thresholds.bronze}
               onChange={handleChange}
+              disabled={loading.saving}
               style={{
                 width: '100%',
                 padding: '8px',
@@ -187,7 +278,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           </div>
         </div>
 
-        {/* Rupees Conversion */}
+        {/* Points Conversion */}
         <div style={{ marginBottom: '15px' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
             <FaStar style={{ color: '#008ED8', fontSize: '16px', marginRight: '8px' }} />
@@ -210,9 +301,10 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
             </div>
             <input
               type="number"
-              name="rupees"
-              value={points.rupees}
+              name="points"
+              value={thresholds.points}
               onChange={handleChange}
+              disabled={loading.saving}
               style={{
                 width: '100%',
                 padding: '8px',

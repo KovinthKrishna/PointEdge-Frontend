@@ -15,13 +15,19 @@ import DiscountSequenceLoyalty from "./DiscountSequenceLoyalty";
 import DiscountReport from "./DiscountReport";
 import DiscountAdd from "./DiscountAdd";
 import DiscountLoyaltySettings from "./DiscountLoyaltySettings";
+import DiscountEdit from "./DiscountEdit";
 
 const DiscountDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showReport, setShowReport] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [editingDiscountId, setEditingDiscountId] = useState<number | null>(null);
   
+  const handleBackFromEdit = () => {
+    setEditingDiscountId(null);
+  };
+
   const renderTabContent = () => {
     if (showSettings) {
       return <DiscountLoyaltySettings onBack={() => setShowSettings(false)} />;
@@ -32,17 +38,25 @@ const DiscountDashboard = () => {
     if (showReport) {
       return <DiscountReport onBack={() => setShowReport(false)} />;
     }
+    if (editingDiscountId) {
+      return <DiscountEdit onBack={handleBackFromEdit} discountId={editingDiscountId} />;
+    }
     
     switch (activeTab) {
       case "dashboard":
         return (
           <>
-            <DiscountOptionsDashboard
-              onReportClick={() => setShowReport(true)}
-              onAddClick={() => setShowAddForm(true)}
+            {!editingDiscountId && (
+              <DiscountOptionsDashboard
+                onReportClick={() => setShowReport(true)}
+                onAddClick={() => setShowAddForm(true)} 
+                discountCount={0}
+              />
+            )}
+            <DiscountTableDashboard 
+              onEditDiscount={(id) => setEditingDiscountId(id)}
             />
-            <DiscountTableDashboard />
-            <DiscountSequenceDashboard />
+            {!editingDiscountId && <DiscountSequenceDashboard />}
           </>
         );
       case "item":
@@ -52,7 +66,9 @@ const DiscountDashboard = () => {
               onReportClick={() => setShowReport(true)}
               onAddClick={() => setShowAddForm(true)}
             />
-            <DiscountTableItem />
+            <DiscountTableItem 
+              onEditDiscount={(id) => setEditingDiscountId(id)}
+            />
             <DiscountSequenceItem />
           </>
         );
@@ -63,7 +79,9 @@ const DiscountDashboard = () => {
               onReportClick={() => setShowReport(true)}
               onAddClick={() => setShowAddForm(true)}
             />
-            <DiscountTableCategory />
+            <DiscountTableCategory 
+              onEditDiscount={(id) => setEditingDiscountId(id)}
+            />
             <DiscountSequenceCategory />
           </>
         );
@@ -72,12 +90,15 @@ const DiscountDashboard = () => {
           <>
             <DiscountOptionsLoyalty
               onSettingsClick={() => setShowSettings(true)}
-              onDeleteClick={() => console.log('Delete clicked')}
-              // onCustomersClick={() => console.log('Customers button clicked')}
+              onDeleteClick={() => console.log('Delete clicked')} 
+              loyaltyCount={0}
+              onAddClick={() => setShowAddForm(true)}
             />
             {!showSettings && (
               <>
-                <DiscountTableLoyalty />
+                <DiscountTableLoyalty
+                  onEditDiscount={(id) => setEditingDiscountId(id)}
+                />
                 <DiscountSequenceLoyalty />
               </>
             )}
@@ -97,6 +118,7 @@ const DiscountDashboard = () => {
           setShowReport(false);
           setShowAddForm(false);
           setShowSettings(false);
+          setEditingDiscountId(null);
         }}
       />
       {renderTabContent()}

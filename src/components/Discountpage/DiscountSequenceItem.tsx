@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const LaTeXLikeArray = () => {
   const numbers = [0, 2, 3, 4, '...', 10];
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
     <div style={{

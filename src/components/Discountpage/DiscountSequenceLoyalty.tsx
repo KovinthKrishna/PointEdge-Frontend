@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const LaTeXLikeArray = () => {
   const numbers = [0, 2, 3, 4, '...', 10];
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
     <div style={{
@@ -22,7 +22,7 @@ const LaTeXLikeArray = () => {
       padding: '8px 16px',
       borderRadius: '8px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      zIndex: 1000,
+      zIndex: 1,
     }}>
       {numbers.map((number, index) => (
         <button
