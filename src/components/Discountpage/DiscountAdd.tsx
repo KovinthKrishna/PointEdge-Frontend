@@ -464,6 +464,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
       return;
     }
     
+    if (discountType === 'loyalty' && !selectedTier) {
+      alert('Please select a loyalty tier');
+      return;
+    }
+    
     if (!selectedPercentage && !selectedAmount) {
       alert('Please select either a percentage or an amount');
       return;
@@ -485,22 +490,24 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
       isActive: enableDiscount,
       duration: selectedDuration.value,
       startDate: new Date().toISOString(),
-      // Set either itemId or categoryId based on discount type
+      // Set fields based on discount type
       ...(discountType === 'item' && { 
         itemId: selectedItem?.id,
-        categoryId: null // Explicitly set to null
+        categoryId: null
       }),
       ...(discountType === 'category' && { 
         categoryId: selectedCategory?.id,
-        itemId: null // Explicitly set to null
+        itemId: null
       }),
       ...(discountType === 'loyalty' && {
         itemId: null,
-        categoryId: null
+        categoryId: null,
+        loyaltyType: selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE'
       }),
-      loyaltyType: discountType === 'loyalty' 
-        ? selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE' 
-        : null,
+      // Optional loyalty tier for item/category discounts
+      ...(discountType !== 'loyalty' && selectedTier && {
+        loyaltyType: selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE'
+      }),
       ...(selectedPercentage && { percentage: selectedPercentage.value }),
       ...(selectedAmount && { amount: selectedAmount.value })
     };
@@ -704,8 +711,8 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
             <div className="dropdown-container" ref={dropdownRefs.discountName}>
               <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Discount Name</h3>
               <div 
-                className={`dropdown-header ${selectedAmount || selectedPercentage ? 'dropdown-disabled' : ''}`}
-                onClick={() => !(selectedAmount || selectedPercentage) && toggleDropdown('discountName')}
+                className="dropdown-header"
+                onClick={() => toggleDropdown('discountName')}
               >
                 <span>{selectedDiscountName ? selectedDiscountName.name : 'Select discount name'}</span>
                 <FaChevronDown style={{ fontSize: '11px' }} />

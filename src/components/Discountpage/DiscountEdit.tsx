@@ -579,6 +579,11 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       return;
     }
     
+    if (discountType === 'loyalty' && !selectedTier) {
+      alert('Please select a loyalty tier');
+      return;
+    }
+    
     if (!selectedPercentage && !selectedAmount) {
       alert('Please select either a percentage or an amount');
       return;
@@ -601,16 +606,30 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       isActive: enableDiscount,
       duration: selectedDuration.value,
       startDate: originalDiscount?.startDate || new Date().toISOString(),
-      itemId: discountType === 'item' && selectedItem ? selectedItem.id : null,
-      categoryId: discountType === 'category' && selectedCategory ? selectedCategory.id : null,
-      loyaltyType: discountType === 'loyalty' && selectedTier ? 
-        selectedTier.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE' : 
-        null,
-      percentage: selectedPercentage ? selectedPercentage.value : null,
-      amount: selectedAmount ? selectedAmount.value : null
+      // Set fields based on discount type
+      ...(discountType === 'item' && { 
+        itemId: selectedItem?.id,
+        categoryId: null
+      }),
+      ...(discountType === 'category' && { 
+        categoryId: selectedCategory?.id,
+        itemId: null
+      }),
+      ...(discountType === 'loyalty' && {
+        itemId: null,
+        categoryId: null,
+        loyaltyType: selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE'
+      }),
+      // Optional loyalty tier for item/category discounts
+      ...(discountType !== 'loyalty' && selectedTier && {
+        loyaltyType: selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE'
+      }),
+      ...(selectedPercentage && { percentage: selectedPercentage.value }),
+      ...(selectedAmount && { amount: selectedAmount.value })
     };
 
     try {
+      console.log('Sending discount data:', discountData);
       const response = await updateDiscount(discountId, discountData);
       
       if (response) {
