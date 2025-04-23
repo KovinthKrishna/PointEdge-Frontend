@@ -24,7 +24,9 @@ export const CustomerModal = () => {
   const renderContent = () => {
     switch(validatedView) {
       case 'details':
-        return <CustomerDetails onClose={handleClose} />;
+        return <CustomerDetails onClose={handleClose} customerId={""} onCustomerDeleted={function (): void {
+          throw new Error("Function not implemented.");
+        } } />;
       case 'add':
         return <CustomerAdd onClose={handleClose} onCustomerAdded={function (newCustomer: { phone: string; }): void {
           throw new Error("Function not implemented.");

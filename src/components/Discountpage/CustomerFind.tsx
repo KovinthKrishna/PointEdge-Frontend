@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { FaArrowLeft, FaUsers, FaPlus, FaSearch, FaCrown, FaMedal, FaAward, FaTrophy } from 'react-icons/fa';
 import CustomerDetails from './CustomerDetails';
 import CustomerAdd from './CustomerAdd';
-import { fetchAllCustomers, fetchCustomerCount, searchCustomers, getCustomerById } from '../../services/customerService';
+import { fetchAllCustomers, fetchCustomerCountsByTier, searchCustomers } from '../../services/customerService';
 import Customer from '../../models/Customer';
 import '../../components/Discountpage/styles/CustomerFind.css';
 
@@ -34,12 +34,11 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
   const [showAddCustomerPopup, setShowAddCustomerPopup] = useState(false);
   const [customers, setCustomers] = useState<CustomerListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalCustomers, setTotalCustomers] = useState({
-    total: 0,
-    gold: 0,
-    silver: 0,
-    bronze: 0,
-    notLoyalty: 0
+  const [tierCounts, setTierCounts] = useState({
+    GOLD: 0,
+    SILVER: 0,
+    BRONZE: 0,
+    NOTLOYALTY: 0
   });
   const [error, setError] = useState('');
   const [fieldsEditable, setFieldsEditable] = useState(false);
@@ -50,9 +49,9 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
   const fetchCustomers = async () => {
     try {
       setLoading(true);
-      const [allCustomers, count] = await Promise.all([
+      const [allCustomers, countsByTier] = await Promise.all([
         fetchAllCustomers(),
-        fetchCustomerCount()
+        fetchCustomerCountsByTier()
       ]);
       
       const transformedCustomers = allCustomers.map(c => ({
@@ -66,19 +65,8 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
         tier: c.tier
       }));
       
-      const tierCounts = transformedCustomers.reduce((acc, customer) => {
-        if (customer.tier === 'GOLD') acc.gold++;
-        else if (customer.tier === 'SILVER') acc.silver++;
-        else if (customer.tier === 'BRONZE') acc.bronze++;
-        else acc.notLoyalty++;
-        return acc;
-      }, { gold: 0, silver: 0, bronze: 0, notLoyalty: 0 });
-      
       setCustomers(transformedCustomers);
-      setTotalCustomers({
-        total: count,
-        ...tierCounts
-      });
+      setTierCounts(countsByTier);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching customers:', err);
@@ -178,7 +166,6 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
     }
   };
 
-  // New handler for phone updates
   const handlePhoneUpdated = (newPhone: string) => {
     setSearchQuery(newPhone);
   };
@@ -285,23 +272,25 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <FaCrown color="#FFD700" size={16} className="trophy-icon silver shake" />
-                <span>{totalCustomers.gold}</span>
+                <span>{tierCounts.GOLD}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <FaMedal color="#C0C0C0" size={16} className="trophy-icon silver shake"/>
-                <span>{totalCustomers.silver}</span>
+                <span>{tierCounts.SILVER}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <FaAward color="#CD7F32" size={16} className="trophy-icon silver shake"/>
-                <span>{totalCustomers.bronze}</span>
+                <span>{tierCounts.BRONZE}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <FaUsers color="#999" size={16} className="trophy-icon bronze pulse"/>
-                <span>{totalCustomers.notLoyalty}</span>
+                <span>{tierCounts.NOTLOYALTY}</span>
               </div>
             </div>
             <div style={{ fontSize: '24px' }}>
-              <span style={{ color: '#FF3B30', fontWeight: 'bold' }}>{totalCustomers.total}</span>
+              <span style={{ color: '#FF3B30', fontWeight: 'bold' }}>
+                {tierCounts.GOLD + tierCounts.SILVER + tierCounts.BRONZE + tierCounts.NOTLOYALTY}
+              </span>
               <span style={{ marginLeft: '10px' }}>Total Customers</span>
             </div>
           </div>
@@ -554,7 +543,7 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
             customerId={customerData.phone || ''}
             onClose={handleCloseDetailsPopup}
             onCustomerDeleted={handleCustomerDeleted}
-            onPhoneUpdated={handlePhoneUpdated} // Add this prop
+            onPhoneUpdated={handlePhoneUpdated}
           />
         </div>
       )}

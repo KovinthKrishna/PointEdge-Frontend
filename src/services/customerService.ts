@@ -212,4 +212,29 @@ export const updateCustomerById = async (id: number, customerData: Customer): Pr
   }
 };
 
+// fetch coustomer count by tier
+
+// Add this to your customerService.ts
+export const fetchCustomerCountsByTier = async (): Promise<{
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
+  NOTLOYALTY: number;
+}> => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/discount/customer/count-by-tier`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching customer counts by tier:', error);
+    return {
+      GOLD: 0,
+      SILVER: 0,
+      BRONZE: 0,
+      NOTLOYALTY: 0
+    };
+  }
+};
+
 export default customerClient;

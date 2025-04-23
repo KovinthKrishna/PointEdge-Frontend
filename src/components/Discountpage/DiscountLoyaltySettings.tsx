@@ -283,7 +283,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
             <FaStar style={{ color: '#008ED8', fontSize: '16px', marginRight: '8px' }} />
             <label style={{ fontSize: '14px', fontWeight: '500' }}>
-              Points Required for 100 Rupees
+            Reward Points Earned per 100 Rupees (1 point = 1 Rupee)
             </label>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
