@@ -8,6 +8,7 @@ const allCustomersClient = new APIClient<Customer[]>("/discount/customer/get-all
 const singleCustomerClient = new APIClient<Customer>("/discount/customer/get-customer");
 const customerCountClient = new APIClient<number>("/discount/customer/count");
 
+
 // Add a new customer
 export const addCustomer = async (customerData: Customer): Promise<Customer> => {
   try {
@@ -234,6 +235,77 @@ export const fetchCustomerCountsByTier = async (): Promise<{
       BRONZE: 0,
       NOTLOYALTY: 0
     };
+  }
+};
+
+// fetch tier by phone number
+
+// In services/customerService.ts
+export const getCustomerTierByPhone = async (phone: string): Promise<string> => {
+  const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/discount/customer/get-tier/${formattedPhone}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching customer tier with phone ${phone}:`, error);
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || 'Failed to fetch customer tier';
+      throw new Error(errorMessage);
+    }
+    throw error;
+  }
+};
+
+// fetch orders
+
+// Add this to your customerService.ts file
+
+interface OrderData {
+  id: string;
+  date: string;
+  items: number;
+  amount: number;
+  points: number;
+}
+
+// Add this to your customerService.ts file
+
+export const fetchCustomerOrders = async (phone: string): Promise<OrderData[]> => {
+  const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/discount/customer/orders/grouped/${formattedPhone}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
+    
+    // Map the response data to the OrderData interface
+    return response.data.map((order: any) => ({
+      id: order.orderId || 0,
+      date: order.orderDateTime || new Date().toLocaleString(),
+      items: typeof order.itemCount === 'number' ? order.itemCount : 0,
+      amount: typeof order.totalAmount === 'number' ? order.totalAmount : 0,
+      points: typeof order.totalPointsEarned === 'number' ? order.totalPointsEarned : 0
+    }));
+  } catch (error) {
+    console.error(`Error fetching orders for customer with phone ${phone}:`, error);
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || 'Failed to fetch orders';
+      throw new Error(errorMessage);
+    }
+    throw error;
   }
 };
 

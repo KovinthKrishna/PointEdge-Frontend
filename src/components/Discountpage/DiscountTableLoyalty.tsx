@@ -34,24 +34,25 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     actions: '10%'
   };
 
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [discountData, countData] = await Promise.all([
+        fetchLoyaltyDiscounts(),
+        fetchDiscountCount()
+      ]);
+
+      setDiscounts(discountData || []); // Ensure we handle null/undefined data
+      setDiscountCount(countData?.count || 0);
+    } catch (error) {
+      console.error('Error loading loyalty discount data:', error);
+      setError('Failed to load loyalty discounts. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [discountData, countData] = await Promise.all([
-          fetchLoyaltyDiscounts(),
-          fetchDiscountCount()
-        ]);
-
-        setDiscounts(discountData);
-        setDiscountCount(countData.count);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading loyalty discount data:', error);
-        setError('Failed to load loyalty discounts. Please try again later.');
-        setLoading(false);
-      }
-    };
-
     loadData();
 
     const intervalId = setInterval(() => {
@@ -234,8 +235,18 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
       const result = await deleteDiscount(discountToDelete);
       
       if (result.success) {
-        setDiscounts(prev => prev.filter(d => d.id !== discountToDelete));
-        setDiscountCount(prev => prev - 1);
+        // Check if this was the last discount
+        const isLastDiscount = discounts.length === 1;
+        
+        if (isLastDiscount) {
+          // If this was the last discount, reload the data completely
+          await loadData();
+        } else {
+          // Otherwise just update the state directly
+          setDiscounts(prev => prev.filter(d => d.id !== discountToDelete));
+          setDiscountCount(prev => Math.max(0, prev - 1));
+        }
+        
         setShowDeleteConfirmation(false);
         setDiscountToDelete(undefined);
       } else {

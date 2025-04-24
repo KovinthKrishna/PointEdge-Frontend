@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { FaArrowLeft, FaCrown, FaStar } from 'react-icons/fa';
-import { getCustomerByPhone, updateCustomer, deleteCustomer2, updateCustomerById } from '../../services/customerService';
+import { FaArrowLeft, FaAward, FaCrown, FaMedal, FaStar } from 'react-icons/fa';
+import { 
+  getCustomerByPhone, 
+  updateCustomerById, 
+  deleteCustomer2, 
+  getCustomerTierByPhone,
+  fetchCustomerOrders  // Add the new import
+} from '../../services/customerService';
 import Customer from '../../models/Customer';
 
 interface CustomerDetailsPopupProps {
   onClose: () => void;
   customerId: string;
   onCustomerDeleted: () => void;
-  onPhoneUpdated?: (newPhone: string) => void; // New prop for phone updates
+  onPhoneUpdated?: (newPhone: string) => void;
 }
 
 interface OrderData {
@@ -26,9 +32,12 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
   onPhoneUpdated
 }) => {
   const [customerData, setCustomerData] = useState<Customer | null>(null);
+  const [customerTier, setCustomerTier] = useState<string>('NOTLOYALTY');
   const [orders, setOrders] = useState<OrderData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState(true);
   const [error, setError] = useState('');
+  const [ordersError, setOrdersError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
@@ -37,23 +46,14 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
         setLoading(true);
         setError('');
         
-        const id = parseInt(customerId);
-        if (isNaN(id)) {
-          throw new Error('Invalid customer ID');
-        }
+        // Fetch customer data and tier in parallel
+        const [customer, tier] = await Promise.all([
+          getCustomerByPhone(customerId),
+          getCustomerTierByPhone(customerId)
+        ]);
 
-        const customer = await getCustomerByPhone(id.toString());
         setCustomerData(customer);
-
-        const mockOrders: OrderData[] = [
-          { id: 240, date: new Date().toLocaleString(), items: 4, amount: 4556.00, points: 27.14 },
-          { id: 241, date: new Date().toLocaleString(), items: 6, amount: 7321.00, points: 45.01 },
-          { id: 242, date: new Date().toLocaleString(), items: 2, amount: 3127.00, points: 21.01 },
-          { id: 243, date: new Date().toLocaleString(), items: 3, amount: 10000.00, points: 56.93 },
-          { id: 244, date: new Date().toLocaleString(), items: 2, amount: 732.00, points: 5.11 },
-        ];
-        setOrders(mockOrders);
-
+        setCustomerTier(tier || 'NOTLOYALTY');
         setLoading(false);
       } catch (err) {
         console.error('Error fetching customer data:', err);
@@ -62,7 +62,28 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
       }
     };
 
+    const fetchOrders = async () => {
+      try {
+        setOrdersLoading(true);
+        setOrdersError('');
+        
+        // Fetch real order data
+        const orderData = await fetchCustomerOrders(customerId);
+        const formattedOrderData = orderData.map(order => ({
+          ...order,
+          id: Number(order.id), // Convert id to number
+        }));
+        setOrders(formattedOrderData);
+        setOrdersLoading(false);
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        setOrdersError(err instanceof Error ? err.message : 'Failed to load order history');
+        setOrdersLoading(false);
+      }
+    };
+
     fetchCustomerDetails();
+    fetchOrders();
   }, [customerId]);
 
   useEffect(() => {
@@ -74,18 +95,32 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
   }, []);
 
   const getTierIcon = (tier?: string) => {
-    if (tier === 'GOLD') return <FaCrown color="#D4AF37" size={16} style={{ marginRight: '8px' }} />;
-    return null;
+    if (!tier) return null;
+    switch(tier.toUpperCase()) {
+      case 'GOLD': 
+        return <FaCrown color="#FFD700" size={16} style={{ marginRight: '8px' }} />;
+      case 'SILVER': 
+        return <FaMedal color="#C0C0C0" size={16} style={{ marginRight: '8px' }} />;
+      case 'BRONZE': 
+        return <FaAward color="#CD7F32" size={16} style={{ marginRight: '8px' }} />;
+      default: 
+        return null;
+    }
   };
 
   const getTierName = (tier?: string) => {
-    if (!tier) return 'NOT A MEMBER';
+    if (!tier || tier === 'NOTLOYALTY') return 'NOT A MEMBER';
     return tier.toUpperCase() + ' MEMBER';
   };
 
   const getTierColor = (tier?: string) => {
-    if (tier === 'GOLD') return '#D4AF37';
-    return '#FFFFFF';
+    if (!tier) return '#FFFFFF';
+    switch(tier.toUpperCase()) {
+      case 'GOLD': return '#FFD700';
+      case 'SILVER': return '#C0C0C0';
+      case 'BRONZE': return '#CD7F32';
+      default: return '#FFFFFF';
+    }
   };
 
   const handleSaveChanges = async () => {
@@ -100,13 +135,12 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
         throw new Error('Invalid customer ID');
       }
 
-      const oldPhone = customerId; // Store original phone before update
+      const oldPhone = customerId;
       await updateCustomerById(id, customerData);
       
       setSuccessMessage('Customer data saved successfully');
       setTimeout(() => setSuccessMessage(''), 3000);
 
-      // Notify parent if phone was updated
       if (customerData.phone !== oldPhone && onPhoneUpdated) {
         onPhoneUpdated(customerData.phone);
       }
@@ -126,10 +160,7 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
         setLoading(true);
         setError('');
         
-        console.log('Attempting to delete phone:', customerData.phone);
-        
         const result = await deleteCustomer2(customerData.phone);
-        console.log('Delete result:', result);
         
         if (result.success) {
           setSuccessMessage(`Customer ${customerData.phone} deleted successfully`);
@@ -157,6 +188,11 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
       ...customerData,
       [name]: value
     });
+  };
+
+  // Format currency value
+  const formatCurrency = (amount: number) => {
+    return `Rs ${amount.toFixed(2)}`;
   };
 
   return ReactDOM.createPortal(
@@ -241,14 +277,14 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
                 textAlign: 'center',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '5px' }}>
-                  {getTierIcon(customerData.tier)}
+                  {getTierIcon(customerTier)}
                   <h3 style={{ 
                     margin: 0,
                     fontSize: '16px',
                     fontWeight: 'bold',
-                    color: getTierColor(customerData.tier)
+                    color: getTierColor(customerTier)
                   }}>
-                    {getTierName(customerData.tier)}
+                    {getTierName(customerTier)}
                   </h3>
                 </div>
                 <div style={{ 
@@ -286,10 +322,10 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
           <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>Order History</div>
           
           <div style={{ flex: 1, overflow: 'auto' }}>
-            {loading ? (
+            {ordersLoading ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>Loading orders...</div>
-            ) : error ? (
-              <div style={{ textAlign: 'center', padding: '20px', color: '#FF3B30' }}>{error}</div>
+            ) : ordersError ? (
+              <div style={{ textAlign: 'center', padding: '20px', color: '#FF3B30' }}>{ordersError}</div>
             ) : orders.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>No order history found</div>
             ) : (
@@ -308,7 +344,7 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontSize: '14px' }}>{order.items} items</div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                      <div>Rs {order.amount.toFixed(2)}</div>
+                      <div>{formatCurrency(order.amount)}</div>
                       <div style={{ 
                         backgroundColor: '#4CD964', 
                         color: 'white', 

@@ -334,7 +334,7 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
                       )}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                      <div>Points: {customer.points}</div>
+                      <div>Points: </div>
                       <div style={{ 
                         backgroundColor: '#4CD964', 
                         color: 'white', 
@@ -343,7 +343,7 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
                         fontSize: '12px',
                         marginTop: '4px'
                       }}>
-                        {customer.discount.toFixed(2)}
+                        {customer.points.toFixed(2)}
                       </div>
                     </div>
                   </div>
