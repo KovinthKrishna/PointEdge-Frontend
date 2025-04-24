@@ -7,6 +7,7 @@ import useProductFormValidation from "./useProductFormValidation";
 const useHandleProduct = () => {
   const validateForm = useProductFormValidation();
 
+  const barcode = useProductFormStore((s) => s.barcode)?.trim();
   const name = useProductFormStore((s) => s.name)
     .trim()
     .replace(/\s+/g, " ");
@@ -34,6 +35,7 @@ const useHandleProduct = () => {
     return {
       id,
       name,
+      barcode,
       price: Math.floor(Number(price) * 100) / 100,
       stockQuantity: Number(quantity),
       minimumQuantity: Number(minimum) || 0,
