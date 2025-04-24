@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FormControl, FormLabel } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import React from "react";
 
 // Define the prop types for the component
 interface InvoiceModalProps {

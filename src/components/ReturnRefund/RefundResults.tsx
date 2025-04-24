@@ -1,6 +1,7 @@
 import { Box, Button, Heading, Text, Flex, VStack } from "@chakra-ui/react";
 import { FaPrint } from "react-icons/fa";
 import { Icon, CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
+import React from "react";
 
 interface RefundResultProps {
   success: boolean;
