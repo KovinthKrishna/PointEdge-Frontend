@@ -8,6 +8,7 @@ const useProductFormValidation = () => {
   const brand = useProductFormStore((s) => s.brand);
   const category = useProductFormStore((s) => s.category);
   const price = useProductFormStore((s) => s.price);
+  const minimum = useProductFormStore((s) => s.minimum);
   const setFormError = useProductFormErrorStore((s) => s.setFormError);
   const resetFormError = useProductFormErrorStore((s) => s.resetFormError);
 
@@ -42,8 +43,27 @@ const useProductFormValidation = () => {
       hasError = true;
     }
 
+    if (
+      minimum.trim() &&
+      (isNaN(Number(minimum)) ||
+        Number(minimum) < 0 ||
+        !Number.isInteger(Number(minimum)))
+    ) {
+      setFormError("minimum", "Minimum must be a positive integer");
+      hasError = true;
+    }
+
     return !hasError;
-  }, [name, quantity, brand, category, price, setFormError, resetFormError]);
+  }, [
+    name,
+    quantity,
+    brand,
+    category,
+    price,
+    minimum,
+    setFormError,
+    resetFormError,
+  ]);
 
   return validateForm;
 };

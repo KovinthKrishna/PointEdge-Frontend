@@ -9,6 +9,7 @@ export interface ProductOrderQuantity {
   productName: string;
   totalQuantity: number;
   pricePerUnit: number;
+  imageName: string | null;
 }
 
 const useProductOrderQuantities = () => {

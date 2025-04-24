@@ -39,7 +39,7 @@ const ProductForm = ({ children }: Props) => {
           >
             <FormLabel margin={0}>Barcode :</FormLabel>
             <Box width={{ lg: 300 }}>
-              <BarcodeButton />
+              <BarcodeButton isAdmin />
             </Box>
           </Flex>
         </FormControl>
@@ -57,6 +57,9 @@ const ProductForm = ({ children }: Props) => {
         </FormField>
         <FormField name="price">
           <FormInput name="price" />
+        </FormField>
+        <FormField name="minimum">
+          <FormInput name="minimum" />
         </FormField>
         <HStack color="white" width="full">
           {children}

@@ -2,6 +2,7 @@ import { Button } from "@chakra-ui/react";
 import { useCallback, useEffect } from "react";
 import useHandleUpdateProduct from "../../../hooks/useHandleUpdateProduct";
 import Product from "../../../models/Product";
+import { getProductImageUrl } from "../../../services/apiClient";
 import useProductFormErrorStore from "../../../store/useProductFormErrorStore";
 import useProductFormStore from "../../../store/useProductFormStore";
 import useProductMutationStore from "../../../store/useProductMutationStore";
@@ -14,22 +15,31 @@ interface Props {
 const UpdateProductForm = ({ product }: Props) => {
   const isLoading = useProductMutationStore((s) => s.isLoading);
   const setFormData = useProductFormStore((s) => s.setFormData);
+  const resetFormData = useProductFormStore((s) => s.resetFormData);
   const resetFormError = useProductFormErrorStore((s) => s.resetFormError);
-
   const updateProduct = useHandleUpdateProduct();
 
   const populateForm = useCallback(() => {
     setFormData("name", product.name);
     setFormData("price", product.price.toString());
+    setFormData("barcode", product.barcode);
     setFormData("quantity", product.stockQuantity.toString());
     setFormData("brand", product.brand.id.toString());
     setFormData("category", product.category.id.toString());
+    setFormData("minimum", product.minimumQuantity.toString());
+    if (product.imageName) {
+      setFormData("existingImageUrl", getProductImageUrl(product.imageName));
+    }
+    setFormData("newImageFile", null);
   }, [product, setFormData]);
 
   useEffect(() => {
     populateForm();
-    resetFormError();
-  }, [populateForm, resetFormError]);
+    return () => {
+      resetFormData();
+      resetFormError();
+    };
+  }, [populateForm, resetFormData, resetFormError]);
 
   return (
     <ProductForm>

@@ -12,7 +12,7 @@ const useCustomToast = () => {
         duration: 5000,
         position: "top",
         containerStyle: {
-          bgColor: "green",
+          bgColor: "blue",
           borderRadius: "10px",
         },
       }),
@@ -25,7 +25,7 @@ const useCustomToast = () => {
         duration: 5000,
         position: "top",
         containerStyle: {
-          bgColor: "red",
+          bgColor: "blue",
           borderRadius: "10px",
         },
       }),

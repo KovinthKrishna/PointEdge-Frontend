@@ -1,6 +1,9 @@
 import { Box, Card, Image, Text, Tooltip } from "@chakra-ui/react";
 import productImage from "../assets/product-image.png";
+import useCustomToast from "../hooks/useCustomToast";
 import Product from "../models/Product";
+import { getProductImageUrl } from "../services/apiClient";
+import useCartStore from "../store/useCartStore";
 import useModalStore from "../store/useModalStore";
 import priceFormatter from "../utils/priceFormatter";
 import UpdateProduct from "./Admin/InventoryPage/UpdateProduct";
@@ -12,12 +15,22 @@ interface Props {
 
 const ProductCard = ({ product, isAdmin }: Props) => {
   const openUpdateProductModal = useModalStore((s) => s.openUpdateProductModal);
+  const addProduct = useCartStore((s) => s.addProduct);
+  const toast = useCustomToast();
 
   return (
     <>
       <Tooltip label={product.name} color="black" bgColor="lightGray">
         <Card
-          opacity={product.hidden ? 0.6 : 1}
+          opacity={
+            isAdmin
+              ? product.hidden
+                ? 0.6
+                : 1
+              : product.stockQuantity > 0
+              ? 1
+              : 0.6
+          }
           paddingX={2}
           paddingY={4}
           borderRadius={10}
@@ -26,11 +39,19 @@ const ProductCard = ({ product, isAdmin }: Props) => {
           border="2px solid transparent"
           _hover={{ borderColor: "darkBlue" }}
           onClick={
-            isAdmin ? () => openUpdateProductModal(product.id) : undefined
+            isAdmin
+              ? () => openUpdateProductModal(product.id)
+              : product.stockQuantity > 0
+              ? () => addProduct(product)
+              : () => toast.error("Out of stock")
           }
         >
           <Image
-            src={productImage}
+            src={
+              product.imageName
+                ? getProductImageUrl(product.imageName)
+                : productImage
+            }
             aspectRatio={1}
             objectFit="contain"
             padding={2}

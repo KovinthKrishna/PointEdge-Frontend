@@ -7,6 +7,7 @@ import useProductFormValidation from "./useProductFormValidation";
 const useHandleProduct = () => {
   const validateForm = useProductFormValidation();
 
+  const barcode = useProductFormStore((s) => s.barcode)?.trim();
   const name = useProductFormStore((s) => s.name)
     .trim()
     .replace(/\s+/g, " ");
@@ -14,11 +15,12 @@ const useHandleProduct = () => {
   const brand = useProductFormStore((s) => s.brand);
   const category = useProductFormStore((s) => s.category);
   const price = useProductFormStore((s) => s.price).trim();
+  const minimum = useProductFormStore((s) => s.minimum).trim();
 
   const { data: brandsData } = useBrands();
   const { data: categoriesData } = useCategories();
 
-  const getProductObject = (id: number, hidden: boolean) => {
+  return (id: number, hidden: boolean) => {
     if (!validateForm()) return null;
 
     const selectedBrand = isNaN(Number(brand))
@@ -33,15 +35,15 @@ const useHandleProduct = () => {
     return {
       id,
       name,
+      barcode,
       price: Math.floor(Number(price) * 100) / 100,
       stockQuantity: Number(quantity),
+      minimumQuantity: Number(minimum) || 0,
       hidden,
       brand: selectedBrand,
       category: selectedCategory,
     } as Product;
   };
-
-  return getProductObject;
 };
 
 export default useHandleProduct;

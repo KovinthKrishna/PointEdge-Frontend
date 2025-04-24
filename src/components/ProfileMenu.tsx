@@ -4,7 +4,7 @@ import ProfileMenuLink from "./ProfileMenuLink";
 
 const ProfileMenu = () => {
   return (
-    <VStack color="lightBlue" paddingX={4} paddingY={4} spacing={6}>
+    <VStack color="lightBlue" padding={2} spacing={4}>
       <Text color="darkBlue" fontSize={20}>
         Naruto Uzumaki
       </Text>
