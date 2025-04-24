@@ -1,4 +1,4 @@
-const EmployeesDashboardPage = () => {
+const EmployeeDashboardPage = () => {
   return <div>EmployeeDashboardPage</div>;
 };
 
