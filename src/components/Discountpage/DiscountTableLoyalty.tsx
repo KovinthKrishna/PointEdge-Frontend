@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { 
   fetchLoyaltyDiscounts, 
@@ -12,6 +12,41 @@ interface DiscountTableLoyaltyProps {
   onEditDiscount: (id: number) => void;
 }
 
+interface NotificationProps {
+  message: string;
+  type: 'success' | 'error';
+}
+
+// Notification Component
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+      {type === 'success' ? 
+        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
+        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+      }
+      {message}
+    </div>
+  );
+};
+
 const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDiscount }) => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,6 +56,7 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
   const [discountToDelete, setDiscountToDelete] = useState<number | undefined>(undefined);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [notification, setNotification] = useState<NotificationProps | null>(null);
 
   // Table column widths
   const columnWidths = {
@@ -32,6 +68,45 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     status: '10%',
     discount: '10%',
     actions: '10%'
+  };
+
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   };
 
   const loadData = async () => {
@@ -249,12 +324,17 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
         
         setShowDeleteConfirmation(false);
         setDiscountToDelete(undefined);
+        showNotification('Loyalty discount deleted successfully', 'success');
       } else {
-        setDeleteError(result.message || 'Failed to delete discount. Please try again.');
+        const errorMsg = result.message || 'Failed to delete loyalty discount. Please try again.';
+        setDeleteError(errorMsg);
+        showNotification(errorMsg, 'error');
       }
     } catch (error) {
       console.error('Error during deletion process:', error);
-      setDeleteError(error instanceof Error ? error.message : 'Failed to delete discount. Please try again.');
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete loyalty discount. Please try again.';
+      setDeleteError(errorMsg);
+      showNotification(errorMsg, 'error');
     } finally {
       setIsDeleting(false);
     }
@@ -666,6 +746,9 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
           </div>
         </div>
       )}
+
+      {/* Notification Component */}
+      {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );
 };

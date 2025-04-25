@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import ReactDOM from 'react-dom';
+import { FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { 
   fetchAllDiscounts, 
@@ -18,6 +19,48 @@ interface DiscountTableDashboardProps {
   onEditDiscount: (id: number) => void;
 }
 
+interface NotificationProps {
+  message: string;
+  type: 'success' | 'error';
+}
+
+// Modal Portal Component
+const ModalPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const modalRoot = document.getElementById('modal-root');
+  if (!modalRoot) return null;
+  return ReactDOM.createPortal(children, modalRoot);
+};
+
+// Notification Component
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+      {type === 'success' ? 
+        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
+        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+      }
+      {message}
+    </div>
+  );
+};
+
 const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditDiscount }) => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [productNames, setProductNames] = useState<DiscountNameMap>({});
@@ -29,6 +72,7 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
   const [discountToDelete, setDiscountToDelete] = useState<number | undefined>(undefined);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [notification, setNotification] = useState<NotificationProps | null>(null);
 
   // Table column widths
   const columnWidths = {
@@ -40,6 +84,62 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     status: '10%',
     discount: '10%',
     actions: '10%'
+  };
+
+  // Create modal root element on component mount
+  useEffect(() => {
+    const modalRoot = document.getElementById('modal-root');
+    if (!modalRoot) {
+      const newModalRoot = document.createElement('div');
+      newModalRoot.id = 'modal-root';
+      document.body.appendChild(newModalRoot);
+    }
+    
+    return () => {
+      const modalRoot = document.getElementById('modal-root');
+      if (modalRoot && modalRoot.parentNode) {
+        modalRoot.parentNode.removeChild(modalRoot);
+      }
+    };
+  }, []);
+
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   };
 
   useEffect(() => {
@@ -269,12 +369,16 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
         setDiscountCount(prev => prev - 1);
         setShowDeleteConfirmation(false);
         setDiscountToDelete(undefined);
+        showNotification('Discount deleted successfully', 'success');
       } else {
-        setDeleteError(result.message || 'Failed to delete discount. Please try again.');
+        const errorMsg = result.message || 'Failed to delete discount. Please try again.';
+        setDeleteError(errorMsg);
+        showNotification(errorMsg, 'error');
       }
     } catch (error) {
-      console.error('Error during deletion process:', error);
-      setDeleteError(error instanceof Error ? error.message : 'Failed to delete discount. Please try again.');
+      const errorMsg = error instanceof Error ? error.message : 'Failed to delete discount. Please try again.';
+      setDeleteError(errorMsg);
+      showNotification(errorMsg, 'error');
     } finally {
       setIsDeleting(false);
     }
@@ -528,7 +632,6 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
                         padding: '14px 16px', 
                         fontSize: '14px', 
                         fontWeight: '500',
-                        // color: discount.percentage ? '#10B981' : '#3B82F6',
                         width: columnWidths.discount,
                         whiteSpace: 'nowrap'
                       }}>
@@ -595,98 +698,104 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
         </div>
       </div>
 
+      {/* Delete Confirmation Modal using Portal */}
       {showDeleteConfirmation && (
-        <div style={overlayStyle}>
-          <div style={modalStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete</h3>
-              <button 
-                onClick={handleCloseConfirmation}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '8px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#6B7280',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                <FaTimes size={16} />
-              </button>
-            </div>
-            <p style={{ 
-              margin: '0 0 20px 0', 
-              color: '#4B5563', 
-              fontSize: '14px', 
-              lineHeight: '1.5'
-            }}>
-              Are you sure you want to delete this discount? This action cannot be undone.
-            </p>
-            
-            {deleteError && (
-              <div style={{ 
-                backgroundColor: '#FEF2F2', 
-                color: '#B91C1C', 
-                padding: '12px', 
-                borderRadius: '6px', 
-                marginTop: '12px',
-                marginBottom: '16px',
-                fontSize: '14px',
-                border: '1px solid #FECACA'
-              }}>
-                {deleteError}
+        <ModalPortal>
+          <div style={overlayStyle}>
+            <div style={modalStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete</h3>
+                <button 
+                  onClick={handleCloseConfirmation}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '8px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#6B7280',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <FaTimes size={16} />
+                </button>
               </div>
-            )}
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-              <button
-                onClick={handleCloseConfirmation}
-                style={{
-                  padding: '8px 16px',
-                  background: '#F9FAFB',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
+              <p style={{ 
+                margin: '0 0 20px 0', 
+                color: '#4B5563', 
+                fontSize: '14px', 
+                lineHeight: '1.5'
+              }}>
+                Are you sure you want to delete this discount? This action cannot be undone.
+              </p>
+              
+              {deleteError && (
+                <div style={{ 
+                  backgroundColor: '#FEF2F2', 
+                  color: '#B91C1C', 
+                  padding: '12px', 
+                  borderRadius: '6px', 
+                  marginTop: '12px',
+                  marginBottom: '16px',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                disabled={isDeleting}
-                style={{
-                  padding: '8px 16px',
-                  background: '#EF4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: isDeleting ? 'default' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  opacity: isDeleting ? 0.7 : 1,
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
-                onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </button>
+                  border: '1px solid #FECACA'
+                }}>
+                  {deleteError}
+                </div>
+              )}
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                <button
+                  onClick={handleCloseConfirmation}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#F9FAFB',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  disabled={isDeleting}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#EF4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: isDeleting ? 'default' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    opacity: isDeleting ? 0.7 : 1,
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
+                  onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
+
+      {/* Notification Component */}
+      {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );
 };

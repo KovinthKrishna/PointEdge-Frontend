@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaStar, FaCrown, FaAward, FaMedal } from 'react-icons/fa';
+import { FaArrowLeft, FaStar, FaCrown, FaAward, FaMedal, FaCheck } from 'react-icons/fa';
 import { fetchLoyaltyThresholds, updateLoyaltyThresholds } from '../../services/discountService';
 
 interface DiscountLoyaltySettingsProps {
   onBack: () => void;
+}
+
+interface NotificationState {
+  show: boolean;
+  message: string;
+  type: 'success' | 'error';
 }
 
 const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBack }) => {
@@ -18,7 +24,11 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
     saving: false
   });
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [notification, setNotification] = useState<NotificationState>({
+    show: false,
+    message: '',
+    type: 'success'
+  });
 
   useEffect(() => {
     const loadThresholds = async () => {
@@ -50,21 +60,29 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
     try {
       setLoading(prev => ({ ...prev, saving: true }));
       setError(null);
-      setSuccess(false);
       
-      console.log('Attempting to save thresholds:', thresholds);
       const updated = await updateLoyaltyThresholds(thresholds);
-      console.log('Update successful:', updated);
       
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      setNotification({
+        show: true,
+        message: 'Loyalty thresholds updated successfully!',
+        type: 'success'
+      });
+      
+      setTimeout(() => {
+        setNotification(prev => ({ ...prev, show: false }));
+      }, 3000);
     } catch (err) {
       console.error('Save error:', err);
-      setError(
-        (err instanceof Error && (err as any).response?.data?.message) ||
-        (err instanceof Error && err.message) ||
-        'Failed to save thresholds. Please try again.'
-      );
+      const errorMessage = (err instanceof Error && (err as any).response?.data?.message) ||
+                          (err instanceof Error && err.message) ||
+                          'Failed to save thresholds. Please try again.';
+      
+      setNotification({
+        show: true,
+        message: errorMessage,
+        type: 'error'
+      });
     } finally {
       setLoading(prev => ({ ...prev, saving: false }));
     }
@@ -86,6 +104,18 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
 
   return (
     <div style={{ padding: '20px' }}>
+      {/* Notification */}
+      {notification.show && (
+        <div className={`notification ${notification.type}`}>
+          {notification.type === 'success' ? (
+            <FaCheck />
+          ) : (
+            <span style={{ marginRight: '10px' }}>❌</span>
+          )}
+          {notification.message}
+        </div>
+      )}
+
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -141,18 +171,6 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           borderRadius: '4px'
         }}>
           {error}
-        </div>
-      )}
-      
-      {success && (
-        <div style={{ 
-          color: 'green', 
-          marginBottom: '15px',
-          padding: '10px',
-          background: '#e8f5e9',
-          borderRadius: '4px'
-        }}>
-          Loyalty thresholds updated successfully!
         </div>
       )}
       
@@ -283,7 +301,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
             <FaStar style={{ color: '#008ED8', fontSize: '16px', marginRight: '8px' }} />
             <label style={{ fontSize: '14px', fontWeight: '500' }}>
-            Reward Points Earned per 100 Rupees (1 point = 1 Rupee)
+              Reward Points Earned per 100 Rupees (1 point = 1 Rupee)
             </label>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -316,6 +334,63 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           </div>
         </div>
       </div>
+
+      {/* Notification Styles */}
+      <style>{`
+        .notification {
+          position: fixed;
+          bottom: 20px;
+          left: 20px;
+          padding: 12px 24px;
+          border-radius: 4px;
+          font-weight: 500;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+          min-width: 250px;
+        }
+
+        .notification.success {
+          background-color: #F0FFF4;
+          border-left: 5px solid #28A745;
+          color: #28A745;
+        }
+
+        .notification.error {
+          background-color: #FFF1F0;
+          border-left: 5px solid #DC3545;
+          color: #DC3545;
+        }
+
+        .notification svg {
+          margin-right: 10px;
+          font-size: 1.2em;
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+            visibility: hidden;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -1,7 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { FaTrash, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaTimes, FaCheck } from 'react-icons/fa';
 import { deleteAllItemDiscounts, fetchItemDiscountCount } from '../../services/discountService';
+
+// Add NotificationProps interface
+interface NotificationProps {
+  message: string;
+  type: 'success' | 'error';
+}
+
+// Add Notification Component
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+      {type === 'success' ? 
+        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
+        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+      }
+      {message}
+    </div>
+  );
+};
 
 interface DiscountOptionsItemProps {
   onAddClick: () => void;
@@ -24,6 +60,7 @@ const DiscountOptionsItem: React.FC<DiscountOptionsItemProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [itemCount, setItemCount] = useState(initialItemCount);
+  const [notification, setNotification] = useState<NotificationProps | null>(null);
 
   // Create modal root element on component mount
   useEffect(() => {
@@ -36,11 +73,52 @@ const DiscountOptionsItem: React.FC<DiscountOptionsItemProps> = ({
     };
   }, []);
 
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Show notification function
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   // Fetch count on component mount and when initialCount changes
   useEffect(() => {
     const fetchCount = async () => {
       try {
         const response = await fetchItemDiscountCount();
+        console.log('Fetched item count:', response.count);
         setItemCount(response.count);
       } catch (error) {
         console.error('Error fetching item discount count:', error);
@@ -75,6 +153,7 @@ const DiscountOptionsItem: React.FC<DiscountOptionsItemProps> = ({
   const refreshCount = async () => {
     try {
       const response = await fetchItemDiscountCount();
+      console.log('Refreshed item count:', response.count);
       setItemCount(response.count);
     } catch (error) {
       console.error('Error refreshing item discount count:', error);
@@ -91,13 +170,21 @@ const DiscountOptionsItem: React.FC<DiscountOptionsItemProps> = ({
     try {
       setIsDeleting(true);
       const result = await deleteAllItemDiscounts(adminPassword.trim());
-      await refreshCount();
-      handleCloseConfirmation();
+      
+      if (result.success) {
+        console.log("Item discounts deletion successful:", result);
+        await refreshCount();
+        handleCloseConfirmation();
+        showNotification('All item discounts deleted successfully', 'success');
+      } else {
+        setErrorMessage(result.message || 'Failed to delete discounts');
+        showNotification(result.message || 'Failed to delete discounts', 'error');
+      }
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : 
-        'Invalid admin password or server error'
-      );
+      console.error('Full error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Invalid admin password or server error';
+      setErrorMessage(errorMsg);
+      showNotification(errorMsg, 'error');
     } finally {
       setIsDeleting(false);
     }
@@ -128,7 +215,7 @@ const DiscountOptionsItem: React.FC<DiscountOptionsItemProps> = ({
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{
         fontFamily: 'Arial, sans-serif',
         padding: '20px',
@@ -416,6 +503,9 @@ const DiscountOptionsItem: React.FC<DiscountOptionsItemProps> = ({
           </div>
         </ModalPortal>
       )}
+      
+      {/* Notification Component */}
+      {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );
 };

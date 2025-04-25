@@ -1,13 +1,56 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from "react-router-dom";
-import { FaTrash, FaCog, FaUsers, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaTrash, FaCog, FaUsers, FaPlus, FaTimes, FaCheck } from 'react-icons/fa';
 import { deleteAllLoyaltyDiscounts, fetchLoyaltyDiscountCount } from '../../services/discountService';
+
+// Add NotificationProps interface
+interface NotificationProps {
+  message: string;
+  type: 'success' | 'error';
+}
+
+// Add Notification Component
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+      {type === 'success' ? 
+        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
+        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+      }
+      {message}
+    </div>
+  );
+};
 
 interface DiscountOptionsLoyaltyProps {
   onSettingsClick: () => void;
   onAddClick: () => void;
   loyaltyCount: number;
 }
+
+const ModalPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const modalRoot = document.getElementById('modal-root');
+  if (!modalRoot) return null;
+  return ReactDOM.createPortal(children, modalRoot);
+};
 
 const CustomerLoyaltyOptions: React.FC<DiscountOptionsLoyaltyProps> = ({ 
   onSettingsClick,
@@ -21,12 +64,63 @@ const CustomerLoyaltyOptions: React.FC<DiscountOptionsLoyaltyProps> = ({
   const [adminPassword, setAdminPassword] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [notification, setNotification] = useState<NotificationProps | null>(null);
+
+  // Create modal root element on component mount
+  useEffect(() => {
+    const modalRoot = document.createElement('div');
+    modalRoot.id = 'modal-root';
+    document.body.appendChild(modalRoot);
+    
+    return () => {
+      document.body.removeChild(modalRoot);
+    };
+  }, []);
 
   const handleCustomersClick = () => {
     navigate('/admin/discounts/customers', {
       state: { background: window.location.pathname }
-        
     });
+  };
+
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Show notification function
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   };
 
   // Fetch count on component mount and when initialCount changes
@@ -91,15 +185,16 @@ const CustomerLoyaltyOptions: React.FC<DiscountOptionsLoyaltyProps> = ({
         console.log("Loyalty discounts deletion successful:", result);
         await refreshCount();
         handleCloseConfirmation();
+        showNotification('All loyalty discounts deleted successfully', 'success');
       } else {
         setErrorMessage(result.message || 'Failed to delete discounts');
+        showNotification(result.message || 'Failed to delete discounts', 'error');
       }
     } catch (error) {
       console.error('Full error:', error);
-      setErrorMessage(
-        error instanceof Error ? error.message : 
-        'Invalid admin password or server error'
-      );
+      const errorMsg = error instanceof Error ? error.message : 'Invalid admin password or server error';
+      setErrorMessage(errorMsg);
+      showNotification(errorMsg, 'error');
     } finally {
       setIsDeleting(false);
     }
@@ -218,25 +313,25 @@ const CustomerLoyaltyOptions: React.FC<DiscountOptionsLoyaltyProps> = ({
           </button>
 
           <button 
-             onClick={onAddClick}
-             style={{
-               display: 'flex',
-               alignItems: 'center',
-               padding: '8px 12px',
-               background: '#008ED8',
-               color: '#fff',
-               border: '1px solid #ccc',
-               borderRadius: '4px',
-               cursor: 'pointer',
-               fontSize: 'clamp(12px, 2.5vw, 14px)',
-               fontWeight: '500',
-               transition: 'all 0.2s ease',
-               whiteSpace: 'nowrap'
-             }}
-           >
-             <FaPlus style={{ marginRight: '8px', fontSize: '14px' }} />
-             Add New Discount
-           </button>       
+            onClick={onAddClick}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '8px 12px',
+              background: '#008ED8',
+              color: '#fff',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: 'clamp(12px, 2.5vw, 14px)',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <FaPlus style={{ marginRight: '8px', fontSize: '14px' }} />
+            Add New Discount
+          </button>       
           
           <button 
             onClick={handleCustomersClick}
@@ -261,197 +356,204 @@ const CustomerLoyaltyOptions: React.FC<DiscountOptionsLoyaltyProps> = ({
         </div>
       </div>
       
-      {/* Confirmation modals remain the same since they're local UI states */}
+      {/* Confirmation modals */}
       {showFirstConfirmation && (
-        <div style={overlayStyle}>
-          <div style={modalStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete All Loyalty Discounts</h3>
-              <button 
-                onClick={handleCloseConfirmation}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '8px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#6B7280',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                <FaTimes size={16} />
-              </button>
-            </div>
-            <p style={{ 
-              margin: '0 0 20px 0', 
-              color: '#4B5563', 
-              fontSize: '14px', 
-              lineHeight: '1.5'
-            }}>
-              Are you sure you want to delete all LOYALTY type discounts? This action cannot be undone.
-            </p>
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-              <button
-                onClick={handleCloseConfirmation}
-                style={{
-                  padding: '8px 16px',
-                  background: '#F9FAFB',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleFirstConfirmYes}
-                style={{
-                  padding: '8px 16px',
-                  background: '#EF4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#DC2626'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#EF4444'}
-              >
-                Yes, Continue
-              </button>
+        <ModalPortal>
+          <div style={overlayStyle}>
+            <div style={modalStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete All Loyalty Discounts</h3>
+                <button 
+                  onClick={handleCloseConfirmation}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '8px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#6B7280',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <FaTimes size={16} />
+                </button>
+              </div>
+              <p style={{ 
+                margin: '0 0 20px 0', 
+                color: '#4B5563', 
+                fontSize: '14px', 
+                lineHeight: '1.5'
+              }}>
+                Are you sure you want to delete all LOYALTY type discounts? This action cannot be undone.
+              </p>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                <button
+                  onClick={handleCloseConfirmation}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#F9FAFB',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleFirstConfirmYes}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#EF4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#DC2626'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#EF4444'}
+                >
+                  Yes, Continue
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
 
       {showPasswordConfirmation && (
-        <div style={overlayStyle}>
-          <div style={modalStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Admin Authentication Required</h3>
-              <button 
-                onClick={handleCloseConfirmation}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '8px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#6B7280',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                <FaTimes size={16} />
-              </button>
-            </div>
-            <p style={{ 
-              margin: '0 0 20px 0', 
-              color: '#4B5563', 
-              fontSize: '14px', 
-              lineHeight: '1.5'
-            }}>
-              To delete all LOYALTY discounts, please enter your admin password:
-            </p>
-            
-            <div style={{ marginTop: '15px' }}>
-              <input
-                type="password"
-                value={adminPassword}
-                onChange={handlePasswordChange}
-                placeholder="Admin password"
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                }}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleFinalDelete();
-                  }
-                }}
-              />
-              {errorMessage && (
-                <div style={{ 
-                  backgroundColor: '#FEF2F2', 
-                  color: '#B91C1C', 
-                  padding: '12px', 
-                  borderRadius: '6px', 
-                  marginTop: '12px',
-                  marginBottom: '16px',
-                  fontSize: '14px',
-                  border: '1px solid #FECACA'
-                }}>
-                  {errorMessage}
-                </div>
-              )}
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-              <button
-                onClick={handleCloseConfirmation}
-                style={{
-                  padding: '8px 16px',
-                  background: '#F9FAFB',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleFinalDelete}
-                disabled={isDeleting}
-                style={{
-                  padding: '8px 16px',
-                  background: '#EF4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: isDeleting ? 'default' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  opacity: isDeleting ? 0.7 : 1,
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
-                onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete All'}
-              </button>
+        <ModalPortal>
+          <div style={overlayStyle}>
+            <div style={modalStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Admin Authentication Required</h3>
+                <button 
+                  onClick={handleCloseConfirmation}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '8px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#6B7280',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <FaTimes size={16} />
+                </button>
+              </div>
+              <p style={{ 
+                margin: '0 0 20px 0', 
+                color: '#4B5563', 
+                fontSize: '14px', 
+                lineHeight: '1.5'
+              }}>
+                To delete all LOYALTY discounts, please enter your admin password:
+              </p>
+              
+              <div style={{ marginTop: '15px' }}>
+                <input
+                  type="password"
+                  value={adminPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Admin password"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleFinalDelete();
+                    }
+                  }}
+                />
+                {errorMessage && (
+                  <div style={{ 
+                    backgroundColor: '#FEF2F2', 
+                    color: '#B91C1C', 
+                    padding: '12px', 
+                    borderRadius: '6px', 
+                    marginTop: '12px',
+                    marginBottom: '16px',
+                    fontSize: '14px',
+                    border: '1px solid #FECACA'
+                  }}>
+                    {errorMessage}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                <button
+                  onClick={handleCloseConfirmation}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#F9FAFB',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleFinalDelete}
+                  disabled={isDeleting}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#EF4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: isDeleting ? 'default' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    opacity: isDeleting ? 0.7 : 1,
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
+                  onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete All'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
+
+      {/* Notification Component */}
+      {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );
 };

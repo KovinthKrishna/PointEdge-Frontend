@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaArrowLeft, FaSearch, FaChevronDown, FaCircle, FaPlus } from 'react-icons/fa';
+import { FaArrowLeft, FaSearch, FaChevronDown, FaCircle, FaPlus, FaCheck, FaTimes } from 'react-icons/fa';
 import './styles/DiscountEditStyles.css';
 
 import { 
@@ -67,6 +67,13 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
     durations: false
   });
   
+  // Notification state
+  const [notification, setNotification] = useState<{
+    show: boolean;
+    message: string;
+    type: 'success' | 'error';
+  }>({ show: false, message: '', type: 'success' });
+
   // Selected values
   const [selectedDiscountName, setSelectedDiscountName] = useState<DiscountName | null>(null);
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
@@ -154,6 +161,14 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
     };
   }, []);
 
+  // Show notification
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification(prev => ({ ...prev, show: false }));
+    }, 3000);
+  };
+
   // Load discount data and all necessary options
   useEffect(() => {
     const loadData = async () => {
@@ -222,7 +237,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
         
       } catch (error) {
         console.error('Error loading discount data:', error);
-        alert('Failed to load discount data. Please try again.');
+        showNotification('Failed to load discount data. Please try again.', 'error');
       } finally {
         setIsLoading(prev => ({ ...prev, discount: false }));
       }
@@ -294,8 +309,6 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
     try {
       const products = await fetchProductNames();
       
-      // The response from fetchProductNames is already in the correct format {id: number, name: string}[]
-      // So we can use it directly
       const formattedItems = products.map((product) => ({ 
         id: product.id, 
         name: product.name
@@ -322,8 +335,6 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
     try {
       const categories = await fetchCategoryNames();
       
-      // The response from fetchCategoryNames should be in format {id: number, name: string}[]
-      // So we can use it directly
       const formattedCategories = categories.map((category) => ({ 
         id: category.id, 
         name: category.name
@@ -454,6 +465,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedDiscountName(newItem);
       setNewDiscountName('');
       setIsAddingNew(prev => ({ ...prev, discountName: false }));
+      showNotification('Discount name added successfully!', 'success');
     } catch (error) {
       console.error('Error adding new discount name:', error);
       const newItem = { id: discountNames.length + 1, name: newDiscountName };
@@ -461,6 +473,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedDiscountName(newItem);
       setNewDiscountName('');
       setIsAddingNew(prev => ({ ...prev, discountName: false }));
+      showNotification('Failed to add discount name', 'error');
     } finally {
       setIsLoading(prev => ({ ...prev, discountNames: false }));
       setDropdownOpen(prev => ({ ...prev, discountName: false }));
@@ -470,7 +483,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
   const handleAddNewPercentage = async () => {
     const percentValue = parseFloat(newPercentage);
     if (isNaN(percentValue) || percentValue < 0 || percentValue > 100) {
-      alert('Please enter a valid percentage between 0 and 100');
+      showNotification('Please enter a valid percentage between 0 and 100', 'error');
       return;
     }
     
@@ -487,6 +500,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedPercentage(newItem);
       setNewPercentage('');
       setIsAddingNew(prev => ({ ...prev, percentage: false }));
+      showNotification('Percentage added successfully!', 'success');
     } catch (error) {
       console.error('Error adding new percentage:', error);
       const newItem = { id: percentages.length + 1, value: percentValue };
@@ -494,6 +508,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedPercentage(newItem);
       setNewPercentage('');
       setIsAddingNew(prev => ({ ...prev, percentage: false }));
+      showNotification('Failed to add percentage', 'error');
     } finally {
       setIsLoading(prev => ({ ...prev, percentages: false }));
       setDropdownOpen(prev => ({ ...prev, percentage: false }));
@@ -503,7 +518,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
   const handleAddNewAmount = async () => {
     const amountValue = parseFloat(newAmount);
     if (isNaN(amountValue) || amountValue <= 0) {
-      alert('Please enter a valid amount');
+      showNotification('Please enter a valid amount', 'error');
       return;
     }
     
@@ -521,6 +536,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedAmount(newItem);
       setNewAmount('');
       setIsAddingNew(prev => ({ ...prev, amount: false }));
+      showNotification('Amount added successfully!', 'success');
     } catch (error) {
       console.error('Error adding new amount:', error);
       const newItem = { id: amounts.length + 1, value: amountValue, currency: 'Rs' };
@@ -528,6 +544,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedAmount(newItem);
       setNewAmount('');
       setIsAddingNew(prev => ({ ...prev, amount: false }));
+      showNotification('Failed to add amount', 'error');
     } finally {
       setIsLoading(prev => ({ ...prev, amounts: false }));
       setDropdownOpen(prev => ({ ...prev, amount: false }));
@@ -550,6 +567,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedDuration(newItem);
       setNewDuration('');
       setIsAddingNew(prev => ({ ...prev, duration: false }));
+      showNotification('Duration added successfully!', 'success');
     } catch (error) {
       console.error('Error adding new duration:', error);
       const newItem = { id: durations.length + 1, value: newDuration };
@@ -557,6 +575,7 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       setSelectedDuration(newItem);
       setNewDuration('');
       setIsAddingNew(prev => ({ ...prev, duration: false }));
+      showNotification('Failed to add duration', 'error');
     } finally {
       setIsLoading(prev => ({ ...prev, durations: false }));
       setDropdownOpen(prev => ({ ...prev, duration: false }));
@@ -565,37 +584,37 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
 
   const handleUpdateDiscount = async () => {
     if (!selectedDiscountName) {
-      alert('Please select a discount name');
+      showNotification('Please select a discount name', 'error');
       return;
     }
     
     if (discountType === 'item' && !selectedItem) {
-      alert('Please select an item');
+      showNotification('Please select an item', 'error');
       return;
     }
     
     if (discountType === 'category' && !selectedCategory) {
-      alert('Please select a category');
+      showNotification('Please select a category', 'error');
       return;
     }
     
     if (discountType === 'loyalty' && !selectedTier) {
-      alert('Please select a loyalty tier');
+      showNotification('Please select a loyalty tier', 'error');
       return;
     }
     
     if (!selectedPercentage && !selectedAmount) {
-      alert('Please select either a percentage or an amount');
+      showNotification('Please select either a percentage or an amount', 'error');
       return;
     }
     
     if (selectedPercentage && selectedAmount) {
-      alert('Please select only one discount value (percentage OR amount)');
+      showNotification('Please select only one discount value (percentage OR amount)', 'error');
       return;
     }
     
     if (!selectedDuration) {
-      alert('Please select a duration');
+      showNotification('Please select a duration', 'error');
       return;
     }
   
@@ -633,17 +652,19 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
       const response = await updateDiscount(discountId, discountData);
       
       if (response) {
-        alert('Discount updated successfully!');
-        onBack();
+        showNotification('Discount updated successfully!', 'success');
+        setTimeout(() => {
+          onBack();
+        }, 1500);
       } else {
-        alert('Failed to update discount');
+        showNotification('Failed to update discount', 'error');
       }
     } catch (error: any) {
       console.error('Error updating discount:', error);
       const errorMessage = error.response?.data?.message || 
                           error.message || 
                           'There was an error updating the discount. Please try again.';
-      alert(errorMessage);
+      showNotification(errorMessage, 'error');
     }
   };
 
@@ -704,6 +725,18 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
 
   return (
     <div style={{ padding: '16px' }}>
+      {/* Notification */}
+      {notification.show && (
+        <div className={`notification ${notification.type}`}>
+          {notification.type === 'success' ? (
+            <FaCheck style={{ marginRight: '10px' }} />
+          ) : (
+            <FaTimes style={{ marginRight: '10px' }} />
+          )}
+          {notification.message}
+        </div>
+      )}
+
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -811,7 +844,6 @@ const DiscountEdit: React.FC<DiscountEditProps> = ({ onBack, discountId }) => {
               </span>
             </div>
           </div>
-
         </div>
 
         {/* Two column layout for form fields */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaArrowLeft, FaSearch, FaChevronDown, FaCircle, FaPlus } from 'react-icons/fa';
+import { FaArrowLeft, FaSearch, FaChevronDown, FaCircle, FaPlus, FaCheck, FaTimes } from 'react-icons/fa';
 import './styles/DiscountAddStyle.css'; // Import the CSS file
 
 import discountClient, { fetchProductNames, fetchCategoryNames, fetchDiscountNames as getDiscountNamesService } from '../../services/discountService';
@@ -46,6 +46,12 @@ interface DurationOption {
   value: string;
 }
 
+interface Notification {
+  message: string;
+  type: 'success' | 'error';
+  id: number;
+}
+
 const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   const [discountType, setDiscountType] = useState('item');
   const [enableDiscount, setEnableDiscount] = useState(false);
@@ -89,6 +95,9 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   const [newPercentage, setNewPercentage] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [newDuration, setNewDuration] = useState('');
+
+  // Notification state
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   
   // Data states
   const [discountNames, setDiscountNames] = useState<DiscountName[]>([]);
@@ -146,6 +155,17 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Show notification function
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    const id = Date.now();
+    setNotifications(prev => [...prev, { message, type, id }]);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 3000);
+  };
 
   // Check dropdown position and adjust if needed
   const checkDropdownPosition = (dropdownKey: keyof typeof dropdownRefs) => {
@@ -347,7 +367,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   const handleAddNewPercentage = async () => {
     const percentValue = parseFloat(newPercentage);
     if (isNaN(percentValue) || percentValue < 0 || percentValue > 100) {
-      alert('Please enter a valid percentage between 0 and 100');
+      showNotification('Please enter a valid percentage between 0 and 100', 'error');
       return;
     }
     
@@ -383,7 +403,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   const handleAddNewAmount = async () => {
     const amountValue = parseFloat(newAmount);
     if (isNaN(amountValue) || amountValue <= 0) {
-      alert('Please enter a valid amount');
+      showNotification('Please enter a valid amount', 'error');
       return;
     }
     
@@ -450,47 +470,46 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
 
   const handleSaveDiscount = async () => {
     if (!selectedDiscountName) {
-      alert('Please select a discount name');
+      showNotification('Please select a discount name', 'error');
       return;
     }
     
     if (discountType === 'item' && !selectedItem) {
-      alert('Please select an item');
+      showNotification('Please select an item', 'error');
       return;
     }
     
     if (discountType === 'category' && !selectedCategory) {
-      alert('Please select a category');
+      showNotification('Please select a category', 'error');
       return;
     }
     
     if (discountType === 'loyalty' && !selectedTier) {
-      alert('Please select a loyalty tier');
+      showNotification('Please select a loyalty tier', 'error');
       return;
     }
     
     if (!selectedPercentage && !selectedAmount) {
-      alert('Please select either a percentage or an amount');
+      showNotification('Please select either a percentage or an amount', 'error');
       return;
     }
     
     if (selectedPercentage && selectedAmount) {
-      alert('Please select only one discount value (percentage OR amount)');
+      showNotification('Please select only one discount value (percentage OR amount)', 'error');
       return;
     }
     
     if (!selectedDuration) {
-      alert('Please select a duration');
+      showNotification('Please select a duration', 'error');
       return;
     }
-  
+
     const discountData: Discount = {
       name: selectedDiscountName.name,
       type: discountType.toUpperCase() as 'ITEM' | 'CATEGORY' | 'LOYALTY',
       isActive: enableDiscount,
       duration: selectedDuration.value,
       startDate: new Date().toISOString(),
-      // Set fields based on discount type
       ...(discountType === 'item' && { 
         itemId: selectedItem?.id,
         categoryId: null
@@ -504,33 +523,53 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
         categoryId: null,
         loyaltyType: selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE'
       }),
-      // Optional loyalty tier for item/category discounts
       ...(discountType !== 'loyalty' && selectedTier && {
         loyaltyType: selectedTier?.name.toUpperCase() as 'GOLD' | 'SILVER' | 'BRONZE'
       }),
       ...(selectedPercentage && { percentage: selectedPercentage.value }),
       ...(selectedAmount && { amount: selectedAmount.value })
     };
-  
+
     try {
-      console.log('Sending discount data:', discountData);
+      setIsLoading(prev => ({ ...prev, saving: true }));
       const response = await discountClient.post(discountData);
       
       if (response) {
-        alert('Discount saved successfully!');
-        onBack();
+        showNotification(
+          `Discount "${selectedDiscountName.name}" created successfully!`, 
+          'success'
+        );
+        
+        // Clear form after successful submission
+        setSelectedDiscountName(null);
+        setSelectedItem(null);
+        setSelectedCategory(null);
+        setSelectedPercentage(null);
+        setSelectedAmount(null);
+        setSelectedTier(null);
+        setSelectedDuration(null);
+        setEnableDiscount(false);
+        setDiscountType('item');
+
+        setTimeout(() => {
+          onBack();
+        }, 1500);
+        
+        // Optional: reload discount names if needed
+        await loadDiscountNames();
       } else {
-        alert('Failed to save discount');
+        showNotification('Failed to save discount. Please try again.', 'error');
       }
     } catch (error: any) {
       console.error('Error saving discount:', error);
       const errorMessage = error.response?.data?.message || 
                           error.message || 
                           'There was an error saving the discount. Please try again.';
-      alert(errorMessage);
+      showNotification(`❌ ${errorMessage}`, 'error');
+    } finally {
+      setIsLoading(prev => ({ ...prev, saving: false }));
     }
   };
-  
 
   // Filter functions
   const filteredDiscountNames = discountNames.filter(item => 
@@ -561,8 +600,37 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
     item.value.toLowerCase().includes(durationSearch.toLowerCase())
   );
 
+  // Notification component
+  const NotificationContainer = () => (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      zIndex: 1000,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: '10px'
+    }}>
+      {notifications.map(notification => (
+        <div 
+          key={notification.id}
+          className={`notification ${notification.type}`}
+        >
+          {notification.type === 'success' ? (
+            <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} />
+          ) : (
+            <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+          )}
+          {notification.message}
+        </div>
+      ))}
+    </div>
+  );
   return (
     <div style={{ padding: '16px' }}>
+      <NotificationContainer />
+      
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -700,7 +768,6 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
               </span>
             </div>
           </div>
-
         </div>
 
         {/* Two column layout for form fields */}

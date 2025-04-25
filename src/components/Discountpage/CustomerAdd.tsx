@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaTimes } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import shopping from '../../assets/shopping.png';
 import { addCustomer } from '../../services/customerService';
@@ -20,6 +20,41 @@ interface AddCustomerPopupProps {
   onCustomerAdded: (newCustomer: Customer) => void;
 }
 
+interface NotificationProps {
+  message: string;
+  type: 'success' | 'error';
+}
+
+// Notification Component
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div className={`notification ${type}`} style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+      {type === 'success' ? 
+        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
+        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+      }
+      {message}
+    </div>
+  );
+};
+
 const CustomerAdd: React.FC<AddCustomerPopupProps> = ({ onClose, onCustomerAdded }) => {
   const [customerData, setCustomerData] = useState<Omit<Customer, 'id' | 'points' | 'tier'>>({
     title: 'MR',
@@ -33,6 +68,47 @@ const CustomerAdd: React.FC<AddCustomerPopupProps> = ({ onClose, onCustomerAdded
     email: '',
     phone: ''
   });
+  const [notification, setNotification] = useState<NotificationProps | null>(null);
+
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Show notification function
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
 
   const validateName = (name: string): boolean => {
     const nameRegex = /^[a-zA-Z\s]*$/;
@@ -99,6 +175,17 @@ const CustomerAdd: React.FC<AddCustomerPopupProps> = ({ onClose, onCustomerAdded
     }
 
     setErrors(newErrors);
+    
+    if (!isValid) {
+      // Show notification for the first error
+      for (const key in newErrors) {
+        if (newErrors[key as keyof typeof newErrors]) {
+          showNotification(newErrors[key as keyof typeof newErrors], 'error');
+          break;
+        }
+      }
+    }
+    
     return isValid;
   };
 
@@ -116,13 +203,19 @@ const CustomerAdd: React.FC<AddCustomerPopupProps> = ({ onClose, onCustomerAdded
       };
 
       const newCustomer = await addCustomer(completeCustomerData);
-      onCustomerAdded(newCustomer);
-      handleCancel();
+      
+      // Show success notification
+      showNotification('Customer added successfully', 'success');
+      
+      // Wait a bit to show the success message before closing
+      setTimeout(() => {
+        onCustomerAdded(newCustomer);
+        handleCancel();
+      }, 1500);
+      
     } catch (err) {
-      setErrors(prev => ({
-        ...prev,
-        phone: err instanceof Error ? err.message : 'Failed to add customer. Please try again.'
-      }));
+      const errorMessage = err instanceof Error ? err.message : 'Failed to add customer. Please try again.'
+      showNotification(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -410,6 +503,9 @@ const CustomerAdd: React.FC<AddCustomerPopupProps> = ({ onClose, onCustomerAdded
           </div>
         </div>
       </div>
+      
+      {/* Notification Component */}
+      {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );
 };
