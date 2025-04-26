@@ -5,7 +5,9 @@ import InvoiceModal from "./InvoiceModal";
 import ItemSelection from "./ItemSelection";
 import RefundMethodSelection from "./RefundMethodSelection";
 import RefundResult from "./RefundResults";
-import { refundService } from "../../services/refundService";
+import refundService from "../../services/refundService";
+import axios from "axios";
+import { Invoice } from "../../models/Invoice";
 
 interface InvoiceItem {
   id: string;
@@ -67,11 +69,30 @@ const ReturnRefundManager: React.FC = () => {
 
   const handleInvoiceSubmit = async (invNumber: string) => {
     try {
-      const data = await refundService.getInvoiceDetails(invNumber);
-      setInvoiceData(data);
+      const response = await axios.get<Invoice>(
+        `http://localhost:8080/api/returns/invoice/${invNumber}`
+      );
+      const data = response.data;
+
+      setInvoiceData({
+        id: data.id,
+        date: data.date,
+        total: data.totalAmount,
+        items: data.items.map((item) => ({
+          id: item.id,
+          name: item.productName,
+          quantity: item.quantity,
+          price: item.price,
+          total: item.quantity * item.price,
+          returnQuantity: 0,
+          refundAmount: 0,
+        })),
+      });
+
       setInvoiceNumber(invNumber);
       setCurrentStep(RefundStep.ITEM_SELECTION);
     } catch (error) {
+      console.error("Error fetching invoice:", error);
       toast({
         title: "Error",
         description: "Failed to fetch invoice details",
@@ -79,7 +100,6 @@ const ReturnRefundManager: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-      throw error; // Re-throw to be caught by the InvoiceModal
     }
   };
 
@@ -110,7 +130,7 @@ const ReturnRefundManager: React.FC = () => {
       };
 
       // Process refund
-      await refundService.processRefund(refundRequest);
+      await refundService.post(refundRequest);
       setRefundSuccess(true);
     } catch (error) {
       console.error("Refund processing failed:", error);

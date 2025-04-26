@@ -1,6 +1,6 @@
 import APIClient from "./apiClient";
 import { RefundRequest } from "../models/Refund";
 
-const refundClient = new APIClient<RefundRequest>("/refunds");
+const refundService = new APIClient<RefundRequest>("/api/returns/items");
 
-export default refundClient;
+export default refundService;

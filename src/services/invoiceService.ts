@@ -1,6 +1,8 @@
 import APIClient from "./apiClient";
 import { Invoice } from "../models/Invoice";
 
-const invoiceClient = new APIClient<Invoice>("/invoices");
+// Create a service instance (base endpoint)
+const invoiceService = new APIClient<Invoice>("/api/returns/invoice");
 
-export default invoiceClient;
+export default invoiceService;
+

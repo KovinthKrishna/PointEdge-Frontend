@@ -14,7 +14,7 @@ import { FormControl, FormLabel } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import React from "react";
 
-// Define the prop types for the component
+// Prop types for the component
 interface InvoiceModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -45,7 +45,6 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     setIsLoading(true);
     try {
       await onSubmit(invoiceNumber);
-      // If successful, onSubmit will handle the next steps
     } catch (error) {
       toast({
         title: "Error",

@@ -7,10 +7,15 @@ export interface InvoiceItem {
   }
   
   export interface Invoice {
-    invoiceNumber: string;
+    id: string;
     date: string;
+    items: {
+      id: string;
+      productName: string;
+      quantity: number;
+      price: number;
+    }[];
     totalAmount: number;
-    loyaltyPoints: number;
-    items: InvoiceItem[];
   }
+  
   

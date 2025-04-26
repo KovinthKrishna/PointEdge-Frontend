@@ -6,8 +6,13 @@ export interface RefundItem {
   
   export interface RefundRequest {
     invoiceNumber: string;
-    items: RefundItem[];
+    items: {
+      id: string;
+      returnQuantity: number;
+      refundAmount: number;
+    }[];
     refundMethod: string;
     totalAmount: number;
   }
+  
   
