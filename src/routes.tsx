@@ -8,6 +8,7 @@ import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
 import SalesDashboard from "./pages/SalesDashboard";
 import Login from "./pages/Login";
+import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
   {
     path: "login",
     element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "return-refund",
+    element: <ReturnRefundPage />,
     errorElement: <ErrorPage />,
   },
 ]);
