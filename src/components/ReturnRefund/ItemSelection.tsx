@@ -1,186 +1,150 @@
-import { useState, useEffect } from "react";
-import { Button } from "@chakra-ui/react";
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import {
+  Box,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Text,
+  Heading,
+  Divider,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/react";
-
-interface InvoiceItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  total: number;
-}
-
-interface InvoiceData {
-  id: string;
-  date: string;
-  items: InvoiceItem[];
-  total: number;
-}
-
-interface SelectedItem extends InvoiceItem {
-  returnQuantity: number;
-  refundAmount: number;
-}
+import {
+  Invoice,
+  InvoiceItem,
+} from "../../pages/ReturnAndRefundpage/ReturnAndRefundpage";
+import priceFormatter from "../../utils/priceFormatter";
+import { useNavigate } from "react-router-dom";
 
 interface ItemSelectionProps {
-  invoiceData: InvoiceData | null;
-  onSubmit: (items: SelectedItem[]) => void;
+  invoiceData: Invoice;
+  selectedItems: InvoiceItem[];
+  onSubmit: (selectedItems: InvoiceItem[]) => void;
   onCancel: () => void;
 }
 
 const ItemSelection: React.FC<ItemSelectionProps> = ({
   invoiceData,
   onSubmit,
-  onCancel,
+  selectedItems,
 }) => {
-  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [totalRefundAmount, setTotalRefundAmount] = useState<number>(0);
-  const toast = useToast();
+  const [items, setItems] = useState<InvoiceItem[]>(selectedItems);
 
-  // Initialize selected items with zero return quantities
-  useEffect(() => {
-    // Add null check before accessing invoiceData
-    if (!invoiceData) return;
+  const handleQuantityChange = (index: number, value: number) => {
+    const updated = [...items];
+    const original = invoiceData.items[index];
+    const returnQty = Math.min(value, original.quantity);
 
-    const initialItems = invoiceData.items.map((item) => ({
-      ...item,
-      returnQuantity: 0,
-      refundAmount: 0,
-    }));
-    setSelectedItems(initialItems);
-  }, [invoiceData]);
+    updated[index].returnQuantity = returnQty;
+    updated[index].refundAmount = returnQty * updated[index].price;
 
-  const handleQuantityChange = (id: string, value: number) => {
-    const updatedItems = selectedItems.map((item) => {
-      if (item.id === id) {
-        // Ensure we don't return more than purchased
-        const returnQuantity = Math.min(value, item.quantity);
-        const refundAmount = returnQuantity * item.price;
-        return { ...item, returnQuantity, refundAmount };
-      }
-      return item;
-    });
-
-    setSelectedItems(updatedItems);
-    calculateTotalRefund(updatedItems);
-  };
-
-  const calculateTotalRefund = (items: SelectedItem[]) => {
-    const total = items.reduce((sum, item) => sum + item.refundAmount, 0);
-    setTotalRefundAmount(total);
+    setItems(updated);
   };
 
   const handleSubmit = () => {
-    const itemsToReturn = selectedItems.filter(
-      (item) => item.returnQuantity > 0
-    );
-
-    if (itemsToReturn.length === 0) {
-      toast({
-        title: "No items selected",
-        description: "Please select at least one item to return",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    onSubmit(itemsToReturn);
+    const selected = items.filter((item) => item.returnQuantity > 0);
+    onSubmit(selected);
   };
 
-  // Early return if invoiceData is null
-  if (!invoiceData) {
-    return (
-      <Box p={4}>
-        <Text>No invoice data available</Text>
-        <Button onClick={onCancel} variant="outline">
-          Back
-        </Button>
-      </Box>
-    );
-  }
+  const totalRefund = items.reduce(
+    (sum, item) => sum + (item.refundAmount || 0),
+    0
+  );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setItems(selectedItems);
+  }, [selectedItems]);
+
+  console.log("Invoice keys:", Object.keys(invoiceData));
 
   return (
-    <Box p={4}>
-      <Heading size="md" mb={4}>
-        Select Items to Return
+    <Box p={6} borderRadius="xl" boxShadow="md" bg="white">
+      <Heading size="md" mb={2}>
+        Return Items from Invoice
       </Heading>
-      <Text mb={4}>
-        Invoice: {invoiceData.id} | Date: {invoiceData.date}
-      </Text>
 
-      <Table variant="simple" mb={6}>
+      <Flex mb={4}>
+        <Box>
+          <Text fontWeight="medium">
+            Invoice Number: {invoiceData.invoiceNumber}
+          </Text>
+          <Text fontWeight="medium">Date: {invoiceData.date}</Text>
+        </Box>
+        <Spacer />
+        <Box textAlign="right">
+          <Text fontWeight="semibold" fontSize="lg" color="teal.600">
+            Total Refund: {priceFormatter(totalRefund)}
+          </Text>
+        </Box>
+      </Flex>
+
+      <Divider mb={4} />
+
+      <Table variant="striped" colorScheme="gray">
         <Thead>
           <Tr>
-            <Th>Item</Th>
-            <Th>Purchased Qty</Th>
-            <Th>Return Qty</Th>
+            <Th>Product</Th>
+            <Th isNumeric>Qty Bought</Th>
             <Th isNumeric>Price</Th>
-            <Th isNumeric>Refund Amount</Th>
+            <Th isNumeric>Return Qty</Th>
+            <Th isNumeric>Refund</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {selectedItems.map((item) => (
+          {items.map((item, index) => (
             <Tr key={item.id}>
               <Td>{item.name}</Td>
-              <Td>{item.quantity}</Td>
-              <Td>
+              <Td isNumeric>{item.quantity}</Td>
+              <Td isNumeric>{priceFormatter(item.price)}</Td>
+              <Td isNumeric>
                 <NumberInput
                   min={0}
                   max={item.quantity}
                   value={item.returnQuantity}
-                  onChange={(_, value) => handleQuantityChange(item.id, value)}
+                  onChange={(valueString) =>
+                    handleQuantityChange(index, parseInt(valueString) || 0)
+                  }
                   size="sm"
-                  maxW={20}
+                  width="80px"
                 >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
+                  <NumberInputField textAlign="center" />
                 </NumberInput>
               </Td>
-              <Td isNumeric>${item.price.toFixed(2)}</Td>
-              <Td isNumeric>${item.refundAmount.toFixed(2)}</Td>
+              <Td isNumeric>{priceFormatter(item.refundAmount)}</Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
 
-      <Flex justifyContent="space-between" alignItems="center" mb={4}>
-        <Text fontWeight="bold">
-          Total Refund Amount: ${totalRefundAmount.toFixed(2)}
-        </Text>
-      </Flex>
-
-      <Flex justifyContent="flex-end" gap={3}>
+      <Flex justifyContent="flex-end" mt={6} gap={3}>
         <Button
-          onClick={onCancel}
-          variant="outline"
-          backgroundColor="gray.100"
-          color="gray.800"
-          _hover={{ backgroundColor: "gray.200" }}
+          variant="ghost"
+          onClick={() => navigate("/")}
+          _hover={{
+            bg: "red",
+            color: "white",
+            borderColor: "darkBlue",
+          }}
         >
           Cancel
         </Button>
         <Button
-          backgroundColor="#4A5568"
+          variant="outline"
           color="white"
-          _hover={{ backgroundColor: "#2D3748" }}
+          bg="darkBlue"
+          border="2px"
           onClick={handleSubmit}
-          isDisabled={totalRefundAmount <= 0}
+          isDisabled={totalRefund <= 0}
         >
-          Proceed to Refund
+          Proceed to Refund Method
         </Button>
       </Flex>
     </Box>
