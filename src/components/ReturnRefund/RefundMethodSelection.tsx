@@ -1,7 +1,14 @@
-import React, { useState } from "react";
-import { Box, Flex, Heading, Text, Stack } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/react";
-import { Radio, RadioGroup } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Stack,
+  useRadioGroup,
+  Button,
+} from "@chakra-ui/react";
+import RadioCard from "./RadioCard";
+import React from "react";
 
 interface RefundMethodProps {
   totalAmount: number;
@@ -14,7 +21,14 @@ const RefundMethodSelection: React.FC<RefundMethodProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const [refundMethod, setRefundMethod] = useState<string>("cash");
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "refundMethod",
+    defaultValue: "cash",
+    onChange: (value) => setRefundMethod(value),
+  });
+
+  const group = getRootProps();
+  const [refundMethod, setRefundMethod] = React.useState<string>("cash");
 
   return (
     <Box p={4}>
@@ -22,22 +36,42 @@ const RefundMethodSelection: React.FC<RefundMethodProps> = ({
         Select Refund Method
       </Heading>
       <Text mb={4} fontWeight="bold">
-        Total Amount to Refund: ${totalAmount.toFixed(2)}
+        Total Amount to Refund: Rs {totalAmount.toFixed(2)}
       </Text>
 
-      <RadioGroup onChange={setRefundMethod} value={refundMethod} mb={6}>
-        <Stack>
-          <Radio value="cash">Cash</Radio>
-          <Radio value="card">Credit/Debit Card</Radio>
-          <Radio value="store_credit">Store Credit</Radio>
-        </Stack>
-      </RadioGroup>
+      <Stack {...group} direction="row" mb={6}>
+        {["cash", "card", "store_credit"].map((method) => {
+          const radio = getRadioProps({ value: method });
+          return (
+            <RadioCard key={method} {...radio}>
+              {method === "cash"
+                ? "Cash"
+                : method === "card"
+                ? "Credit/Debit Card"
+                : "Store Credit"}
+            </RadioCard>
+          );
+        })}
+      </Stack>
 
       <Flex justifyContent="flex-end" gap={3}>
-        <Button onClick={onCancel} variant="outline">
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          _hover={{
+            bg: "darkBlue",
+            color: "white",
+          }}
+        >
           Back
         </Button>
-        <Button colorScheme="blue" onClick={() => onSubmit(refundMethod)}>
+        <Button
+          backgroundColor="darkBlue"
+          color="white"
+          _hover={{ backgroundColor: "blue.800" }}
+          onClick={() => onSubmit(refundMethod)}
+          isDisabled={!refundMethod}
+        >
           Process Refund
         </Button>
       </Flex>

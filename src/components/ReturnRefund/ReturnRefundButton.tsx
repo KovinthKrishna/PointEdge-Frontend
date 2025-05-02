@@ -20,7 +20,7 @@ const ReturnRefundButton: React.FC<ReturnRefundButtonProps> = ({ onClick }) => {
       }}
       onClick={onClick}
     >
-      Return
+      Proceed to Return
     </Button>
   );
 };

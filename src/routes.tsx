@@ -2,16 +2,15 @@ import { createBrowserRouter } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AnalysisPage from "./pages/Admin/AnalysisPage";
-import { DiscountsPage } from "./pages/Admin/DiscountsPage";
+import DiscountsPage from "./pages/Admin/DiscountsPage";
 import EmployeesPage from "./pages/Admin/EmployeesPage";
 import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
-import SalesDashboard from "./pages/SalesDashboard";
 import Login from "./pages/Login";
 import ForgotPW from "./pages/ForgotPW";
-
-//temperory import to check these components
 import TestingPage from "./pages/TestingPage";
+import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
+import SalesDashboard from "./pages/SalesDashboard";
 
 const router = createBrowserRouter([
   {
@@ -35,19 +34,18 @@ const router = createBrowserRouter([
             path: "customers",
             element: <DiscountsPage />,
             handle: {
-<<<<<<< HEAD
               showCustomerModal: true,
             },
           },
-=======
-              showCustomerModal: true 
-            }
-          }
->>>>>>> 869dcb43f45bc9aaced767b7881b702e2c8864fd
         ],
       },
       { path: "employees", element: <EmployeesPage /> },
     ],
+  },
+  {
+    path: "return-refund",
+    element: <ReturnRefundPage />,
+    errorElement: <ErrorPage />,
   },
   {
     path: "login",
