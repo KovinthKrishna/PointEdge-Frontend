@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import DiscountTabBar from "./DiscountTabBar";
 import DiscountOptionsDashboard from "./DiscountOptionsDashborad";
 import DiscountTableDashboard from "./DiscountTableDashborad";
@@ -63,8 +63,7 @@ const DiscountDashboard = () => {
         return (
           <>
             <DiscountOptionsItem
-              onReportClick={() => setShowReport(true)}
-              onAddClick={() => setShowAddForm(true)}
+              onAddClick={() => setShowAddForm(true)} itemCount={0}            
             />
             <DiscountTableItem 
               onEditDiscount={(id) => setEditingDiscountId(id)}
@@ -76,9 +75,8 @@ const DiscountDashboard = () => {
         return (
           <>
             <DiscountOptionsCategory
-              onReportClick={() => setShowReport(true)}
-              onAddClick={() => setShowAddForm(true)}
-            />
+              onAddClick={() => setShowAddForm(true)} categoryCount={0}          
+             />
             <DiscountTableCategory 
               onEditDiscount={(id) => setEditingDiscountId(id)}
             />
@@ -90,7 +88,6 @@ const DiscountDashboard = () => {
           <>
             <DiscountOptionsLoyalty
               onSettingsClick={() => setShowSettings(true)}
-              onDeleteClick={() => console.log('Delete clicked')} 
               loyaltyCount={0}
               onAddClick={() => setShowAddForm(true)}
             />
