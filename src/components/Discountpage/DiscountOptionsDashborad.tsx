@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTrash, FaFlag, FaPlus, FaTimes, FaCheck } from 'react-icons/fa';
-import discountClient, { deleteAllDiscounts, fetchDiscountCount } from '../../services/discountService';
+import { deleteAllDiscounts, fetchDiscountCount } from '../../services/discountService';
 
 interface DiscountOptionsDashboardProps {
   onReportClick: () => void;
