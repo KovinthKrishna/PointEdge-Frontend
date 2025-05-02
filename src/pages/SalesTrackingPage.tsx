@@ -1,4 +1,3 @@
-"use client"
 import { Box, Flex, Text, Grid, GridItem, Icon, HStack, VStack, useColorModeValue } from "@chakra-ui/react"
 import { ChevronDown, Gift, Home, Monitor, ShoppingBag, Shirt, TrendingDown, TrendingUp } from 'lucide-react'
 

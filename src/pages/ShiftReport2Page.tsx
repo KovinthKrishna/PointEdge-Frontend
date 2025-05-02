@@ -1,24 +1,5 @@
-import { useState } from "react"
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Grid,
-  Heading,
-  Image,
-  Select,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useColorModeValue,
-} from "@chakra-ui/react"
-import { ArrowBackIcon, CalendarIcon } from "@chakra-ui/icons"
-import { SingleDatepicker } from "chakra-dayzed-datepicker"
+import { Box, Button, Container, Flex, Grid, Heading, Image, Text, useColorModeValue } from "@chakra-ui/react"
+import { ArrowBackIcon } from "@chakra-ui/icons"
 
 // Define types for props
 interface Employee {
@@ -36,9 +17,6 @@ interface ShiftReport2PageProps {
 }
 
 export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2PageProps) {
-  const [fromDate, setFromDate] = useState<Date>(new Date("2024-12-26"))
-  const [toDate, setToDate] = useState<Date>(new Date("2024-12-30"))
-
   const bgHeader = useColorModeValue("#003049", "#003049")
   const bgCard = useColorModeValue("white", "gray.800")
 
@@ -112,105 +90,29 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
 
   return (
     <Box minH="100vh" bg="gray.50">
-    {/* Search Bar */}
-    <Flex p={4} bg={bgCard} borderBottomWidth="1px" justifyContent="space-between" alignItems="center">
-        {/* Left side element */}
-        <Select placeholder="Type" defaultValue="All Types" w="180px" bg="white">
-          <option value="all">All Types</option>
-          <option value="morning">Morning Shift</option>
-          <option value="evening">Evening Shift</option>
-        </Select>
-
-        {/* Right side elements */}
-        <Flex gap={2} alignItems="center" flexWrap="wrap">
-          <Box position="relative" w="180px">
-            <SingleDatepicker
-              name="from-date"
-              date={fromDate}
-              onDateChange={setFromDate}
-              propsConfigs={{
-                inputProps: {
-                  placeholder: "From",
-                  size: "md",
-                  bg: "white",
-                },
-                popoverCompProps: {
-                  popoverBodyProps: {
-                    bg: "white",
-                    border: "1px solid",
-                    borderColor: "gray.200",
-                    shadow: "md",
-                    rounded: "md",
-                  },
-                },
-              }}
-            />
-            <Box
-              position="absolute"
-              right="10px"
-              top="50%"
-              transform="translateY(-50%)"
-              pointerEvents="none"
-              zIndex="1"
-            >
-              <CalendarIcon color="gray.400" />
-            </Box>
-          </Box>
-
-          <Box position="relative" w="180px">
-            <SingleDatepicker
-              name="to-date"
-              date={toDate}
-              onDateChange={setToDate}
-              propsConfigs={{
-                inputProps: {
-                  placeholder: "To",
-                  size: "md",
-                  bg: "white",
-                },
-                popoverCompProps: {
-                  popoverBodyProps: {
-                    bg: "white",
-                    border: "1px solid",
-                    borderColor: "gray.200",
-                    shadow: "md",
-                    rounded: "md",
-                  },
-                },
-              }}
-            />
-            <Box
-              position="absolute"
-              right="10px"
-              top="50%"
-              transform="translateY(-50%)"
-              pointerEvents="none"
-              zIndex="1"
-            >
-              <CalendarIcon color="gray.400" />
-            </Box>
-          </Box>
-
-          <Button bg="#003049" color="white" _hover={{ bg: "#00253a" }}>
-            Search
-          </Button>
+      {/* Search Bar */}
+      <Flex p={4} bg={bgCard} borderBottomWidth="1px" justifyContent="flex-end" alignItems="center">
+      
+        {/* Buttons on the right */}
+        <Flex gap={2}>
 
           <Button
-             variant="outline"
-             leftIcon={<ArrowBackIcon />}
-             onClick={onBackClick}
+            variant="outline"
+            leftIcon={<ArrowBackIcon />}
+            onClick={onBackClick}
             color="#003049"
             borderRadius="md"
             size="md"
             fontWeight="normal"
-             _hover={{
-             bg: "#D3D3D3",
-          }}
+            _hover={{
+              bg: "#D3D3D3",
+            }}
           >
-             Back
-         </Button>
-       </Flex>
+            Back
+          </Button>
+        </Flex>
       </Flex>
+
 
       {/* Header */}
       <Box bg={bgHeader} color="white" py={8} px={4} textAlign="center">
@@ -250,44 +152,212 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
           </Box>
         </Flex>
 
-        {/* Shift Table */}
-        <Box overflowX="auto">
-          <Table variant="simple" w="full">
-            <Thead>
-              <Tr bg="#003049">
-                <Th color="white">Shift Type</Th>
-                <Th color="white">Start Time</Th>
-                <Th color="white">End Time</Th>
-                <Th color="white">Break</Th>
-                <Th color="white">OT Hours</Th>
-                <Th color="white">Location</Th>
-                <Th color="white">Total Hours</Th>
-                <Th color="white">Orders</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {shifts.length > 0 ? (
-                shifts.map((shift, index) => (
-                  <Tr key={index} _hover={{ bg: "gray.50" }}>
-                    <Td>{shift.shiftType}</Td>
-                    <Td>{shift.startTime}</Td>
-                    <Td>{shift.endTime}</Td>
-                    <Td>{shift.break}</Td>
-                    <Td>{shift.otHours}</Td>
-                    <Td>{shift.location}</Td>
-                    <Td>{shift.totalHours}</Td>
-                    <Td>{shift.orders}</Td>
-                  </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <Td colSpan={8} textAlign="center" py={4}>
-                    No shift data available
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
+        {/* Shift Details Blocks */}
+        <Box mt={8}>
+          {shifts.length > 0 ? (
+            shifts.map((shift, index) => (
+              <Box key={index} mb={6} borderRadius="md" overflow="hidden" boxShadow="sm">
+                <Flex
+                  bg="#003049"
+                  color="white"
+                  p={3}
+                  fontWeight="bold"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Text>{shift.shiftType}</Text>
+                </Flex>
+
+                <Grid
+                  templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
+                  gap={4}
+                  p={4}
+                  bg="gray.50"
+                >
+                  {/* Left Column - Now with 4 rows */}
+                  <Box>
+                    <Grid templateColumns="1fr" gap={4}>
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          1
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            Start Time:
+                          </Text>
+                          <Text fontWeight="medium">{shift.startTime}</Text>
+                        </Box>
+                      </Flex>
+
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          2
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            End Time:
+                          </Text>
+                          <Text fontWeight="medium">{shift.endTime}</Text>
+                        </Box>
+                      </Flex>
+
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          3
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            Break:
+                          </Text>
+                          <Text fontWeight="medium">{shift.break}</Text>
+                        </Box>
+                      </Flex>
+
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          4
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            Location:
+                          </Text>
+                          <Text fontWeight="medium">{shift.location}</Text>
+                        </Box>
+                      </Flex>
+                    </Grid>
+                  </Box>
+
+                  {/* Middle Column */}
+                  <Box>
+                    <Grid templateColumns="1fr" gap={4}>
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          5
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            OT Hours:
+                          </Text>
+                          <Text fontWeight="medium">{shift.otHours}</Text>
+                        </Box>
+                      </Flex>
+
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          6
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            Total Hours:
+                          </Text>
+                          <Text fontWeight="medium">{shift.totalHours}</Text>
+                        </Box>
+                      </Flex>
+
+                      <Flex alignItems="center" bg="#B8D8D8" p={3} borderRadius="md">
+                        <Box
+                          bg="#003049"
+                          color="white"
+                          borderRadius="full"
+                          w="24px"
+                          h="24px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          mr={3}
+                        >
+                          7
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            Orders:
+                          </Text>
+                          <Text fontWeight="medium">{shift.orders}</Text>
+                        </Box>
+                      </Flex>
+                    </Grid>
+                  </Box>
+
+                  {/* Right Column - Additional Info */}
+                  <Box>
+                    <Flex direction="column" bg="#B8D8D8" p={3} borderRadius="md" height="50%">
+                      <Text fontSize="lg" fontWeight="bold" mb={2}>
+                        Notes
+                      </Text>
+                      <Text>
+                        {shift.shiftType} at {shift.location} with {shift.orders} processed. Total working time:{" "}
+                        {shift.totalHours} including {shift.otHours} overtime.
+                      </Text>
+                    </Flex>
+                  </Box>
+                </Grid>
+              </Box>
+            ))
+          ) : (
+            <Box textAlign="center" py={8} bg="#B8D8D8" borderRadius="md">
+              <Text fontSize="lg">No shift data available</Text>
+            </Box>
+          )}
         </Box>
       </Container>
     </Box>
