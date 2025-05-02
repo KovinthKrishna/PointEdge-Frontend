@@ -20,16 +20,10 @@ import ShiftReport2Page from "./pages/ShiftReport2Page";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Navigate to="/admin/employees" replace />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/",
+    index: true,
     element: <SalesDashboard />,
     errorElement: <ErrorPage />,
   },
-
   {
     path: "admin",
     element: <AdminLayout />,
