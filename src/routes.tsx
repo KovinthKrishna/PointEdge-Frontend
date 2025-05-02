@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom"
+import { createBrowserRouter, Navigate } from "react-router-dom"
 import AdminDashboard from "./pages/AdminDashboard"
 import AdminLayout from "./pages/AdminLayout"
 import AnalysisPage from "./pages/AnalysisPage"
@@ -19,10 +19,10 @@ const router = createBrowserRouter([
     element: <SalesDashboard />,
     errorElement: <ErrorPage />,
   },
+  // Direct access to employees section
   {
-    index: true,
-    element: <AdminLayout />, 
-    errorElement: <ErrorPage />,
+    path: "employees",
+    element: <Navigate to="/admin/employees" replace />
   },
   {
     path: "admin",
@@ -33,8 +33,8 @@ const router = createBrowserRouter([
       { path: "analysis", element: <AnalysisPage /> },
       { path: "inventory", element: <InventoryPage /> },
       { path: "discounts", element: <DiscountsPage /> },
-      {
-        path: "employees",
+      { 
+        path: "employees", 
         element: <EmployeesPage />,
         children: [
           { index: true, element: <EmployeeDashboardPage /> },
@@ -49,4 +49,3 @@ const router = createBrowserRouter([
 ])
 
 export default router;
-
