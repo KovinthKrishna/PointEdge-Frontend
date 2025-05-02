@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter , Navigate} from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AnalysisPage from "./pages/Admin/AnalysisPage";
@@ -11,6 +11,12 @@ import ForgotPW from "./pages/ForgotPW";
 import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
+import EmployeeDashboardPage from "./pages/EmployeeDashboardPage";
+import EmployeeAttendancePage from "./pages/EmployeeAttendancePage";
+import SalesTrackingPage from "./pages/SalesTrackingPage";
+import TopPerformersPage from "./pages/TopPerformersPage";
+import ShiftReportsPage from "./pages/ShiftReport1Page";
+import ShiftReport2Page from "./pages/ShiftReport2Page";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +45,17 @@ const router = createBrowserRouter([
           },
         ],
       },
-      { path: "employees", element: <EmployeesPage /> },
+      { 
+        path: "employees", 
+        element: <EmployeesPage />,
+        children: [
+          { index: true, element: <EmployeeDashboardPage /> },
+          { path: "attendance", element: <EmployeeAttendancePage /> },
+          { path: "sales-tracking", element: <SalesTrackingPage /> },
+          { path: "top-performers", element: <TopPerformersPage /> },
+          { path: "shift-reports", element: <ShiftReportsPage /> },
+        ],
+      },
     ],
   },
   {
