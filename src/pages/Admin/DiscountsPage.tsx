@@ -3,10 +3,11 @@ import { useMatches } from "react-router-dom";
 import { CustomerModal } from "../../components/Discountpage/CustomerModal";
 import DiscountDashboard from "../../components/Discountpage/DiscountDashboard";
 
-export const DiscountsPage = () => {
+const DiscountsPage = () => {
   const matches = useMatches();
   const showCustomerModal = matches.some(
-    match => (match.handle as { showCustomerModal?: boolean })?.showCustomerModal
+    (match) =>
+      (match.handle as { showCustomerModal?: boolean })?.showCustomerModal
   );
 
   return (
@@ -16,3 +17,5 @@ export const DiscountsPage = () => {
     </div>
   );
 };
+
+export default DiscountsPage;

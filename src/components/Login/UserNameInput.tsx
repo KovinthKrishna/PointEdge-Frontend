@@ -4,17 +4,22 @@ import {
   Input,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { Controller } from "react-hook-form";
+import { Controller, Control, FieldErrors } from "react-hook-form";
+
+interface LoginFormInputs {
+  username: string;
+  password: string;
+}
 
 interface UsernameInputProps {
-  control: any;
-  errors: any;
+  control: Control<LoginFormInputs>;
+  errors: FieldErrors<LoginFormInputs>;
 }
 
 const UsernameInput: React.FC<UsernameInputProps> = ({ control, errors }) => {
   return (
     <FormControl isInvalid={!!errors.username} color="#003049">
-      <FormLabel fontSize="14px">Username</FormLabel>
+      <FormLabel fontSize="14px">Email</FormLabel>
       <Controller
         name="username"
         control={control}

@@ -2,12 +2,15 @@ import { createBrowserRouter } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AnalysisPage from "./pages/Admin/AnalysisPage";
-import { DiscountsPage } from "./pages/Admin/DiscountsPage";
+import DiscountsPage from "./pages/Admin/DiscountsPage";
 import EmployeesPage from "./pages/Admin/EmployeesPage";
 import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
-import SalesDashboard from "./pages/SalesDashboard";
 import Login from "./pages/Login";
+import ForgotPW from "./pages/ForgotPW";
+import TestingPage from "./pages/TestingPage";
+import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
+import SalesDashboard from "./pages/SalesDashboard";
 
 const router = createBrowserRouter([
   {
@@ -31,17 +34,34 @@ const router = createBrowserRouter([
             path: "customers",
             element: <DiscountsPage />,
             handle: {
-              showCustomerModal: true 
-            }
-          }
+              showCustomerModal: true,
+            },
+          },
         ],
       },
       { path: "employees", element: <EmployeesPage /> },
     ],
   },
   {
+    path: "return-refund",
+    element: <ReturnRefundPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "login",
     element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "forgotpw",
+    element: <ForgotPW />,
+    errorElement: <ErrorPage />,
+  },
+
+  //temperory path adding to check the component
+  {
+    path: "test",
+    element: <TestingPage />,
     errorElement: <ErrorPage />,
   },
 ]);

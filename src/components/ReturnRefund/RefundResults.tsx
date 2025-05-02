@@ -1,7 +1,13 @@
 import { Box, Button, Heading, Text, Flex, VStack } from "@chakra-ui/react";
 import { FaPrint } from "react-icons/fa";
 import { Icon, CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
-import React from "react";
+import React, { useEffect } from "react";
+import priceFormatter from "../../utils/priceFormatter";
+
+// Helper function to format the currency in Sri Lankan Rupees
+/*const formatToRupees = (amount: number) => {
+  return `Rs. ${amount.toLocaleString("si-LK")}`;
+};*/
 
 interface RefundResultProps {
   success: boolean;
@@ -35,12 +41,12 @@ const RefundResult: React.FC<RefundResultProps> = ({
 
         {success ? (
           <Text textAlign="center">
-            A refund of ${amount.toFixed(2)} has been processed via {method} for
-            invoice #{invoiceNumber}.
+            A refund of {priceFormatter(amount)} has been processed via {method}{" "}
+            for invoice #{invoiceNumber}.
           </Text>
         ) : (
           <Text textAlign="center">
-            The refund of ${amount.toFixed(2)} via {method} for invoice #
+            The refund of {priceFormatter(amount)} via {method} for invoice #
             {invoiceNumber} could not be processed. Please try again or contact
             support.
           </Text>
@@ -62,6 +68,16 @@ const RefundResult: React.FC<RefundResultProps> = ({
       </Flex>
     </Box>
   );
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [success, onClose]);
 };
 
 export default RefundResult;
