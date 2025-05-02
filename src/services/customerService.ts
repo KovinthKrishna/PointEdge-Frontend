@@ -85,7 +85,10 @@ export const deleteCustomer = async (customerId: number): Promise<{ success: boo
     );
     
     console.log(`Customer with ID ${customerId} deleted successfully`);
-    return { success: true, message: 'Customer deleted successfully' };
+    return { 
+      success: response.status === 200, 
+      message: 'Customer deleted successfully' 
+    };
   } catch (error) {
     console.error(`Error deleting customer with ID ${customerId}:`, error);
     if (axios.isAxiosError(error)) {

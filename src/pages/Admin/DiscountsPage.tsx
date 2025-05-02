@@ -1,5 +1,5 @@
 // DiscountsPage.tsx
-import { Outlet, useMatches } from "react-router-dom";
+import { useMatches } from "react-router-dom";
 import { CustomerModal } from "../../components/Discountpage/CustomerModal";
 import DiscountDashboard from "../../components/Discountpage/DiscountDashboard";
 
