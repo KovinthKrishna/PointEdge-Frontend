@@ -80,7 +80,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   const [categorySearch, setCategorySearch] = useState('');
   const [percentageSearch, setPercentageSearch] = useState('');
   const [amountSearch, setAmountSearch] = useState('');
-  const [tierSearch, setTierSearch] = useState('');
+  const [] = useState('');
   const [durationSearch, setDurationSearch] = useState('');
   
   // Add new states
@@ -592,35 +592,22 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
     item.value.toString().includes(amountSearch)
   );
   
-  const filteredTiers = tiers.filter(item => 
-    item.name.toLowerCase().includes(tierSearch.toLowerCase())
-  );
-  
   const filteredDurations = durations.filter(item => 
     item.value.toLowerCase().includes(durationSearch.toLowerCase())
   );
 
   // Notification component
   const NotificationContainer = () => (
-    <div style={{
-      position: 'fixed',
-      bottom: '20px',
-      left: '20px',
-      zIndex: 1000,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      gap: '10px'
-    }}>
+    <div className="notification-container">
       {notifications.map(notification => (
         <div 
           key={notification.id}
           className={`notification ${notification.type}`}
         >
           {notification.type === 'success' ? (
-            <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} />
+            <FaCheck className="notification-icon" />
           ) : (
-            <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+            <FaTimes className="notification-icon" />
           )}
           {notification.message}
         </div>
@@ -628,23 +615,18 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
     </div>
   );
   return (
-    <div style={{ padding: '16px' }}>
+    <div className="discount-add-container">
       <NotificationContainer />
       
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '16px'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Create New Discount</h1>
+      <div className="discount-add-header">
+        <h1>Create New Discount</h1>
         
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="discount-add-buttons">
           <button 
             onClick={onBack}
             className="back-btn"
           >
-            <FaArrowLeft style={{ marginRight: '8px', fontSize: '14px', color: '#666' }} />
+            <FaArrowLeft className="back-icon" />
             Back to Discounts
           </button>
           <button 
@@ -656,114 +638,42 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
         </div>
       </div>
       
-      <div style={{ 
-        background: '#fff', 
-        border: '1px solid #eee', 
-        borderRadius: '4px', 
-        padding: '16px'
-      }}>
+      <div className="discount-add-form-container">
         {/* Discount Type with Enable Toggle */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'flex-start',
-          marginBottom: '16px' 
-        }}>
-          <div style={{ flex: 1 }}>
-            <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Discount Type</h3>
-            <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="discount-type-container">
+          <div className="discount-type-selector">
+            <h3>Discount Type</h3>
+            <div className="discount-type-buttons">
               <button 
                 onClick={() => setDiscountType('item')}
                 className={`discount-type-btn ${discountType === 'item' ? 'active' : ''}`}
-                style={{
-                  padding: '6px 10px',
-                  background: discountType === 'item' ? '#008ED8' : '#f5f5f5',
-                  color: discountType === 'item' ? 'white' : '#333',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  opacity: 1,
-                  fontSize: '13px',
-                  transition: 'all 0.2s ease'
-                }}
               >
                 Item Discount
               </button>
               <button 
                 onClick={() => setDiscountType('category')}
                 className={`discount-type-btn ${discountType === 'category' ? 'active' : ''}`}
-                style={{
-                  padding: '6px 10px',
-                  background: discountType === 'category' ? '#008ED8' : '#f5f5f5',
-                  color: discountType === 'category' ? 'white' : '#333',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  opacity: 1,
-                  fontSize: '13px',
-                  transition: 'all 0.2s ease'
-                }}
               >
                 Category Discount
               </button>
               <button 
                 onClick={() => setDiscountType('loyalty')}
                 className={`discount-type-btn ${discountType === 'loyalty' ? 'active' : ''}`}
-                style={{
-                  padding: '6px 10px',
-                  background: discountType === 'loyalty' ? '#008ED8' : '#f5f5f5',
-                  color: discountType === 'loyalty' ? 'white' : '#333',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  opacity: 1,
-                  fontSize: '13px',
-                  transition: 'all 0.2s ease'
-                }}
               >
                 Loyalty Discount
               </button>
             </div>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            marginLeft: '16px',
-            marginTop: '28px' 
-          }}>
+          <div className="discount-toggle-container">
             <div 
               onClick={() => setEnableDiscount(!enableDiscount)}
-              style={{
-                width: '36px',
-                height: '18px',
-                background: enableDiscount ? '#4CAF50' : '#F44336', // green or red background
-                borderRadius: '9px',
-                position: 'relative',
-                cursor: 'pointer',
-                marginRight: '8px',
-                transition: 'background 0.2s ease'
-              }}
+              className="toggle-switch"
             >
-              <div style={{
-                width: '14px',
-                height: '14px',
-                background: 'white',
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '2px',
-                left: enableDiscount ? '20px' : '2px',
-                transition: 'left 0.2s'
-              }} />
+              <div className="toggle-switch-handle" style={{ left: enableDiscount ? '20px' : '2px' }} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <FaCircle 
-                style={{ 
-                  color: enableDiscount ? '#4CAF50' : '#F44336', // green or red dot
-                  fontSize: '9px', 
-                  marginRight: '4px' 
-                }} 
-              />
-              <span style={{ fontSize: '13px' }}>
+            <div className="toggle-label">
+              <FaCircle className={`toggle-icon ${enableDiscount ? 'active' : 'inactive'}`} />
+              <span>
                 {enableDiscount ? 'Active' : 'Inactive'}
               </span>
             </div>
@@ -771,18 +681,18 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
         </div>
 
         {/* Two column layout for form fields */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', margin: '0 -8px' }}>
+        <div className="discount-form-columns">
           {/* Left Column */}
-          <div style={{ flex: '1 1 50%', minWidth: '280px', padding: '0 8px' }}>
+          <div className="discount-form-column">
             {/* Discount Name Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.discountName}>
-              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Discount Name</h3>
+              <h3>Discount Name</h3>
               <div 
                 className="dropdown-header"
                 onClick={() => toggleDropdown('discountName')}
               >
                 <span>{selectedDiscountName ? selectedDiscountName.name : 'Select discount name'}</span>
-                <FaChevronDown style={{ fontSize: '11px' }} />
+                <FaChevronDown className="dropdown-chevron" />
               </div>
               {dropdownOpen.discountName && (
                 <div className={`dropdown-list ${checkDropdownPosition('discountName') ? 'upward' : ''}`}>
@@ -791,7 +701,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, discountName: true }))}
                       className="add-new-btn"
                     >
-                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+                      <FaPlus className="add-new-icon" /> Add New
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -821,7 +731,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
-                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                  <div className="dropdown-items-container">
                     {isLoading.discountNames ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (
@@ -857,13 +767,13 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
             {/* Item Search Dropdown (shown for Item Discount) */}
             {discountType === 'item' && (
               <div className="dropdown-container" ref={dropdownRefs.item}>
-                <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Select Item</h3>
+                <h3>Select Item</h3>
                 <div 
                   className="dropdown-header"
                   onClick={() => toggleDropdown('item')}
                 >
                   <span>{selectedItem ? selectedItem.name : 'Select Item'}</span>
-                  <FaChevronDown style={{ fontSize: '11px' }} />
+                  <FaChevronDown className="dropdown-chevron" />
                 </div>
                 {dropdownOpen.item && (
                   <div className={`dropdown-list ${checkDropdownPosition('item') ? 'upward' : ''}`}>
@@ -882,7 +792,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                         className="dropdown-search-input"
                       />
                     </div>
-                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                    <div className="dropdown-items-container">
                       {isLoading.items ? (
                         <div className="dropdown-item">Loading...</div>
                       ) : filteredItems.length > 0 ? (
@@ -921,13 +831,13 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
             {/* Category Dropdown */}
             {discountType === 'category' && (
               <div className="dropdown-container" ref={dropdownRefs.category}>
-                <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Select Category</h3>
+                <h3>Select Category</h3>
                 <div 
                   className="dropdown-header"
                   onClick={() => toggleDropdown('category')}
                 >
                   <span>{selectedCategory ? selectedCategory.name : 'Select category'}</span>
-                  <FaChevronDown style={{ fontSize: '11px' }} />
+                  <FaChevronDown className="dropdown-chevron" />
                 </div>
                 {dropdownOpen.category && (
                   <div className={`dropdown-list ${checkDropdownPosition('category') ? 'upward' : ''}`}>
@@ -946,7 +856,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                         className="dropdown-search-input"
                       />
                     </div>
-                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                    <div className="dropdown-items-container">
                       {isLoading.categories ? (
                         <div className="dropdown-item">Loading...</div>
                       ) : filteredCategories.length > 0 ? (
@@ -984,17 +894,17 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   
             {/* Tier Dropdown - Always visible */}
             <div className="dropdown-container" ref={dropdownRefs.tier}>
-              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Select Tier</h3>
+              <h3>Select Tier</h3>
               <div 
                 className="dropdown-header"
                 onClick={() => toggleDropdown('tier')}
               >
                 <span>{selectedTier ? selectedTier.name : 'Select tier'}</span>
-                <FaChevronDown style={{ fontSize: '11px' }} />
+                <FaChevronDown className="dropdown-chevron" />
               </div>
               {dropdownOpen.tier && (
                 <div className={`dropdown-list ${checkDropdownPosition('tier') ? 'upward' : ''}`}>
-                  <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+                  <div className="dropdown-items-container">
                     <div 
                       onClick={() => {
                         setSelectedTier(null);
@@ -1023,16 +933,16 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
           </div>
   
           {/* Right Column */}
-          <div style={{ flex: '1 1 50%', minWidth: '280px', padding: '0 8px' }}>
+          <div className="discount-form-column">
             {/* Percentage Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.percentage}>
-              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Percentage</h3>
+              <h3>Percentage</h3>
               <div 
                 className={`dropdown-header ${selectedAmount ? 'dropdown-disabled' : ''}`}
                 onClick={() => !selectedAmount && toggleDropdown('percentage')}
               >
                 <span>{selectedPercentage ? `${selectedPercentage.value}%` : 'Select percentages'}</span>
-                <FaChevronDown style={{ fontSize: '11px' }} />
+                <FaChevronDown className="dropdown-chevron" />
               </div>
               {dropdownOpen.percentage && !selectedAmount && (
                 <div className={`dropdown-list ${checkDropdownPosition('percentage') ? 'upward' : ''}`}>
@@ -1041,7 +951,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, percentage: true }))}
                       className="add-new-btn"
                     >
-                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+                      <FaPlus className="add-new-icon" /> Add New
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -1074,7 +984,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
-                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                  <div className="dropdown-items-container">
                     {isLoading.percentages ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (
@@ -1109,13 +1019,13 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   
             {/* Amount Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.amount}>
-              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Amount</h3>
+              <h3>Amount</h3>
               <div 
                 className={`dropdown-header ${selectedPercentage ? 'dropdown-disabled' : ''}`}
                 onClick={() => !selectedPercentage && toggleDropdown('amount')}
               >
                 <span>{selectedAmount ? `${selectedAmount.currency} ${selectedAmount.value.toFixed(2)}` : 'Select amounts'}</span>
-                <FaChevronDown style={{ fontSize: '11px' }} />
+                <FaChevronDown className="dropdown-chevron" />
               </div>
               {dropdownOpen.amount && !selectedPercentage && (
                 <div className={`dropdown-list ${checkDropdownPosition('amount') ? 'upward' : ''}`}>
@@ -1124,7 +1034,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, amount: true }))}
                       className="add-new-btn"
                     >
-                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+                      <FaPlus className="add-new-icon" /> Add New
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -1156,7 +1066,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
-                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                  <div className="dropdown-items-container">
                     {isLoading.amounts ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (
@@ -1191,13 +1101,13 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   
             {/* Duration Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.duration}>
-              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Duration</h3>
+              <h3>Duration</h3>
               <div 
                 className="dropdown-header"
                 onClick={() => toggleDropdown('duration')}
               >
                 <span>{selectedDuration ? selectedDuration.value : 'Select durations'}</span>
-                <FaChevronDown style={{ fontSize: '11px' }} />
+                <FaChevronDown className="dropdown-chevron" />
               </div>
               {dropdownOpen.duration && (
                 <div className={`dropdown-list ${checkDropdownPosition('duration') ? 'upward' : ''}`}>
@@ -1206,7 +1116,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, duration: true }))}
                       className="add-new-btn"
                     >
-                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+                      <FaPlus className="add-new-icon" /> Add New
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -1236,7 +1146,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
-                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                  <div className="dropdown-items-container">
                     {isLoading.durations ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (

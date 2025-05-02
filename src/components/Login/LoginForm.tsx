@@ -1,11 +1,15 @@
 import { Box, VStack } from "@chakra-ui/react";
-import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useNavigate } from "react-router-dom"; //to navigate pages
 import UsernameInput from "./UserNameInput";
 import PasswordInput from "./PasswordInput";
 import ForgotPassword from "./ForgotPassword";
 import LoginButton from "./LoginButton";
+import { login } from "../../services/authService";
+import { useForm } from "react-hook-form";
+import PopupAlert from "../Common/PopupAlert";
+import { useState } from "react";
 
 // Validation schema using Yup
 const schema = yup.object({
@@ -17,6 +21,12 @@ const schema = yup.object({
 });
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
+
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertDescription, setAlertDescription] = useState("");
+
   const {
     control,
     handleSubmit,
@@ -25,12 +35,20 @@ const LoginForm: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Login Data:", data);
+  const onSubmit = async (data: any) => {
+    try {
+      const token = await login(data.username, data.password);
+      localStorage.setItem("token", token);
+      navigate("/"); // redirect to dashboard or home
+    } catch (error: any) {
+      setAlertTitle("Login Failed");
+      setAlertDescription(error.message || "Something went wrong");
+      setIsAlertOpen(true); // 🚨 Open the popup alert
+    }
   };
 
   const handleForgotPassword = () => {
-    alert("Redirect to Forgot Password Page!");
+    navigate("/forgotpw");
   };
 
   return (
@@ -42,6 +60,14 @@ const LoginForm: React.FC = () => {
         <Box h="4" />
         <LoginButton isLoading={isSubmitting} />
       </VStack>
+
+      <PopupAlert
+        isOpen={isAlertOpen}
+        onClose={() => setIsAlertOpen(false)}
+        status="error"
+        title={alertTitle}
+        description={alertDescription}
+      />
     </Box>
   );
 };
