@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  Spinner,
-  Box,
-  useToast,
-  Progress,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
 import axios from "axios";
-import ItemSelection from "../../components/ReturnRefund/ItemSelection";
-import RefundMethodSelection from "../../components/ReturnRefund/RefundMethodSelection";
-import RefundResult from "../../components/ReturnRefund/RefundResults";
-import StepIndicator from "../../components/ReturnRefund/StepIndicator";
+
+import ItemSelection from "../../components/ReturnAndRefund/ItemSelection";
+import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoSelction";
+import RefundResult from "../../components/ReturnAndRefund/RefundResults";
+import StepHeader from "../../components/ReturnAndRefund/StepHeader";
+import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
+//import ReturnStepContainer from "../../components/ReturnAndRefund/ReturnStepContainer";
 
 enum RefundStep {
   ITEM_SELECTION,
@@ -31,7 +27,7 @@ export interface InvoiceItem {
 }
 
 export interface Invoice {
-  invoiceNumber: String;
+  invoiceNumber: string;
   date: string;
   items: InvoiceItem[];
   totalAmount: number;
@@ -61,31 +57,24 @@ const ReturnRefundPage: React.FC = () => {
         );
         const data = response.data;
 
+        const items = data.items.map((item: any) => ({
+          id: item.id,
+          name: item.productName,
+          quantity: item.quantity,
+          price: item.price,
+          returnQuantity: 0,
+          refundAmount: 0,
+          total: item.quantity * item.price,
+        }));
+
         setInvoiceData({
           invoiceNumber: data.id,
           date: data.date,
           totalAmount: data.totalAmount,
-          items: data.items.map((item: any) => ({
-            id: item.id,
-            name: item.productName,
-            quantity: item.quantity,
-            price: item.price,
-            returnQuantity: 0,
-            refundAmount: 0,
-            total: item.quantity * item.price,
-          })),
+          items,
         });
-        setItemSelections(
-          data.items.map((item: any) => ({
-            id: item.id,
-            name: item.productName,
-            quantity: item.quantity,
-            price: item.price,
-            returnQuantity: 0,
-            refundAmount: 0,
-            total: item.quantity * item.price,
-          }))
-        );
+
+        setItemSelections(items);
       } catch (error) {
         console.error("Failed to fetch invoice", error);
         toast({
@@ -105,6 +94,7 @@ const ReturnRefundPage: React.FC = () => {
 
   const handleItemSelection = (items: InvoiceItem[]) => {
     setItemSelections(items);
+    setSelectedItems(items); // Important!
     const total = items.reduce((sum, item) => sum + item.refundAmount, 0);
     setTotalRefundAmount(total);
     setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);
@@ -129,7 +119,6 @@ const ReturnRefundPage: React.FC = () => {
         "http://localhost:8080/api/returns/refund",
         refundRequest
       );
-
       setRefundSuccess(true);
     } catch (error) {
       console.error("Refund processing failed", error);
@@ -139,7 +128,6 @@ const ReturnRefundPage: React.FC = () => {
     setCurrentStep(RefundStep.REFUND_RESULT);
   };
 
-  // Reset selections and go back to step 1
   const handleCancel = () => {
     setSelectedItems([]);
     setTotalRefundAmount(0);
@@ -147,12 +135,14 @@ const ReturnRefundPage: React.FC = () => {
   };
 
   if (!invoiceData) {
-    return <Spinner size="xl" />;
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
   }
 
   const stepLabels = ["Select Items", "Choose Refund Method", "Refund Result"];
-  const progressValue =
-    (currentStep / (Object.keys(RefundStep).length / 2 - 1)) * 100;
 
   const renderStep = () => {
     switch (currentStep) {
@@ -184,6 +174,7 @@ const ReturnRefundPage: React.FC = () => {
               window.location.href = "/";
             }}
             onPrint={() => window.print()}
+            onBack={() => setCurrentStep(RefundStep.REFUND_METHOD_SELECTION)}
           />
         );
       default:
@@ -191,28 +182,14 @@ const ReturnRefundPage: React.FC = () => {
     }
   };
 
-  /*const formatToRupees = (amount: number) => {
-    return Rs. ${amount.toLocaleString("si-LK")};
-  };*/
-
   return (
     <Box p={6}>
-      <VStack spacing={2} mb={6}>
-        <Text fontSize="lg" fontWeight="bold" color="gray.600">
-          Step {currentStep + 1} of 3: {stepLabels[currentStep]}
-        </Text>
-        <Progress
-          value={progressValue}
-          size="sm"
-          colorScheme="darkBlue"
-          width="100%"
-          borderRadius="md"
-        />
-        <Box p={6}>
-          <StepIndicator currentStep={currentStep} />
-          {renderStep()}
-        </Box>
-      </VStack>
+      <StepHeader
+        currentStep={currentStep}
+        stepLabels={stepLabels}
+        progressValue={0}
+      />
+      <StepWrapper currentStep={currentStep}>{renderStep()}</StepWrapper>
     </Box>
   );
 };

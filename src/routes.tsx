@@ -32,9 +32,9 @@ const router = createBrowserRouter([
             path: "customers",
             element: <DiscountsPage />,
             handle: {
-              showCustomerModal: true 
-            }
-          }
+              showCustomerModal: true,
+            },
+          },
         ],
       },
       { path: "employees", element: <EmployeesPage /> },

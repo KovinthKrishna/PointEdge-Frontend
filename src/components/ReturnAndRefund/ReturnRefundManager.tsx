@@ -9,20 +9,21 @@ const ReturnRefundManager: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const handleInvoiceSubmit = async (invNumber: string) => {
+  const handleInvoiceSubmit = async (invoiceNumber: string) => {
     try {
-      // Optionally validate invoice number via API
-      await axios.get(`http://localhost:8080/api/returns/invoice/${invNumber}`);
+      // Validate invoice existence before navigating
+      await axios.get(
+        `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
+      );
 
-      //Navigate to ReturnRefundPage with the invoice number as query param
-      navigate(`/return-refund?invoice=${invNumber}`);
-
+      // Navigate to ReturnRefundPage with invoice number as query param
+      navigate(`/return-refund?invoice=${invoiceNumber}`);
       onClose();
     } catch (error) {
       console.error("Error fetching invoice:", error);
       toast({
-        title: "Error",
-        description: "Invalid Invoice Number. Please try again!",
+        title: "Invoice Not Found",
+        description: "The invoice number you entered is invalid.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -38,13 +39,11 @@ const ReturnRefundManager: React.FC = () => {
         color="white"
         _hover={{ backgroundColor: "#6B46C1" }}
       />
-      {isOpen && (
-        <InvoiceModal
-          isOpen={isOpen}
-          onClose={onClose}
-          onSubmit={handleInvoiceSubmit}
-        />
-      )}
+      <InvoiceModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSubmit={handleInvoiceSubmit}
+      />
     </Box>
   );
 };
