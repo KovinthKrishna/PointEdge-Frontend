@@ -8,6 +8,10 @@ import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
 import SalesDashboard from "./pages/SalesDashboard";
 import Login from "./pages/Login";
+import ForgotPW from "./pages/ForgotPW";
+
+//temperory import to check these components
+import TestingPage from "./pages/TestingPage";
 
 const router = createBrowserRouter([
   {
@@ -23,13 +27,37 @@ const router = createBrowserRouter([
       { index: true, element: <AdminDashboard /> },
       { path: "analysis", element: <AnalysisPage /> },
       { path: "inventory", element: <InventoryPage /> },
-      { path: "discounts", element: <DiscountsPage /> },
+      {
+        path: "discounts",
+        children: [
+          { index: true, element: <DiscountsPage /> },
+          {
+            path: "customers",
+            element: <DiscountsPage />,
+            handle: {
+              showCustomerModal: true,
+            },
+          },
+        ],
+      },
       { path: "employees", element: <EmployeesPage /> },
     ],
   },
   {
     path: "login",
     element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "forgotpw",
+    element: <ForgotPW />,
+    errorElement: <ErrorPage />,
+  },
+
+  //temperory path adding to check the component
+  {
+    path: "test",
+    element: <TestingPage />,
     errorElement: <ErrorPage />,
   },
 ]);
