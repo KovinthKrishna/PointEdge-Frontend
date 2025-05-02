@@ -7,6 +7,8 @@ import EmployeesPage from "./pages/Admin/EmployeesPage";
 import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
 import Login from "./pages/Login";
+import ForgotPW from "./pages/ForgotPW";
+import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
 
@@ -41,13 +43,25 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "return-refund",
+    element: <ReturnRefundPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "login",
     element: <Login />,
     errorElement: <ErrorPage />,
   },
   {
-    path: "return-refund",
-    element: <ReturnRefundPage />,
+    path: "forgotpw",
+    element: <ForgotPW />,
+    errorElement: <ErrorPage />,
+  },
+
+  //temperory path adding to check the component
+  {
+    path: "test",
+    element: <TestingPage />,
     errorElement: <ErrorPage />,
   },
 ]);
