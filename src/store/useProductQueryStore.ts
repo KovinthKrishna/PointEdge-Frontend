@@ -4,6 +4,8 @@ interface ProductQuery {
   brandId?: number;
   categoryId?: number;
   timeFilter?: string;
+  search?: string;
+  page: number;
 }
 
 interface ProductQueryStore {
@@ -11,17 +13,22 @@ interface ProductQueryStore {
   setBrandId: (id?: number) => void;
   setCategoryId: (id?: number) => void;
   setTimeFilter: (id?: string) => void;
+  setSearch: (search?: string) => void;
+  setPage: (page: number) => void;
   resetAll: () => void;
 }
 
 const useProductQueryStore = create<ProductQueryStore>((set) => ({
-  productQuery: {},
+  productQuery: {
+    page: 0,
+  },
 
   setBrandId: (id) =>
     set((store) => ({
       productQuery: {
         ...store.productQuery,
         brandId: id,
+        page: 0,
       },
     })),
 
@@ -30,6 +37,7 @@ const useProductQueryStore = create<ProductQueryStore>((set) => ({
       productQuery: {
         ...store.productQuery,
         categoryId: id,
+        page: 0,
       },
     })),
 
@@ -38,12 +46,32 @@ const useProductQueryStore = create<ProductQueryStore>((set) => ({
       productQuery: {
         ...store.productQuery,
         timeFilter: id,
+        page: 0,
+      },
+    })),
+
+  setSearch: (search) =>
+    set((store) => ({
+      productQuery: {
+        ...store.productQuery,
+        search,
+        page: 0,
+      },
+    })),
+
+  setPage: (page) =>
+    set((store) => ({
+      productQuery: {
+        ...store.productQuery,
+        page,
       },
     })),
 
   resetAll: () =>
     set(() => ({
-      productQuery: {},
+      productQuery: {
+        page: 0,
+      },
     })),
 }));
 
