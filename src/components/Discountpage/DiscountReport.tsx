@@ -186,7 +186,6 @@ const BarChart = ({ data, colors }: { data: BarChartData[]; colors: string[] }) 
           <React.Fragment key={dayIndex}>
             {dataPoint.values.map((value, valueIndex) => {
               const barWidth = 3;
-              const groupWidth = dataPoint.values.length * (barWidth + 1);
               const x = dayIndex * 15 + valueIndex * (barWidth + 1);
               const height = (value / maxValue) * chartHeight;
               const y = chartHeight - height;
@@ -230,7 +229,7 @@ const DonutChart = ({ segments, centerText, centerTextColor = "#00669B" }: Donut
   const circumference = 2 * Math.PI * radius;
   let currentOffset = 0;
   
-  const chartSegments = segments.map((segment, index) => {
+  const chartSegments = segments.map((segment) => {
     const percentage = total > 0 ? segment.value / total : 0;
     const dashArray = percentage * circumference;
     const dashOffset = -currentOffset;
@@ -719,21 +718,24 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   };
 
   const createBarChartData = (period: string) => {
-    const totals = getOrderTotalsForPeriod(period);
-    const maxValue = Math.max(totals.totalLoyaltyAmount, totals.totalItemAmount, totals.totalCategoryAmount);
+    const totals = getDiscountTotalsForPeriod(period);
     
-    // Normalize values to be between 10-100 for the chart
-    const normalize = (value: number) => {
-      return 10 + (value / maxValue) * 90;
-    };
-
-    return Array(10).fill(null).map((_, i) => ({
-      values: [
-        normalize(totals.totalLoyaltyAmount * (0.7 + Math.random() * 0.3)),
-        normalize(totals.totalItemAmount * (0.7 + Math.random() * 0.3)),
-        normalize(totals.totalCategoryAmount * (0.7 + Math.random() * 0.3))
-      ]
-    }));
+    // Calculate the relative distribution of discount types
+    const total = totals.loyaltyDiscount + totals.itemDiscount + totals.categoryDiscount;
+    const loyaltyPercent = total > 0 ? totals.loyaltyDiscount / total : 0.33;
+    const itemPercent = total > 0 ? totals.itemDiscount / total : 0.33;
+    const categoryPercent = total > 0 ? totals.categoryDiscount / total : 0.34;
+    
+    // Create 7 bars showing different combinations of the discount types
+    return [
+      { values: [loyaltyPercent * 0.9, itemPercent * 0.05, categoryPercent * 0.05] },
+      { values: [loyaltyPercent * 0.6, itemPercent * 0.3, categoryPercent * 0.1] },
+      { values: [loyaltyPercent * 0.1, itemPercent * 0.8, categoryPercent * 0.1] },
+      { values: [loyaltyPercent * 0.4, itemPercent * 0.4, categoryPercent * 0.2] },
+      { values: [loyaltyPercent * 0.1, itemPercent * 0.2, categoryPercent * 0.7] },
+      { values: [loyaltyPercent * 0.3, itemPercent * 0.5, categoryPercent * 0.2] },
+      { values: [loyaltyPercent * 0.8, itemPercent * 0.1, categoryPercent * 0.1] }
+    ];
   };
   
   const getLoyaltySegments = (period: string) => {

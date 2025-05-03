@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { 
@@ -7,6 +8,7 @@ import {
   deleteDiscount
 } from '../../services/discountService';
 import Discount from '../../models/Discount';
+import './styles/DiscountTable.css';
 
 interface DiscountTableLoyaltyProps {
   onEditDiscount: (id: number) => void;
@@ -17,30 +19,20 @@ interface NotificationProps {
   type: 'success' | 'error';
 }
 
-// Notification Component
+// Modal Portal component - added from DiscountTableDashboard
+const ModalPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const modalRoot = document.getElementById('modal-root');
+  if (!modalRoot) return null;
+  return ReactDOM.createPortal(children, modalRoot);
+};
+
+// Notification Component - updated class names
 const Notification: React.FC<NotificationProps> = ({ message, type }) => {
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '20px',
-      left: '20px',
-      padding: '12px 24px',
-      borderRadius: '4px',
-      fontWeight: 500,
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
-      minWidth: '250px',
-      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
-      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
-      color: type === 'success' ? '#28A745' : '#DC3545',
-    }}>
+    <div className={`discount-notification discount-notification--${type}`}>
       {type === 'success' ? 
-        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
-        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+        <FaCheck className="discount-notification__icon" /> : 
+        <FaTimes className="discount-notification__icon" />
       }
       {message}
     </div>
@@ -51,63 +43,29 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [discountCount, setDiscountCount] = useState<number>(0);
+  const [, setDiscountCount] = useState<number>(0);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
   const [discountToDelete, setDiscountToDelete] = useState<number | undefined>(undefined);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [notification, setNotification] = useState<NotificationProps | null>(null);
 
-  // Table column widths
-  const columnWidths = {
-    name: '15%',
-    type: '18%',
-    startDate: '15%',
-    duration: '10%',
-    remaining: '12%',
-    status: '10%',
-    discount: '10%',
-    actions: '10%'
-  };
-
-  // Add animation styles
+  // Added modal-root creation - same as in DiscountTableDashboard
   useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes slideIn {
-        from {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      
-      @keyframes fadeOut {
-        from {
-          opacity: 1;
-        }
-        to {
-          opacity: 0;
-          visibility: hidden;
-        }
-      }
-    `;
-    document.head.appendChild(style);
+    const modalRoot = document.getElementById('modal-root');
+    if (!modalRoot) {
+      const newModalRoot = document.createElement('div');
+      newModalRoot.id = 'modal-root';
+      document.body.appendChild(newModalRoot);
+    }
     
     return () => {
-      document.head.removeChild(style);
+      const modalRoot = document.getElementById('modal-root');
+      if (modalRoot && modalRoot.parentNode) {
+        modalRoot.parentNode.removeChild(modalRoot);
+      }
     };
   }, []);
-
-  const showNotification = (message: string, type: 'success' | 'error') => {
-    setNotification({ message, type });
-    setTimeout(() => {
-      setNotification(null);
-    }, 3000);
-  };
 
   const loadData = async () => {
     try {
@@ -137,28 +95,14 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     return () => clearInterval(intervalId);
   }, []);
 
-  // Helper functions for status display
-  const getStatusDot = (status: boolean) => ({
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: status ? '#10B981' : '#EF4444',
-    display: 'inline-block',
-    marginRight: '6px',
-  });
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
 
-  const getStatusStyle = (status: boolean) => ({
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '6px 12px',
-    borderRadius: '20px',
-    backgroundColor: status ? '#ECFDF5' : '#FEF2F2',
-    color: status ? '#10B981' : '#EF4444',
-    fontSize: '12px',
-    fontWeight: '600',
-    whiteSpace: 'nowrap',
-  });
-
+  // Helper functions for status display - updated class names
   const formatDiscountValue = (discount: Discount) => {
     if (discount.percentage) {
       return `${discount.percentage}%`;
@@ -180,9 +124,9 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     }
   };
 
-  const getRemainingTimeStyle = (remainingTime: string) => {
+  const getRemainingTimeClass = (remainingTime: string) => {
     if (remainingTime === 'Expired') {
-      return { color: '#EF4444', fontWeight: 'bold' };
+      return 'discount-time-remaining--expired';
     }
     
     // Check if remaining time is less than (60 minutes)
@@ -194,10 +138,10 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     const totalMinutes = (days * 24 * 60) + (hours * 60) + minutes;
     
     if (totalMinutes < 60) {
-      return { color: '#F59E0B', fontWeight: 'bold' }; // Orange for less than 60 minutes
+      return 'discount-time-remaining--warning'; // Orange for less than 60 minutes
     }
     
-    return { color: '#3B82F6' }; // Blue for normal
+    return 'discount-time-remaining--normal'; // Blue for normal
   };
 
   const getRemainingTime = (startDate: string | undefined, duration: string) => {
@@ -277,10 +221,11 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     return 'Loyalty Discount';
   };
 
+  // Updated to use the same class names as DiscountTableDashboard
   const displayStatus = (isActive: boolean) => {
     return (
-      <div style={getStatusStyle(isActive)}>
-        <span style={getStatusDot(isActive)}></span>
+      <div className={`discount-status ${isActive ? 'discount-status--active' : 'discount-status--inactive'}`}>
+        <span className={`discount-status__dot ${isActive ? 'discount-status__dot--active' : 'discount-status__dot--inactive'}`}></span>
         {isActive ? 'Active' : 'Inactive'}
       </div>
     );
@@ -340,50 +285,9 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
     }
   };
 
-  // Modal styles
-  const overlayStyle: React.CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000
-  };
-
-  const modalStyle: React.CSSProperties = {
-    backgroundColor: 'white',
-    padding: '24px',
-    borderRadius: '12px',
-    maxWidth: '450px',
-    width: '100%',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-    position: 'relative'
-  };
-
-  // Table container styles
-  const tableContainerStyle: React.CSSProperties = {
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-    background: 'white',
-    overflow: 'hidden',
-    border: '1px solid #EAECF0',
-    marginBottom: '24px'
-  };
-
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '200px',
-        color: '#6B7280',
-        fontSize: '15px'
-      }}>
+      <div className="discount-loading">
         Loading loyalty discounts...
       </div>
     );
@@ -391,35 +295,8 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
 
   if (error) {
     return (
-      <div style={{ 
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '60px',
-        color: '#dc3545',
-        backgroundColor: '#fff1f0',
-        borderLeft: '4px solid #dc3545',
-        borderRadius: '4px',
-        padding: '0 20px',
-        margin: '20px auto',
-        maxWidth: '600px',
-        fontSize: '14px',
-        fontWeight: '500',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-        gap: '8px'
-      }}>
-        <div style={{
-          width: '18px',
-          height: '18px',
-          borderRadius: '50%',
-          backgroundColor: '#dc3545',
-          color: 'white',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '12px',
-          flexShrink: 0
-        }}>!</div>
+      <div className="discount-error">
+        <div className="discount-error__icon">!</div>
         {error}
       </div>
     );
@@ -427,219 +304,70 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
 
   return (
     <div>
-      <div style={tableContainerStyle}>
+      <div className="discount-table-container">
         <div style={{ overflowX: 'auto' }}>
           {discounts.length === 0 ? (
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '40px', 
-              color: '#6B7280',
-              fontSize: '15px'
-            }}>
+            <div className="discount-empty-state">
               No loyalty discounts found.
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, minWidth: '800px' }}>
+            <table className="discount-table">
               <thead>
-                <tr style={{ 
-                  background: '#F9FAFB', 
-                  textAlign: 'left',
-                  borderBottom: '1px solid #EAECF0'
-                }}>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.name,
-                    whiteSpace: 'nowrap'
-                  }}>Name</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.type,
-                    whiteSpace: 'nowrap'
-                  }}>Loyalty Tier</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.startDate,
-                    whiteSpace: 'nowrap'
-                  }}>Start Date & Time</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.duration,
-                    whiteSpace: 'nowrap'
-                  }}>Duration</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.remaining,
-                    whiteSpace: 'nowrap'
-                  }}>Time Left</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.status,
-                    whiteSpace: 'nowrap'
-                  }}>Status</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.discount,
-                    whiteSpace: 'nowrap'
-                  }}>Discount</th>
-                  <th style={{ 
-                    padding: '14px 16px', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold', 
-                    color: '#374151',
-                    width: columnWidths.actions,
-                    whiteSpace: 'nowrap'
-                  }}>Actions</th>
+                <tr className="discount-table__header">
+                  <th className="discount-table__header-cell col-name">Name</th>
+                  <th className="discount-table__header-cell col-type">Loyalty Tier</th>
+                  <th className="discount-table__header-cell col-start-date">Start Date & Time</th>
+                  <th className="discount-table__header-cell col-duration">Duration</th>
+                  <th className="discount-table__header-cell col-remaining">Time Left</th>
+                  <th className="discount-table__header-cell col-status">Status</th>
+                  <th className="discount-table__header-cell col-discount">Discount</th>
+                  <th className="discount-table__header-cell col-actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {discounts.map((discount, index) => {
                   const remainingTime = getRemainingTime(discount.startDate, discount.duration);
-                  const remainingStyle = getRemainingTimeStyle(remainingTime);
+                  const remainingClass = getRemainingTimeClass(remainingTime);
                   
                   return (
                     <tr 
                       key={discount.id} 
-                      style={{ 
-                        borderBottom: '1px solid #EAECF0',
-                        backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F9FAFB'
-                      }}
+                      className={`discount-table__row ${index % 2 === 0 ? 'discount-table__row--even' : 'discount-table__row--odd'}`}
                     >
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        fontWeight: '500', 
-                        color: '#111827',
-                        width: columnWidths.name,
-                        maxWidth: '0',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <td className="discount-table__cell discount-table__cell--name">
                         {discount.name}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        color: '#374151',
-                        width: columnWidths.type,
-                        maxWidth: '0',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <td className="discount-table__cell">
                         {getFormattedType(discount)}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        color: '#374151',
-                        width: columnWidths.startDate,
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <td className="discount-table__cell">
                         {formatDate(discount.startDate)}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        color: '#374151',
-                        width: columnWidths.duration,
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <td className="discount-table__cell">
                         {discount.duration}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        ...remainingStyle,
-                        width: columnWidths.remaining,
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <td className={`discount-table__cell discount-time-remaining ${remainingClass}`}>
                         {remainingTime}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        width: columnWidths.status
-                      }}>
+                      <td className="discount-table__cell">
                         {displayStatus(discount.isActive)}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px', 
-                        fontWeight: '500',
-                        width: columnWidths.discount,
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <td className="discount-table__cell discount-table__cell--discount">
                         {formatDiscountValue(discount)}
                       </td>
-                      <td style={{ 
-                        padding: '14px 16px', 
-                        fontSize: '14px',
-                        width: columnWidths.actions
-                      }}>
-                        <div style={{ 
-                          display: 'flex', 
-                          gap: '16px', 
-                          alignItems: 'center'
-                        }}>
+                      <td className="discount-table__cell">
+                        <div className="discount-actions">
                           <button
                             onClick={() => discount.id !== undefined && onEditDiscount(discount.id)}
                             title="Edit Discount"
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              padding: '6px',
-                              cursor: 'pointer',
-                              color: '#3B82F6',
-                              borderRadius: '4px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              transition: 'background-color 0.2s',
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            className="discount-action-button discount-action-button--edit"
                           >
                             <FaEdit size={16} />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(discount.id)}
                             title="Delete Discount"
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              padding: '6px',
-                              cursor: 'pointer',
-                              color: '#EF4444',
-                              borderRadius: '4px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              transition: 'background-color 0.2s',
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEF2F2'}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            className="discount-action-button discount-action-button--delete"
                           >
                             <FaTrash size={16} />
                           </button>
@@ -655,99 +383,48 @@ const DiscountTableLoyalty: React.FC<DiscountTableLoyaltyProps> = ({ onEditDisco
       </div>
 
       {showDeleteConfirmation && (
-        <div style={overlayStyle}>
-          <div style={modalStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete</h3>
-              <button 
-                onClick={handleCloseConfirmation}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  padding: '8px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#6B7280',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                <FaTimes size={16} />
-              </button>
-            </div>
-            <p style={{ 
-              margin: '0 0 20px 0', 
-              color: '#4B5563', 
-              fontSize: '14px', 
-              lineHeight: '1.5'
-            }}>
-              Are you sure you want to delete this loyalty discount? This action cannot be undone.
-            </p>
-            
-            {deleteError && (
-              <div style={{ 
-                backgroundColor: '#FEF2F2', 
-                color: '#B91C1C', 
-                padding: '12px', 
-                borderRadius: '6px', 
-                marginTop: '12px',
-                marginBottom: '16px',
-                fontSize: '14px',
-                border: '1px solid #FECACA'
-              }}>
-                {deleteError}
+        <ModalPortal>
+          <div className="discount-modal-overlay">
+            <div className="discount-modal">
+              <div className="discount-modal__header">
+                <h3 className="discount-modal__title">Confirm Delete</h3>
+                <button 
+                  onClick={handleCloseConfirmation}
+                  className="discount-modal__close-button"
+                >
+                  <FaTimes size={16} />
+                </button>
               </div>
-            )}
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-              <button
-                onClick={handleCloseConfirmation}
-                style={{
-                  padding: '8px 16px',
-                  background: '#F9FAFB',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                disabled={isDeleting}
-                style={{
-                  padding: '8px 16px',
-                  background: '#EF4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: isDeleting ? 'default' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  opacity: isDeleting ? 0.7 : 1,
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
-                onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </button>
+              <p className="discount-modal__message">
+                Are you sure you want to delete this loyalty discount? This action cannot be undone.
+              </p>
+              
+              {deleteError && (
+                <div className="discount-modal__error">
+                  {deleteError}
+                </div>
+              )}
+              
+              <div className="discount-modal__footer">
+                <button
+                  onClick={handleCloseConfirmation}
+                  className="discount-modal__cancel-button"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  disabled={isDeleting}
+                  className="discount-modal__confirm-button"
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
 
-      {/* Notification Component */}
       {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );
