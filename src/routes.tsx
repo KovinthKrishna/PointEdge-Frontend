@@ -15,8 +15,8 @@ import EmployeeDashboardPage from "./pages/EmployeeDashboardPage";
 import EmployeeAttendancePage from "./pages/EmployeeAttendancePage";
 import SalesTrackingPage from "./pages/SalesTrackingPage";
 import TopPerformersPage from "./pages/TopPerformersPage";
-import ShiftReportsPage from "./pages/ShiftReport1Page";
-import ShiftReport2Page from "./pages/ShiftReport2Page";
+import ShiftReport1Page from "./pages/ShiftReport1Page";
+
 
 const router = createBrowserRouter([
   {
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
           { path: "attendance", element: <EmployeeAttendancePage /> },
           { path: "sales-tracking", element: <SalesTrackingPage /> },
           { path: "top-performers", element: <TopPerformersPage /> },
-          { path: "shift-reports", element: <ShiftReportsPage /> },
+          { path: "shift-reports", element: <ShiftReport1Page /> },
         ],
       },
     ],
