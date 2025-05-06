@@ -1,5 +1,6 @@
 import { VStack } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Invoice, InvoiceItem } from "../../models/Invoice";
 import InvoiceSummary from "./InvoiceSummary";
 import ItemTable from "./ItemTable";
@@ -16,25 +17,31 @@ interface ItemSelectionProps {
 const ItemSelection: React.FC<ItemSelectionProps> = ({
   invoiceData,
   onSubmit,
-  onCancel,
   selectedItems,
 }) => {
   const [items, setItems] = useState<InvoiceItem[]>(selectedItems);
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     const filtered = items.filter((item) => item.returnQuantity > 0);
     onSubmit(filtered);
   };
 
+  const handleCancel = () => {
+    navigate("/");
+  };
+
   return (
     <VStack align="stretch" spacing={6}>
-      <InvoiceSummary invoice={invoiceData} /> {/* Show invoice details */}
+      <InvoiceSummary invoice={invoiceData} />
       <ItemTable items={items} onItemChange={setItems} />
       <RefundSummary items={items} />
       <ActionButtons
         onSubmit={handleSubmit}
-        onCancel={onCancel}
+        onCancel={handleCancel}
         disabled={items.every((i) => i.returnQuantity === 0)}
+        text1="Cancel"
+        text2="Next"
       />
     </VStack>
   );

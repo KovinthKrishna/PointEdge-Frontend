@@ -94,7 +94,7 @@ const ReturnRefundPage: React.FC = () => {
 
   const handleItemSelection = (items: InvoiceItem[]) => {
     setItemSelections(items);
-    setSelectedItems(items); // Important!
+    setSelectedItems(items);
     const total = items.reduce((sum, item) => sum + item.refundAmount, 0);
     setTotalRefundAmount(total);
     setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Box, VStack, Text, Button, useToast, HStack } from "@chakra-ui/react";
+import { Box, VStack, Text, useToast, HStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { CreditCard, Wallet } from "lucide-react";
+import ActionButtons from "./ActionButtons";
 
 interface RefundMethodSelectionProps {
   totalAmount: number;
@@ -93,18 +94,13 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
       </HStack>
 
       <HStack spacing={4} pt={4}>
-        <Button
-          colorScheme="blue"
-          bg="darkBlue"
-          color="white"
-          isDisabled={!selectedMethod}
-          onClick={handleConfirm}
-        >
-          Confirm
-        </Button>
-        <Button variant="ghost" color="red.500" onClick={onCancel}>
-          Cancel
-        </Button>
+        <ActionButtons
+          onSubmit={handleConfirm}
+          onCancel={onCancel}
+          disabled={!selectedMethod}
+          text1="Cancel"
+          text2="Confirm"
+        />
       </HStack>
     </VStack>
   );

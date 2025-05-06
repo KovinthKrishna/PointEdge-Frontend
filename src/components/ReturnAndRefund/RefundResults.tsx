@@ -72,10 +72,24 @@ const RefundResult: React.FC<RefundResultProps> = ({
               ⬅ Back
             </Button>
           )}
-          <Button colorScheme="blue" bg="darkBlue" onClick={onPrint}>
+          <Button
+            colorScheme="blue"
+            bg="darkBlue"
+            _hover={{ bg: "blue" }}
+            onClick={onPrint}
+          >
             Print Receipt
           </Button>
-          <Button variant="outline" colorScheme="blue" onClick={onClose}>
+          <Button
+            variant="outline"
+            colorScheme="blue"
+            onClick={onClose}
+            _hover={{
+              bg: "red",
+              color: "white",
+              borderColor: "red",
+            }}
+          >
             Close
           </Button>
         </HStack>

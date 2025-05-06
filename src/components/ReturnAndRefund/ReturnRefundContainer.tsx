@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  Spinner,
-  Box,
-  useToast,
-  VStack,
-  Text,
-  Progress,
-} from "@chakra-ui/react";
-import axios from "axios";
+import { Spinner, Box, VStack } from "@chakra-ui/react";
 
 import StepHeader from "./StepHeader";
 import StepIndicator from "./StepIndicator";
@@ -17,6 +9,7 @@ import { useInvoiceData } from "../../hooks/useInvoiceData";
 import { useItemSelection } from "../../hooks/useItemSelection";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
 import { useReturnFlowSteps } from "../../hooks/UseReturnFlowSteps";
+import { InvoiceItem } from "../../models/Invoice";
 
 export enum RefundStep {
   ITEM_SELECTION,
@@ -24,29 +17,12 @@ export enum RefundStep {
   REFUND_RESULT,
 }
 
-export interface InvoiceItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  returnQuantity: number;
-  refundAmount: number;
-  total: number;
-}
-
-export interface Invoice {
-  invoiceNumber: string;
-  date: string;
-  items: InvoiceItem[];
-  totalAmount: number;
-}
-
 const ReturnRefundContainer: React.FC = () => {
   const [searchParams] = useSearchParams();
   const invoiceNumber = searchParams.get("invoice");
 
   const { invoiceData } = useInvoiceData(invoiceNumber);
-  const { currentStep, goToNext, goToPrev, reset, stepLabels, progressValue } =
+  const { currentStep, goToNext, reset, stepLabels, progressValue } =
     useReturnFlowSteps();
 
   const { selectedItems, updateSelectedItems, totalRefundAmount } =
@@ -54,7 +30,7 @@ const ReturnRefundContainer: React.FC = () => {
 
   const [refundSuccess, setRefundSuccess] = useState(false);
 
-  const { processRefund, isProcessing } = useRefundProcessor({
+  const { processRefund } = useRefundProcessor({
     invoiceNumber: invoiceNumber!,
     selectedItems,
     totalAmount: totalRefundAmount,
