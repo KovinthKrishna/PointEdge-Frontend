@@ -38,6 +38,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
         status: "error",
         duration: 3000,
         isClosable: true,
+        variant: "solid",
       });
       return;
     }
@@ -99,7 +100,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
             _hover={{
               bg: "red",
               color: "white",
-              borderColor: "darkBlue",
+              borderColor: "red",
             }}
           >
             Cancel

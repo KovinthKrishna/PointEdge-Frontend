@@ -5,7 +5,7 @@ import BrandFilter from "../BrandFilter";
 import CategoryFilter from "../CategoryFilter";
 import ProfileButton from "../ProfileButton";
 import SearchBox from "../SearchBox";
-import ReturnRefundManager from "../ReturnRefund/ReturnRefundManager";
+import ReturnRefundManager from "../ReturnAndRefund/ReturnRefundManager";
 
 const ProductsPanelTop = () => {
   return (
