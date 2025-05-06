@@ -9,10 +9,10 @@ import SalesStatCard from "./SalesStatCard";
 const SalesStats = () => {
   const { data } = useProductOrderQuantities();
   const totalOrders = data
-    ? data.reduce((sum, item) => sum + item.totalQuantity, 0)
+    ? data.content.reduce((sum, item) => sum + item.totalQuantity, 0)
     : 0;
   const totalRevenue = data
-    ? data.reduce(
+    ? data.content.reduce(
         (sum, item) => sum + item.totalQuantity * item.pricePerUnit,
         0
       )

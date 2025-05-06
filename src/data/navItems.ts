@@ -5,10 +5,11 @@ import { IoIosPeople } from "react-icons/io";
 import { IoGiftSharp } from "react-icons/io5";
 import { TbReportAnalytics } from "react-icons/tb";
 
-export interface NavItem {
+interface NavItem {
   label: string;
   url: string;
   icon: IconType;
+  isSearchable: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -16,26 +17,31 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     url: "",
     icon: HiOutlineHome,
+    isSearchable: true,
   },
   {
     label: "Analysis",
     url: "analysis",
     icon: TbReportAnalytics,
+    isSearchable: false,
   },
   {
     label: "Inventory",
     url: "inventory",
     icon: FaTruckFast,
+    isSearchable: true,
   },
   {
     label: "Discounts",
     url: "discounts",
     icon: IoGiftSharp,
+    isSearchable: false,
   },
   {
     label: "Employees",
     url: "employees",
     icon: IoIosPeople,
+    isSearchable: false,
   },
 ];
 
