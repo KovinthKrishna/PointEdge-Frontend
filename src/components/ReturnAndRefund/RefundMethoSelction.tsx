@@ -10,7 +10,7 @@ interface RefundMethodSelectionProps {
   onCancel: () => void;
 }
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   totalAmount,
@@ -55,7 +55,7 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   return (
     <VStack spacing={6}>
       <Text fontSize="xl" fontWeight="bold" color="darkBlue">
-        Total Refund Amount: Rs {totalAmount}
+        Total Refund Amount: Rs {totalAmount.toFixed(2)}
       </Text>
 
       <Text fontSize="md" color="gray.600">

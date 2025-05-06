@@ -17,7 +17,7 @@ interface RefundResultProps {
   invoiceNumber: string;
   onClose: () => void;
   onPrint: () => void;
-  onBack?: () => void; // Optional, only needed for failure case
+  onBack?: () => void;
 }
 
 const RefundResult: React.FC<RefundResultProps> = ({

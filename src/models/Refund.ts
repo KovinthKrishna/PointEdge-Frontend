@@ -1,18 +1,13 @@
-export interface RefundItem {
-    id: string;
-    returnQuantity: number;
-    refundAmount: number;
-  }
-  
-  export interface RefundRequest {
-    invoiceNumber: string;
-    items: {
-      id: string;
-      returnQuantity: number;
-      refundAmount: number;
-    }[];
-    refundMethod: string;
-    totalAmount: number;
-  }
-  
-  
+export interface ReturnedItem {
+  itemId: string;
+  quantity: number;
+  refundAmount: number;
+  reason: string;
+}
+
+export interface RefundRequest {
+  invoiceNumber: string;
+  items: ReturnedItem[];
+  refundMethod: string;
+  totalAmount: number;
+}

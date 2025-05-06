@@ -5,9 +5,22 @@ import ReturnItemRow from "./ReturnItemRow";
 interface ItemTableProps {
   items: InvoiceItem[];
   onItemChange: (updatedItems: InvoiceItem[]) => void;
+  header1: string;
+  header2: string;
+  header3: string;
+  header4: string;
+  header5: string;
 }
 
-const ItemTable: React.FC<ItemTableProps> = ({ items, onItemChange }) => {
+const ItemTable: React.FC<ItemTableProps> = ({
+  items,
+  onItemChange,
+  header1,
+  header2,
+  header3,
+  header4,
+  header5,
+}) => {
   const handleChange = (index: number, updatedItem: InvoiceItem) => {
     const updatedItems = [...items];
     updatedItems[index] = updatedItem;
@@ -18,11 +31,11 @@ const ItemTable: React.FC<ItemTableProps> = ({ items, onItemChange }) => {
     <Table variant="striped" colorScheme="blue">
       <Thead bg="lightBlue">
         <Tr>
-          <Th color="white">Item</Th>
-          <Th color="white">Qty Purchased</Th>
-          <Th color="white">Qty to Return</Th>
-          <Th color="white">Unit Price</Th>
-          <Th color="white">Refund</Th>
+          <Th color="white">{header1}</Th>
+          <Th color="white">{header2}</Th>
+          <Th color="white">{header3}</Th>
+          <Th color="white">{header4}</Th>
+          <Th color="white">{header5}</Th>
         </Tr>
       </Thead>
       <Tbody>
