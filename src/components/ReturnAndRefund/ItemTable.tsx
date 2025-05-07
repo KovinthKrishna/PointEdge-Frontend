@@ -10,6 +10,7 @@ interface ItemTableProps {
   header3: string;
   header4: string;
   header5: string;
+  header6: string;
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({
@@ -20,6 +21,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   header3,
   header4,
   header5,
+  header6,
 }) => {
   const handleChange = (index: number, updatedItem: InvoiceItem) => {
     const updatedItems = [...items];
@@ -36,6 +38,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
           <Th color="white">{header3}</Th>
           <Th color="white">{header4}</Th>
           <Th color="white">{header5}</Th>
+          <Th color="white">{header6}</Th>
         </Tr>
       </Thead>
       <Tbody>

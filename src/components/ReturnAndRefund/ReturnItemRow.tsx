@@ -63,6 +63,13 @@ const ReturnItemRow: React.FC<RowProps> = ({ item, onChange }) => {
           onChange={(e) => onChange({ ...item, reason: e.target.value })}
           placeholder="Reason"
           size="sm"
+          resize="none"
+          bg="white"
+          width="160px"
+          height="32px"
+          fontSize="sm"
+          borderColor="gray.200"
+          _focus={{ borderColor: "blue.400", boxShadow: "outline" }}
         />
       </Td>
     </Tr>

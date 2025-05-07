@@ -42,6 +42,7 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
         header3="Qty to Return"
         header4="Unit Price"
         header5="Refund"
+        header6="Reason"
       />
       <RefundSummary items={items} />
       <ActionButtons

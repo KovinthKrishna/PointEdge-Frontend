@@ -9,28 +9,12 @@ import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
 //import ReturnStepContainer from "../../components/ReturnAndRefund/ReturnStepContainer";
+import { InvoiceItem, Invoice } from "../../models/Invoice";
 
 enum RefundStep {
   ITEM_SELECTION,
   REFUND_METHOD_SELECTION,
   REFUND_RESULT,
-}
-
-export interface InvoiceItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  returnQuantity: number;
-  refundAmount: number;
-  total: number;
-}
-
-export interface Invoice {
-  invoiceNumber: string;
-  date: string;
-  items: InvoiceItem[];
-  totalAmount: number;
 }
 
 const ReturnRefundPage: React.FC = () => {
