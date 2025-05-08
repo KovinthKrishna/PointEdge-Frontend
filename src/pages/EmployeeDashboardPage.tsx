@@ -11,8 +11,11 @@ import {
   StatArrow,
   Select,
   Badge,
+  ChakraProvider,
   Image,
 } from "@chakra-ui/react";
+import employeeIcon from "../assets/employee-icon.png";
+import clockIcon from "../assets/clock-icon.png";
 
 // Sales Chart Component
 const SalesChart: React.FC = () => {
@@ -81,7 +84,7 @@ const SalesChart: React.FC = () => {
             h="100%"
             flex={1}
           >
-            <Flex w="100%" justify="center" gap={1}>
+            <Flex w="100%" justify="center" gap={1} align="flex-end">
               <Box 
                 w="40%" 
                 h={getBarHeight(data.primary)} 
@@ -105,15 +108,30 @@ const SalesChart: React.FC = () => {
 
 const EmployeeDashboardPage: React.FC = () => {
   return (
+    
+    <ChakraProvider >
     <Box>
       {/* Stats Cards */}
       <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={6}>
+      <StatCard
+          icon={
+            <Image
+              src="https://th.bing.com/th/id/R.12d1ca1ed26243d7628fdd4e1d4ef181?rik=VoTkKyaHH27vmg&riu=http%3a%2f%2fmedia-s3-us-east-1.ceros.com%2fgartner%2fimages%2f2016%2f09%2f20%2fab06779a075d7e1e3ed3e114355a3fee%2ficon2-individual-02.png&ehk=7r%2fpOA%2fTuq1JD8GyXcU7Uw8FZxdylRicmz0dHcBO1nM%3d&risl=&pid=ImgRaw&r=0"
+              alt="Employee Icon"
+              boxSize="36px"
+            />
+          }
+          title="No. of Employees"
+          value="1,256"
+          change={10}
+          chartData={[18, 25, 22, 20]}
+        />
         <StatCard
           icon={
             <Image
               src="https://icon-library.com/images/costly-icon/costly-icon-26.jpg"
               alt="Dollar Icon"
-              boxSize="40px"
+              boxSize="36px"
             />
           }
           title="Total Sales"
@@ -134,19 +152,7 @@ const EmployeeDashboardPage: React.FC = () => {
           change={10}
           chartData={[15, 18, 25, 20]}
         />
-        <StatCard
-          icon={
-            <Image
-              src="https://th.bing.com/th/id/R.12d1ca1ed26243d7628fdd4e1d4ef181?rik=VoTkKyaHH27vmg&riu=http%3a%2f%2fmedia-s3-us-east-1.ceros.com%2fgartner%2fimages%2f2016%2f09%2f20%2fab06779a075d7e1e3ed3e114355a3fee%2ficon2-individual-02.png&ehk=7r%2fpOA%2fTuq1JD8GyXcU7Uw8FZxdylRicmz0dHcBO1nM%3d&risl=&pid=ImgRaw&r=0"
-              alt="Employee Icon"
-              boxSize="36px"
-            />
-          }
-          title="No. of Employees"
-          value="1,256"
-          change={10}
-          chartData={[18, 25, 22, 20]}
-        />
+        
       </Grid>
 
       {/* Charts Section */}
@@ -154,8 +160,9 @@ const EmployeeDashboardPage: React.FC = () => {
         {/* Main Chart */}
         <GridItem bg="white" borderRadius="md" p={4} border="1px" borderColor="blue.100">
           <Flex justify="space-between" mb={4}>
-            <Text fontWeight="medium">Overall sales</Text>
-            <Select size="sm" w="120px" defaultValue="2023">
+            <Text fontWeight="medium">Employee Productivity</Text>
+            <Select size="sm" w="120px" defaultValue="2024">
+             <option value="2023">2024</option>
               <option value="2023">2023</option>
               <option value="2022">2022</option>
             </Select>
@@ -165,20 +172,19 @@ const EmployeeDashboardPage: React.FC = () => {
           <SalesChart />
           
           {/* Customer Stats */}
-          <Flex mt={6} justify="space-between">
+          <Flex mt={16} justify="space-between">
             <Flex align="center">
-              <Box bg="blue.100" p={7} borderRadius="md" mr={2}>
+              <Box bg="blue.100" p={2} borderRadius="md" mr={3}>
                 <Image
-                  src="https://th.bing.com/th/id/R.12d1ca1ed26243d7628fdd4e1d4ef181?rik=VoTkKyaHH27vmg&riu=http%3a%2f%2fmedia-s3-us-east-1.ceros.com%2fgartner%2fimages%2f2016%2f09%2f20%2fab06779a075d7e1e3ed3e114355a3fee%2ficon2-individual-02.png&ehk=7r%2fpOA%2fTuq1JD8GyXcU7Uw8FZxdylRicmz0dHcBO1nM%3d&risl=&pid=ImgRaw&r=0"
-                  alt="Customer Icon"
+                  src={clockIcon}
                   boxSize="40px"
                 />
               </Box>
               <Box>
                 <Text fontSize="sm" color="gray.500">
-                  Total Customers
+                  Total Hours Worked
                 </Text>
-                <Text fontWeight="bold">10,528</Text>
+                <Text fontWeight="bold">10,52 h</Text>
               </Box>
             </Flex>
 
@@ -189,19 +195,19 @@ const EmployeeDashboardPage: React.FC = () => {
             </Flex>
 
             <Flex align="center">
-              <Box bg="blue.100" p={2} borderRadius="md" mr={4}>
+              <Box bg="blue.100" p={2} borderRadius="md" mr={3}>
                 <Image
-                  src="https://petportraits.com/cdn/shop/files/gempages_473363655757399046-50ce5062-b2cf-48c4-a464-46cbe00feb57.png?v=5421772371716083385"
+                  src={employeeIcon}
                   alt="Product Icon"
                   boxSize="40px"
                 />
               </Box>
               <Box>
                 <Text fontSize="sm" color="gray.500">
-                  Bestsellers
+                  Total Employees
                 </Text>
                 <Text fontWeight="bold" fontSize="sm">
-                  Asus ROG Strix Scope...
+                  250
                 </Text>
               </Box>
             </Flex>
@@ -217,74 +223,53 @@ const EmployeeDashboardPage: React.FC = () => {
         {/* Side Charts */}
         <GridItem>
           <Flex direction="column" gap={6}>
-            {/* Sales Report */}
+            {/* attendance Report */}
             <Box bg="white" borderRadius="md" p={4} border="1px" borderColor="gray.200">
-              <Flex justify="space-between" mb={4}>
-                <Text fontWeight="medium">Sales Report</Text>
-                <Select size="sm" w="100px" defaultValue="month">
-                  <option value="month">Month</option>
-                  <option value="week">Week</option>
-                  <option value="day">Day</option>
-                </Select>
-              </Flex>
-              <Box h="150px" position="relative" display="flex" justifyContent="center">
-                {/* Simplified donut chart */}
-                <Box position="relative" w="150px" h="150px">
-                  <Box as="svg" viewBox="0 0 100 100" w="100%" h="100%">
-                    <Box
-                      as="circle"
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="none"
-                      stroke="#3182CE"
-                      strokeWidth="20"
-                      strokeDasharray="188.5 251.3"
-                      transform="rotate(-90 50 50)"
-                    />
-                    <Box
-                      as="circle"
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="none"
-                      stroke="#2C5282"
-                      strokeWidth="20"
-                      strokeDasharray="75.4 251.3"
-                      strokeDashoffset="-188.5"
-                      transform="rotate(-90 50 50)"
-                    />
-                    <Box
-                      as="circle"
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="none"
-                      stroke="#E2E8F0"
-                      strokeWidth="20"
-                      strokeDasharray="37.7 251.3"
-                      strokeDashoffset="-263.9"
-                      transform="rotate(-90 50 50)"
-                    />
-                    <Box as="circle" cx="50" cy="50" r="20" fill="white" />
-                  </Box>
-                </Box>
-              </Box>
-              <Flex justify="center" mt={4} fontSize="xs">
-                <Flex align="center" mr={4}>
-                  <Box w="8px" h="8px" borderRadius="full" bg="blue.400" mr={2} />
-                  <Text>Google</Text>
-                </Flex>
-                <Flex align="center" mr={4}>
-                  <Box w="8px" h="8px" borderRadius="full" bg="blue.700" mr={2} />
-                  <Text>Personal</Text>
-                </Flex>
-                <Flex align="center">
-                  <Box w="8px" h="8px" borderRadius="full" bg="gray.200" mr={2} />
-                  <Text>Others</Text>
-                </Flex>
-              </Flex>
-            </Box>
+         <Flex justify="space-between" mb={4}>
+         <Text fontWeight="medium">Attendance Report</Text>
+       </Flex>
+       <Box h="150px" position="relative" display="flex" justifyContent="center">
+        {/* Simplified donut chart */}
+       <Box position="relative" w="150px" h="150px">
+        <Box as="svg" viewBox="0 0 100 100" w="100%" h="100%">
+        <Box
+          as="circle"
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="#2C5282"
+          strokeWidth="20"
+          strokeDasharray="188.5 251.3"
+          transform="rotate(-90 50 50)"
+         />
+        <Box
+          as="circle"
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="#B8B8B8"
+          strokeWidth="20"
+          strokeDasharray="70.7 251.3"
+          strokeDashoffset="-188.5"
+          transform="rotate(-90 50 50)"
+         />
+         <Box as="circle" cx="50" cy="50" r="20" fill="white" />
+       </Box>
+     </Box>
+    </Box>
+      <Flex justify="center" mt={4} fontSize="xs">
+        <Flex align="center" mr={4}>
+             <Box w="10px" h="10px" borderRadius="full" bg="#2C5282" mr={2} />
+              <Text>Active</Text>
+            </Flex>
+            <Flex align="center" mr={4}>
+             <Box w="10px" h="10px" borderRadius="full" bg="#B8B8B8" mr={2} />
+              <Text>Leave</Text>
+            </Flex>
+         </Flex>
+       </Box>
 
             {/* Weekly Transaction */}
             <Box bg="white" borderRadius="md" p={4} border="1px" borderColor="gray.200">
@@ -318,7 +303,9 @@ const EmployeeDashboardPage: React.FC = () => {
         </GridItem>
       </Grid>
     </Box>
+    </ChakraProvider>
   );
+  
 };
 
 // Stat Card Component
@@ -361,6 +348,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
       </Box>
     </Box>
   );
+  
 };
 
 export default EmployeeDashboardPage;

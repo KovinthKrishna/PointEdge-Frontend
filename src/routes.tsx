@@ -13,14 +13,18 @@ import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
 import EmployeeDashboardPage from "./pages/EmployeeDashboardPage";
 import EmployeeAttendancePage from "./pages/EmployeeAttendancePage";
-import SalesTrackingPage from "./pages/SalesTrackingPage";
 import TopPerformersPage from "./pages/TopPerformersPage";
 import ShiftReport1Page from "./pages/ShiftReport1Page";
 
 
 const router = createBrowserRouter([
   {
-    index: true,
+    path: "/",
+    element: <Navigate to="/admin/employees" replace />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/sales",
     element: <SalesDashboard />,
     errorElement: <ErrorPage />,
   },
@@ -51,7 +55,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <EmployeeDashboardPage /> },
           { path: "attendance", element: <EmployeeAttendancePage /> },
-          { path: "sales-tracking", element: <SalesTrackingPage /> },
           { path: "top-performers", element: <TopPerformersPage /> },
           { path: "shift-reports", element: <ShiftReport1Page /> },
         ],

@@ -15,10 +15,10 @@ import {
   Tr,
   Th,
   Td,
+  ChakraProvider,
   Image,
   Button,
   Grid,
-  Avatar,
   Stat,
   StatNumber,
   StatHelpText,
@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react"
 import { SearchIcon } from "@chakra-ui/icons"
 import ShiftReport2Page from "./ShiftReport2Page"
+import clockIcon from "../assets/clock-icon.png";
 
 // Sample data for the shift report
 const employeeData = [
@@ -80,68 +81,6 @@ const employeeData = [
   },
 ]
 
-// Sample shift data for each employee
-const shiftData = {
-  "2377373": [
-    {
-      shiftType: "Morning Shift",
-      startTime: "08:30:00",
-      endTime: "12:30:00",
-      break: "00:30:00",
-      otHours: "02:00:00",
-      location: "Store 1",
-      totalHours: "05:30:00",
-      orders: "125 orders",
-    },
-    {
-      shiftType: "Evening Shift",
-      startTime: "15:00:00",
-      endTime: "18:00:00",
-      break: "00:10:00",
-      otHours: "02:00:00",
-      location: "Store 2",
-      totalHours: "06:00:00",
-      orders: "98 orders",
-    },
-  ],
-  "2236767": [
-    {
-      shiftType: "Morning Shift",
-      startTime: "07:00:00",
-      endTime: "11:30:00",
-      break: "00:20:00",
-      otHours: "01:00:00",
-      location: "Store 1",
-      totalHours: "04:30:00",
-      orders: "110 orders",
-    },
-  ],
-  "2345657": [
-    {
-      shiftType: "Evening Shift",
-      startTime: "14:00:00",
-      endTime: "20:00:00",
-      break: "00:45:00",
-      otHours: "01:30:00",
-      location: "Store 2",
-      totalHours: "06:45:00",
-      orders: "145 orders",
-    },
-  ],
-  "2435412": [
-    {
-      shiftType: "Night Shift",
-      startTime: "20:00:00",
-      endTime: "02:00:00",
-      break: "00:30:00",
-      otHours: "00:00:00",
-      location: "Store 3",
-      totalHours: "06:30:00",
-      orders: "78 orders",
-    },
-  ],
-}
-
 const ShiftReport1Page: React.FC = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null)
   const [showDetailedReport, setShowDetailedReport] = useState<boolean>(false)
@@ -163,6 +102,7 @@ const ShiftReport1Page: React.FC = () => {
   }
 
   return (
+    <ChakraProvider >
     <Box p={4} bg="gray.50">
       {/* Stats Cards */}
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6} mb={6}>
@@ -181,7 +121,7 @@ const ShiftReport1Page: React.FC = () => {
         <StatCard
           icon={
             <Image
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpb3zBLliuak_q9oF76Qkrwalgtmnsi35HBQ&s"
+              src={clockIcon}
               alt="Time Icon"
               boxSize="36px"
             />
@@ -199,6 +139,8 @@ const ShiftReport1Page: React.FC = () => {
           change={10}
         />
       </Grid>
+
+    
 
       <Flex p={4} bg={bgCard} borderBottomWidth="1px" flexWrap="wrap" gap={2} alignItems="center">
 
@@ -226,40 +168,40 @@ const ShiftReport1Page: React.FC = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {employeeData.map((employee, index) => (
-              <Tr key={`${employee.id}-${index}`}>
-                <Td>{employee.id}</Td>
-                <Td>
-                  <Flex align="center">
-                    <Avatar size="sm" name={employee.name} src={employee.avatar} mr={3} />
-                    <Text fontWeight="medium">{employee.name}</Text>
-                  </Flex>
-                </Td>
-                <Td>{employee.role}</Td>
-                <Td>{employee.location}</Td>
-                <Td>
-                  <Button
-                    size="sm"
-                    _hover={{
-                      bg: "#00253a",
-                      color: "white",
-                      transform: "scale(1.05)",
-                      boxShadow: "md",
-                    }}
-                    transition="all 0.2s"
-                    borderRadius="full"
-                    px={6}
-                    onClick={() => handleViewClick(employee)}
-                  >
-                    View
-                  </Button>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
+             {employeeData.map((employee, index) => (
+            <Tr key={`${employee.id}-${index}`}>
+              <Td>{employee.id}</Td>
+              <Td>
+              {/* Removed Avatar, keeping only the name with consistent styling */}
+               <Text fontWeight="medium">{employee.name}</Text>
+              </Td>
+              <Td>{employee.role}</Td>
+              <Td>{employee.location}</Td>
+              <Td>
+               <Button
+                  size="sm"
+                  _hover={{
+                  bg: "#00253a",
+                  color: "white",
+                  transform: "scale(1.05)",
+                  boxShadow: "md",
+               }}
+               transition="all 0.2s"
+               borderRadius="full"
+               px={6}
+               onClick={() => handleViewClick(employee)}
+              >
+               View
+             </Button>
+           </Td>
+         </Tr>
+         ))}
+        </Tbody>
         </Table>
       </Box>
-    </Box>
+      </Box>
+      </ChakraProvider>
+    
   )
 }
 

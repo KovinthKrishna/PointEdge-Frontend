@@ -10,9 +10,8 @@ const EmployeesPage = () => {
   const getActiveTabIndex = () => {
     const path = location.pathname;
     if (path.includes("/attendance")) return 1;
-    if (path.includes("/sales-tracking")) return 2;
-    if (path.includes("/top-performers")) return 3;
-    if (path.includes("/shift-reports")) return 4;
+    if (path.includes("/top-performers")) return 2;
+    if (path.includes("/shift-reports")) return 3;
     return 0;
   };
   
@@ -21,7 +20,6 @@ const EmployeesPage = () => {
     const routes = [
       "/admin/employees",
       "/admin/employees/attendance",
-      "/admin/employees/sales-tracking",
       "/admin/employees/top-performers",
       "/admin/employees/shift-reports",
     ];
@@ -79,7 +77,6 @@ const EmployeesPage = () => {
         >
           <Tab>Dashboard</Tab>
           <Tab>Employee Attendance</Tab>
-          <Tab>Sales Tracking</Tab>
           <Tab>Top Performers</Tab>
           <Tab>Shift Reports</Tab>
         </TabList>

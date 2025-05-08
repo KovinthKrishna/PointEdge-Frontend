@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex, Grid, Heading, Image, Text, useColorModeValue } from "@chakra-ui/react"
+import { Box, Button, Container, Flex, Grid, Heading, Image,ChakraProvider, Text, useColorModeValue } from "@chakra-ui/react"
 import { ArrowBackIcon } from "@chakra-ui/icons"
 
 // Define types for props
@@ -89,6 +89,7 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
   const shifts = getShiftData(employee?.id)
 
   return (
+    <ChakraProvider>
     <Box minH="100vh" bg="gray.50">
       {/* Search Bar */}
       <Flex p={4} bg={bgCard} borderBottomWidth="1px" justifyContent="flex-end" alignItems="center">
@@ -361,5 +362,6 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
         </Box>
       </Container>
     </Box>
+    </ChakraProvider>
   )
 }

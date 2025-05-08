@@ -90,47 +90,56 @@ const EmployeeAttendancePage = () => {
   };
   
   // Handle search
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const searchData = {
-        date: formatDateForBackend(date),
-        searchQuery: searchQuery
-      };
-      
-      const searchResults = await searchAttendances(searchData);
-      
-      const formattedData = searchResults.map((att: AttendanceDTO) => ({
-        id: att.employeeId,
-        name: att.employeeName,
-        role: att.role,
-        clockIn: att.clockIn || '-',
-        clockOut: att.clockOut || '-',
-        totalHours: att.totalHours || '0:00:00',
-        otHours: att.otHours || '0:00:00',
-        status: att.status,
-        avatar: att.avatar,
-        date: att.date
-      }));
-      
-      setEmployeeAttendances(formattedData);
-    } catch (error) {
-      console.error('Error searching:', error);
-      toast({
-        title: 'Search failed',
-        description: 'Could not search attendance records. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Handle search
+const handleSearch = async () => {
+  setLoading(true);
+  try {
+    // Check if searchQuery is a number (employee ID)
+    const isNumeric = /^\d+$/.test(searchQuery);
+    
+    const searchData = {
+      date: formatDateForBackend(date),
+      searchQuery: isNumeric ? '' : searchQuery,
+      employeeId: isNumeric ? parseInt(searchQuery) : null
+    };
+    
+    console.log("Sending search request:", searchData); // Debug
+    
+    const searchResults = await searchAttendances(searchData);
+    
+    const formattedData = searchResults.map((att: AttendanceDTO) => ({
+      id: att.employeeId,
+      name: att.employeeName,
+      role: att.role,
+      clockIn: att.clockIn || '-',
+      clockOut: att.clockOut || '-',
+      totalHours: att.totalHours || '0:00:00',
+      otHours: att.otHours || '0:00:00',
+      status: att.status,
+      avatar: att.avatar,
+      date: att.date
+    }));
+    
+    setEmployeeAttendances(formattedData);
+  } catch (error) {
+    console.error('Error searching:', error);
+    toast({
+      title: 'Search failed',
+      description: 'Could not search attendance records. Please try again.',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <ChakraProvider>
-      <Box flex={1} bg="gray.50" p={3} overflowY="auto">
+    <ChakraProvider >
+    <Flex justify="center" bg="gray.50" minH="100vh">
+        <Box p={4} maxW="1200px" w="100%">
+    
         {/* Work Hour Section */}
         <Box bg="lavender" p={3} rounded="md" mb={7}>
           <Grid templateColumns="repeat(5, 1fr)" gap={9}>
@@ -181,15 +190,17 @@ const EmployeeAttendancePage = () => {
               bg="white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             />
           </InputGroup>
           <HStack spacing={2}>
             <Button 
               bg="#003049" 
               color="white" 
-              px={8}
+
               onClick={handleSearch}
               isLoading={loading}
+              _hover={{ bg: "#00253a" }}
             >
               Search
             </Button>
@@ -253,8 +264,10 @@ const EmployeeAttendancePage = () => {
           )}
         </Box>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
+
 };
 
 export default EmployeeAttendancePage;
