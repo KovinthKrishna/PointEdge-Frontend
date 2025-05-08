@@ -6,7 +6,7 @@ export interface InvoiceItem {
   returnQuantity: number; 
   refundAmount: number; 
   total: number;
-  reason:string;
+  reason?:string;
 }
 
   

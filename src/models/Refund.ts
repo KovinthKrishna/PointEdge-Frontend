@@ -1,8 +1,9 @@
 export interface ReturnedItem {
-  itemId: string;
+  itemId: number;
   quantity: number;
-  refundAmount: number;
+  returned:boolean;
   reason: string;
+  refundAmount: number;
 }
 
 export interface RefundRequest {
@@ -10,4 +11,5 @@ export interface RefundRequest {
   items: ReturnedItem[];
   refundMethod: string;
   totalAmount: number;
+  reason:string;
 }

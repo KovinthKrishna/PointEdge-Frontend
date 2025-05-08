@@ -8,7 +8,6 @@ import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoS
 import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
-//import ReturnStepContainer from "../../components/ReturnAndRefund/ReturnStepContainer";
 import { InvoiceItem, Invoice } from "../../models/Invoice";
 
 enum RefundStep {
@@ -91,16 +90,17 @@ const ReturnRefundPage: React.FC = () => {
       const refundRequest = {
         invoiceNumber: invoiceNumber!,
         items: selectedItems.map((item) => ({
-          id: item.id,
-          returnQuantity: item.returnQuantity,
-          refundAmount: item.refundAmount,
+          itemId: item.id,
+          quantity: item.returnQuantity,
+          reason: item.reason || "",
         })),
         refundMethod: method,
         totalAmount: totalRefundAmount,
+        reason: "",
       };
 
       await axios.post(
-        "http://localhost:8080/api/returns/refund",
+        "http://localhost:8080/api/returns/process",
         refundRequest
       );
       setRefundSuccess(true);
