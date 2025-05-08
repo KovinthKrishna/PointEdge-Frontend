@@ -9,11 +9,12 @@ export interface InvoiceItem {
 }
 
   
-  export interface Invoice {
-    invoiceNumber: string;
-    date: string;
-    items: InvoiceItem[]; 
-    totalAmount: number;
-  }
+export interface Invoice {
+  invoiceNumber: string;
+  date: string;
+  items: InvoiceItem[];
+  totalAmount: number;
+}
+
   
   

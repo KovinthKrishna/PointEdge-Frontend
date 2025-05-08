@@ -1,5 +1,6 @@
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import useProductOrderQuantities from "../../../hooks/useProductOrderQuantities";
+import Pagination from "../../Pagination";
 import StatusMessage from "../../StatusMessage";
 import ProductCard from "./ProductCard";
 import ProductListText from "./ProductListText";
@@ -25,12 +26,15 @@ const ProductList = () => {
         <ProductListText value="PPU" />
         <ProductListText value="Revenue" />
       </HStack>
-      {salesData && salesData.length > 0 ? (
-        <VStack spacing={2.5} paddingX={{ base: 2, lg: 4 }} marginBottom={6}>
-          {salesData.map((data, index) => (
-            <ProductCard key={index} data={data} />
-          ))}
-        </VStack>
+      {salesData && salesData.content.length > 0 ? (
+        <>
+          <VStack spacing={2.5} paddingX={{ base: 2, lg: 4 }} marginBottom={6}>
+            {salesData.content.map((data, index) => (
+              <ProductCard key={index} data={data} />
+            ))}
+          </VStack>
+          <Pagination page={salesData.page} />
+        </>
       ) : (
         <StatusMessage message="No sales data available" />
       )}

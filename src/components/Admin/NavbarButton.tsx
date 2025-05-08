@@ -1,14 +1,26 @@
 import { HStack, Text } from "@chakra-ui/react";
+import { IconType } from "react-icons";
 import { Link } from "react-router-dom";
-import { NavItem } from "../../data/navItems";
-import useExtractSecondPathSegment from "../../hooks/useExtractSecondPathSegment";
+import usePathSegment from "../../hooks/usePathSegment";
+import useProductQueryStore from "../../store/useProductQueryStore";
 import theme from "../../theme";
 
-const NavbarButton = ({ icon: Icon, label, url }: NavItem) => {
-  const active = useExtractSecondPathSegment() === url;
+interface Props {
+  label: string;
+  url: string;
+  icon: IconType;
+}
+
+const NavbarButton = ({ icon: Icon, label, url }: Props) => {
+  const active = usePathSegment(1) === url;
+  const resetAll = useProductQueryStore((s) => s.resetAll);
 
   return (
-    <Link to={url ? `/admin/${url}` : "/admin"} style={{ width: "100%" }}>
+    <Link
+      to={url ? `/admin/${url}` : "/admin"}
+      style={{ width: "100%" }}
+      onClick={resetAll}
+    >
       <HStack
         paddingX={2}
         paddingY={{ base: 1, lg: 2.5 }}

@@ -1,4 +1,4 @@
-import { createBrowserRouter , Navigate} from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AnalysisPage from "./pages/Admin/AnalysisPage";
@@ -49,8 +49,8 @@ const router = createBrowserRouter([
           },
         ],
       },
-      { 
-        path: "employees", 
+      {
+        path: "employees",
         element: <EmployeesPage />,
         children: [
           { index: true, element: <EmployeeDashboardPage /> },
