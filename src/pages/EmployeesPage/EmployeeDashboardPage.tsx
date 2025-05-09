@@ -14,8 +14,8 @@ import {
   ChakraProvider,
   Image,
 } from "@chakra-ui/react";
-import employeeIcon from "../assets/employee-icon.png";
-import clockIcon from "../assets/clock-icon.png";
+import employeeIcon from "../../assets/employee-icon.png";
+import clockIcon from "../../assets/clock-icon.png";
 
 // Sales Chart Component
 const SalesChart: React.FC = () => {

@@ -27,7 +27,7 @@ import {
 } from "@chakra-ui/react"
 import { SearchIcon } from "@chakra-ui/icons"
 import ShiftReport2Page from "./ShiftReport2Page"
-import clockIcon from "../assets/clock-icon.png";
+import clockIcon from "../../assets/clock-icon.png";
 
 // Sample data for the shift report
 const employeeData = [

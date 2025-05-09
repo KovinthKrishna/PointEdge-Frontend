@@ -11,10 +11,10 @@ import ForgotPW from "./pages/ForgotPW";
 import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
-import EmployeeDashboardPage from "./pages/EmployeeDashboardPage";
-import EmployeeAttendancePage from "./pages/EmployeeAttendancePage";
-import TopPerformersPage from "./pages/TopPerformersPage";
-import ShiftReport1Page from "./pages/ShiftReport1Page";
+import EmployeeDashboardPage from "./pages/EmployeesPage/EmployeeDashboardPage";
+import EmployeeAttendancePage from "./pages/EmployeesPage/EmployeeAttendancePage";
+import TopPerformersPage from "./pages/EmployeesPage/TopPerformersPage";
+import ShiftReport1Page from "./pages/EmployeesPage/ShiftReport1Page";
 
 
 const router = createBrowserRouter([
