@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Box, Flex, Input, InputGroup, InputLeftElement, Button,
-  Table, Thead, Tbody, Tr, Th, Td, Avatar, Text, Badge, 
-  Grid, GridItem, HStack, ChakraProvider, Spinner, useToast
-} from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
 import { getAttendances, searchAttendances } from '../../../services/employeeService';
+import './styles/EmployeeAttendance.css';
 
 // Define interfaces
 interface AttendanceDTO {
@@ -41,9 +36,8 @@ const EmployeeAttendancePage = () => {
   const [startTime, setStartTime] = useState('07:30:00');
   const [endTime, setEndTime] = useState('16:00:00');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  const toast = useToast();
-  
+  const [toastMessage, setToastMessage] = useState<{ title: string; message: string; type: string } | null>(null);
+
   // Load data on component mount
   useEffect(() => {
     fetchData();
@@ -77,12 +71,10 @@ const EmployeeAttendancePage = () => {
       setEmployeeAttendances(formattedData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast({
+      setToastMessage({
         title: 'Error fetching data',
-        description: 'Could not load attendance data. Please try again later.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
+        message: 'Could not load attendance data. Please try again later.',
+        type: 'error'
       });
     } finally {
       setLoading(false);
@@ -90,184 +82,204 @@ const EmployeeAttendancePage = () => {
   };
   
   // Handle search
-  // Handle search
-const handleSearch = async () => {
-  setLoading(true);
-  try {
-    // Check if searchQuery is a number (employee ID)
-    const isNumeric = /^\d+$/.test(searchQuery);
-    
-    const searchData = {
-      date: formatDateForBackend(date),
-      searchQuery: isNumeric ? '' : searchQuery,
-      employeeId: isNumeric ? parseInt(searchQuery) : null
-    };
-    
-    console.log("Sending search request:", searchData); // Debug
-    
-    const searchResults = await searchAttendances(searchData);
-    
-    const formattedData = searchResults.map((att: AttendanceDTO) => ({
-      id: att.employeeId,
-      name: att.employeeName,
-      role: att.role,
-      clockIn: att.clockIn || '-',
-      clockOut: att.clockOut || '-',
-      totalHours: att.totalHours || '0:00:00',
-      otHours: att.otHours || '0:00:00',
-      status: att.status,
-      avatar: att.avatar,
-      date: att.date
-    }));
-    
-    setEmployeeAttendances(formattedData);
-  } catch (error) {
-    console.error('Error searching:', error);
-    toast({
-      title: 'Search failed',
-      description: 'Could not search attendance records. Please try again.',
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      // Check if searchQuery is a number (employee ID)
+      const isNumeric = /^\d+$/.test(searchQuery);
+      
+      const searchData = {
+        date: formatDateForBackend(date),
+        searchQuery: isNumeric ? '' : searchQuery,
+        employeeId: isNumeric ? parseInt(searchQuery) : null
+      };
+      
+      console.log("Sending search request:", searchData);
+      
+      const searchResults = await searchAttendances(searchData);
+      
+      const formattedData = searchResults.map((att: AttendanceDTO) => ({
+        id: att.employeeId,
+        name: att.employeeName,
+        role: att.role,
+        clockIn: att.clockIn || '-',
+        clockOut: att.clockOut || '-',
+        totalHours: att.totalHours || '0:00:00',
+        otHours: att.otHours || '0:00:00',
+        status: att.status,
+        avatar: att.avatar,
+        date: att.date
+      }));
+      
+      setEmployeeAttendances(formattedData);
+    } catch (error) {
+      console.error('Error searching:', error);
+      setToastMessage({
+        title: 'Search failed',
+        message: 'Could not search attendance records. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle enter key press for search
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Get initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
-    <ChakraProvider >
-    <Flex justify="center" bg="gray.50" minH="100vh">
-        <Box p={4} maxW="1200px" w="100%">
-    
+    <div className="attendance-container">
+      <div className="attendance-content">
         {/* Work Hour Section */}
-        <Box bg="lavender" p={3} rounded="md" mb={7}>
-          <Grid templateColumns="repeat(5, 1fr)" gap={9}>
-            <GridItem>
-              <Text fontWeight="medium">Work Hour</Text>
-            </GridItem>
-            <GridItem>
-              <Text fontSize="sm" mb={1}>Date</Text>
-              <Input 
-                bg="white" 
-                size="sm" 
+        <div className="work-hour-section">
+          <div className="grid grid-cols-5 gap-9">
+            <div>
+              <div className="font-medium">Work Hour</div>
+            </div>
+            <div>
+              <div className="text-sm mb-1">Date</div>
+              <input 
+                className="input input-sm input-bg-white"
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               />
-            </GridItem>
-            <GridItem colStart={4}>
-              <Text fontSize="sm" mb={1}>Start Time</Text>
-              <Input 
-                bg="white" 
-                size="sm" 
+            </div>
+            <div className="col-start-4">
+              <div className="text-sm mb-1">Start Time</div>
+              <input 
+                className="input input-sm input-bg-white"
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
               />
-            </GridItem>
-            <GridItem>
-              <Text fontSize="sm" mb={1}>End Time</Text>
-              <Input 
-                bg="white" 
-                size="sm" 
+            </div>
+            <div>
+              <div className="text-sm mb-1">End Time</div>
+              <input 
+                className="input input-sm input-bg-white"
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
               />
-            </GridItem>
-          </Grid>
-        </Box>
+            </div>
+          </div>
+        </div>
 
         {/* Search Section */}
-        <Flex mb={6} gap={4}>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="gray.300" />
-            </InputLeftElement>
-            <Input
+        <div className="flex mb-6 gap-4">
+          <div className="input-group">
+            <div className="input-left-element">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
+                  stroke="#A0AEC0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <input
+              className="input input-bg-white input-with-icon"
               placeholder="Search by name, id, or role..."
-              bg="white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              onKeyPress={handleKeyPress}
             />
-          </InputGroup>
-          <HStack spacing={2}>
-            <Button 
-              bg="#003049" 
-              color="white" 
-
+          </div>
+          <div className="flex gap-4">
+            <button 
+              className={`button button-primary ${loading ? 'loading-button' : ''}`}
               onClick={handleSearch}
-              isLoading={loading}
-              _hover={{ bg: "#00253a" }}
+              disabled={loading}
             >
+              {loading && <div className="spinner spinner-small"></div>}
               Search
-            </Button>
-          </HStack>
-        </Flex>
+            </button>
+          </div>
+        </div>
 
         {/* Table */}
-        <Box bg="white" rounded="md" overflow="hidden" shadow="sm">
+        <div className="box bg-white rounded-md overflow-hidden shadow-sm">
           {loading ? (
-            <Flex justify="center" align="center" height="200px">
-              <Spinner size="xl" color="#003049" />
-            </Flex>
+            <div className="spinner-container">
+              <div className="spinner"></div>
+            </div>
           ) : (
-            <Table variant="simple">
-              <Thead bg="#003049">
-                <Tr>
-                  <Th color="white">EMPLOYEE ID</Th>
-                  <Th color="white">EMPLOYEE NAME</Th>
-                  <Th color="white">ROLE</Th>
-                  <Th color="white">CLOCK IN</Th>
-                  <Th color="white">CLOCK OUT</Th>
-                  <Th color="white">TOTAL HOURS</Th>
-                  <Th color="white">OT HOURS</Th>
-                  <Th color="white">STATUS</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Employee Name</th>
+                  <th>Role</th>
+                  <th>Clock In</th>
+                  <th>Clock Out</th>
+                  <th>Total Hours</th>
+                  <th>OT Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
                 {employeeAttendances.map((attendance) => (
-                  <Tr key={attendance.attendanceId}>
-                    <Td>{attendance.id}</Td>
-                    <Td>
-                      <Flex align="center">
-                        <Avatar size="sm" name={attendance.name} src={attendance.avatar} mr={2} />
-                        <Text>{attendance.name}</Text>
-                      </Flex>
-                    </Td>
-                    <Td>{attendance.role}</Td>
-                    <Td>{attendance.clockIn}</Td>
-                    <Td>{attendance.clockOut}</Td>
-                    <Td>{attendance.totalHours}</Td>
-                    <Td>{attendance.otHours}</Td>
-                    <Td>
-                      <Badge
-                        bg={attendance.status === "Active" ? "rgba(72, 187, 120, 0.2)" : "rgba(245, 101, 101, 0.2)"}
-                        color={attendance.status === "Active" ? "green.600" : "red.600"}
-                        px={3}
-                        py={1}
-                        rounded="full"
-                        width="70px"
-                        textAlign="center"
-                        border="1px solid"
-                        borderColor={attendance.status === "Active" ? "green.200" : "red.200"}
+                  <tr key={attendance.attendanceId || attendance.id}>
+                    <td>{attendance.id}</td>
+                    <td>
+                      <div className="flex align-center">
+                        <div className="avatar">
+                          {attendance.avatar ? (
+                            <img src={attendance.avatar} alt={attendance.name} />
+                          ) : (
+                            <span className="avatar-fallback">{getInitials(attendance.name)}</span>
+                          )}
+                        </div>
+                        <span>{attendance.name}</span>
+                      </div>
+                    </td>
+                    <td>{attendance.role}</td>
+                    <td>{attendance.clockIn}</td>
+                    <td>{attendance.clockOut}</td>
+                    <td>{attendance.totalHours}</td>
+                    <td>{attendance.otHours}</td>
+                    <td>
+                      <div 
+                        className={`badge ${attendance.status === "Active" ? "badge-active" : "badge-inactive"}`}
                       >
                         {attendance.status}
-                      </Badge>
-                    </Td>
-                  </Tr>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </Tbody>
-            </Table>
+              </tbody>
+            </table>
           )}
-        </Box>
-      </Box>
-      </Flex>
-    </ChakraProvider>
-  );
+        </div>
 
+        {/* Toast notification */}
+        {toastMessage && (
+          <div className={`toast toast-${toastMessage.type}`}>
+            <div className="font-medium">{toastMessage.title}</div>
+            <div>{toastMessage.message}</div>
+            <button 
+              className="toast-close-button"
+              onClick={() => setToastMessage(null)}
+            >
+              ×
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default EmployeeAttendancePage;

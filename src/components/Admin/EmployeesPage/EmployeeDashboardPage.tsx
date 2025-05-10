@@ -1,21 +1,7 @@
-import type React from "react";
-import {
-  Box,
-  Flex,
-  Text,
-  Grid,
-  GridItem,
-  Stat,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  Select,
-  Badge,
-  ChakraProvider,
-  Image,
-} from "@chakra-ui/react";
+import React from "react";
 import employeeIcon from "../../../assets/employee-icon.png";
 import clockIcon from "../../../assets/clock-icon.png";
+import "./styles/EmployeeDashboard.css";
 
 // Sales Chart Component
 const SalesChart: React.FC = () => {
@@ -43,82 +29,53 @@ const SalesChart: React.FC = () => {
     return `${(value / maxValue) * 150}px`;
   };
 
-  return (
-    <Box h="275px" position="relative">
-      {/* Chart grid lines */}
-      <Box 
-        position="absolute" 
-        top={0} 
-        bottom={0} 
-        left={0} 
-        right={0} 
-        zIndex={1}
-      >
+   return (
+    <div className="chart-container">
+      {/* Chart grid lines - fixed positioning */}
+      <div className="chart-grid-lines">
         {[...Array(6)].map((_, i) => (
-          <Box 
+          <div 
             key={i} 
-            position="absolute" 
-            top={`${i * 20}%`} 
-            left={0} 
-            right={0} 
-            h="1px" 
-            bg="gray.200" 
+            className="chart-grid-line"
+            style={{ top: `${i * 20}%` }}
           />
         ))}
-      </Box>
+      </div>
 
-      {/* Chart bars */}
-      <Flex 
-        justify="space-between" 
-        align="flex-end" 
-        h="100%" 
-        position="relative" 
-        zIndex={2}
-      >
+      {/* Chart bars - improved layout */}
+      <div className="chart-bars-container">
         {salesData.map((data, index) => (
-          <Flex 
-            key={index} 
-            direction="column" 
-            align="center" 
-            justify="flex-end"
-            h="100%"
-            flex={1}
-          >
-            <Flex w="100%" justify="center" gap={1} align="flex-end">
-              <Box 
-                w="40%" 
-                h={getBarHeight(data.primary)} 
-                bg="#003A5D" 
-                borderRadius="sm" 
+          <div key={index} className="chart-month-column">
+            <div className="chart-bars-wrapper">
+              <div 
+                className="chart-bar-primary"
+                style={{ height: getBarHeight(data.primary) }}
               />
-              <Box 
-                w="40%" 
-                h={getBarHeight(data.secondary)} 
-                bg="#2A7AB0" 
-                borderRadius="sm" 
+              <div 
+                className="chart-bar-secondary"
+                style={{ height: getBarHeight(data.secondary) }}
               />
-            </Flex>
-            <Text fontSize="sm" mt={2}>{data.month}</Text>
-          </Flex>
+            </div>
+            <div className="chart-month-label">{data.month}</div>
+          </div>
         ))}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   );
 };
 
 const EmployeeDashboardPage: React.FC = () => {
   return (
-    
-    <ChakraProvider >
-    <Box>
+    <div className="dashboard-container">
       {/* Stats Cards */}
-      <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={6}>
-      <StatCard
+      <div className="grid grid-cols-3 gap-6 mb-6">
+        <StatCard
           icon={
-            <Image
+            <img
               src="https://th.bing.com/th/id/R.12d1ca1ed26243d7628fdd4e1d4ef181?rik=VoTkKyaHH27vmg&riu=http%3a%2f%2fmedia-s3-us-east-1.ceros.com%2fgartner%2fimages%2f2016%2f09%2f20%2fab06779a075d7e1e3ed3e114355a3fee%2ficon2-individual-02.png&ehk=7r%2fpOA%2fTuq1JD8GyXcU7Uw8FZxdylRicmz0dHcBO1nM%3d&risl=&pid=ImgRaw&r=0"
               alt="Employee Icon"
-              boxSize="36px"
+              width="36"
+              height="36"
             />
           }
           title="No. of Employees"
@@ -128,10 +85,11 @@ const EmployeeDashboardPage: React.FC = () => {
         />
         <StatCard
           icon={
-            <Image
+            <img
               src="https://icon-library.com/images/costly-icon/costly-icon-26.jpg"
               alt="Dollar Icon"
-              boxSize="36px"
+              width="36"
+              height="36"
             />
           }
           title="Total Sales"
@@ -141,10 +99,11 @@ const EmployeeDashboardPage: React.FC = () => {
         />
         <StatCard
           icon={
-            <Image
+            <img
               src="https://static.vecteezy.com/system/resources/previews/014/322/497/original/shopping-cart-icons-design-in-blue-circle-png.png"
               alt="Order Icon"
-              boxSize="36px"
+              width="36"
+              height="36"
             />
           }
           title="Total Order"
@@ -152,160 +111,162 @@ const EmployeeDashboardPage: React.FC = () => {
           change={10}
           chartData={[15, 18, 25, 20]}
         />
-        
-      </Grid>
+      </div>
 
       {/* Charts Section */}
-      <Grid templateColumns="2fr 1fr" gap={6}>
+      <div className="grid grid-cols-3-1 gap-6">
         {/* Main Chart */}
-        <GridItem bg="white" borderRadius="md" p={4} border="1px" borderColor="blue.100">
-          <Flex justify="space-between" mb={4}>
-            <Text fontWeight="medium">Employee Productivity</Text>
-            <Select size="sm" w="120px" defaultValue="2024">
-             <option value="2023">2024</option>
+        <div className="bg-white rounded-md p-4 border border-blue-100">
+          <div className="flex justify-between mb-4">
+            <div className="font-medium">Employee Productivity</div>
+            <select className="select" defaultValue="2024">
+              <option value="2023">2024</option>
               <option value="2023">2023</option>
               <option value="2022">2022</option>
-            </Select>
-          </Flex>
+            </select>
+          </div>
           
-          {/* Replace the simplified chart with the actual SalesChart component */}
+          {/* Chart component */}
           <SalesChart />
           
           {/* Customer Stats */}
-          <Flex mt={16} justify="space-between">
-            <Flex align="center">
-              <Box bg="blue.100" p={2} borderRadius="md" mr={3}>
-                <Image
+          <div className="flex justify-between mt-16">
+            <div className="flex items-center">
+              <div className="bg-blue-100 p-2 rounded-md mr-3">
+                <img
                   src={clockIcon}
-                  boxSize="40px"
+                  alt="Clock Icon"
+                  width="30"
+                  height="30"
                 />
-              </Box>
-              <Box>
-                <Text fontSize="sm" color="gray.500">
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">
                   Total Hours Worked
-                </Text>
-                <Text fontWeight="bold">10,52 h</Text>
-              </Box>
-            </Flex>
+                </div>
+                <div className="font-bold">10,52 h</div>
+              </div>
+            </div>
 
-            <Flex align="center">
-              <Badge colorScheme="green" mr={2}>
+            <div className="flex items-center">
+              <div className="badge badge-green mr-2">
                 ↑ 3%
-              </Badge>
-            </Flex>
+              </div>
+            </div>
 
-            <Flex align="center">
-              <Box bg="blue.100" p={2} borderRadius="md" mr={3}>
-                <Image
+            <div className="flex items-center">
+              <div className="bg-blue-100 p-2 rounded-md mr-3">
+                <img
                   src={employeeIcon}
                   alt="Product Icon"
-                  boxSize="40px"
+                  width="30"
+                  height="30"
                 />
-              </Box>
-              <Box>
-                <Text fontSize="sm" color="gray.500">
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">
                   Total Employees
-                </Text>
-                <Text fontWeight="bold" fontSize="sm">
+                </div>
+                <div className="font-bold text-sm">
                   250
-                </Text>
-              </Box>
-            </Flex>
+                </div>
+              </div>
+            </div>
 
-            <Flex align="center">
-              <Badge colorScheme="green" mr={2}>
+            <div className="flex items-center">
+              <div className="badge badge-green mr-2">
                 ↑ 3%
-              </Badge>
-            </Flex>
-          </Flex>
-        </GridItem>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Side Charts */}
-        <GridItem>
-          <Flex direction="column" gap={6}>
+        <div>
+          <div className="flex flex-col gap-6">
             {/* attendance Report */}
-            <Box bg="white" borderRadius="md" p={4} border="1px" borderColor="gray.200">
-         <Flex justify="space-between" mb={4}>
-         <Text fontWeight="medium">Attendance Report</Text>
-       </Flex>
-       <Box h="150px" position="relative" display="flex" justifyContent="center">
-        {/* Simplified donut chart */}
-       <Box position="relative" w="150px" h="150px">
-        <Box as="svg" viewBox="0 0 100 100" w="100%" h="100%">
-        <Box
-          as="circle"
-          cx="50"
-          cy="50"
-          r="40"
-          fill="none"
-          stroke="#2C5282"
-          strokeWidth="20"
-          strokeDasharray="188.5 251.3"
-          transform="rotate(-90 50 50)"
-         />
-        <Box
-          as="circle"
-          cx="50"
-          cy="50"
-          r="40"
-          fill="none"
-          stroke="#B8B8B8"
-          strokeWidth="20"
-          strokeDasharray="70.7 251.3"
-          strokeDashoffset="-188.5"
-          transform="rotate(-90 50 50)"
-         />
-         <Box as="circle" cx="50" cy="50" r="20" fill="white" />
-       </Box>
-     </Box>
-    </Box>
-      <Flex justify="center" mt={4} fontSize="xs">
-        <Flex align="center" mr={4}>
-             <Box w="10px" h="10px" borderRadius="full" bg="#2C5282" mr={2} />
-              <Text>Active</Text>
-            </Flex>
-            <Flex align="center" mr={4}>
-             <Box w="10px" h="10px" borderRadius="full" bg="#B8B8B8" mr={2} />
-              <Text>Leave</Text>
-            </Flex>
-         </Flex>
-       </Box>
+            <div className="bg-white rounded-md p-4 border border-gray-200">
+              <div className="flex justify-between mb-4">
+                <div className="font-medium">Attendance Report</div>
+              </div>
+              <div className="relative flex justify-center donut-container">
+                {/* Simplified donut chart */}
+                <div className="donut-chart">
+                  <svg viewBox="0 0 100 100" width="100%" height="100%">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      fill="none"
+                      stroke="#2C5282"
+                      strokeWidth="20"
+                      strokeDasharray="188.5 251.3"
+                      transform="rotate(-90 50 50)"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      fill="none"
+                      stroke="#B8B8B8"
+                      strokeWidth="20"
+                      strokeDasharray="70.7 251.3"
+                      strokeDashoffset="-188.5"
+                      transform="rotate(-90 50 50)"
+                    />
+                    <circle cx="50" cy="50" r="20" fill="white" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex justify-center mt-4 text-xs">
+                <div className="flex items-center mr-4">
+                  <div className="donut-indicator donut-indicator-active"></div>
+                  <div>Active</div>
+                </div>
+                <div className="flex items-center mr-4">
+                  <div className="donut-indicator donut-indicator-leave"></div>
+                  <div>Leave</div>
+                </div>
+              </div>
+            </div>
 
             {/* Weekly Transaction */}
-            <Box bg="white" borderRadius="md" p={4} border="1px" borderColor="gray.200">
-              <Flex justify="space-between" mb={4}>
-                <Text fontWeight="medium">Weekly Transaction Summary</Text>
-                <Text fontSize="xs" color="blue.500">
+            <div className="bg-white rounded-md p-4 border border-gray-200">
+              <div className="flex justify-between mb-4">
+                <div className="font-medium">Weekly Transaction Summary</div>
+                <div className="text-xs text-blue-500">
                   Last 7 month
-                </Text>
-              </Flex>
-              <Box h="150px" position="relative">
-                <Box position="relative" mt={3}>
-                  {/* Mini chart - positioned absolutely to the right */}
-                  <Flex h="100%" justify="space-between" align="flex-end">
+                </div>
+              </div>
+              <div className="weekly-chart-container">
+                <div className="relative mt-3">
+                  {/* Mini chart */}
+                  <div className="flex justify-between items-end weekly-bars-container">
                     {[140, 100, 125, 85, 150, 110, 160].map((height, i) => (
-                      <Box key={i} w="20px" h={`${height}px`} bg={"#2C5282"} borderRadius="2px" />
+                      <div 
+                        key={i} 
+                        className="weekly-bar"
+                        style={{ height: `${height}px` }}
+                      />
                     ))}
-                  </Flex>
-                </Box>
-              </Box>
-              <Flex justify="space-between" mt={4} fontSize="xs" color="gray.500">
-                <Text>24 Jun</Text>
-                <Text>25 Jun</Text>
-                <Text>26 Jun</Text>
-                <Text>27 Jun</Text>
-                <Text>28 Jun</Text>
-                <Text>29 Jun</Text>
-                <Text>30 Jun</Text>
-              </Flex>
-            </Box>
-          </Flex>
-        </GridItem>
-      </Grid>
-    </Box>
-    </ChakraProvider>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-between mt-4 text-xs text-gray-500">
+                <div>24 Jun</div>
+                <div>25 Jun</div>
+                <div>26 Jun</div>
+                <div>27 Jun</div>
+                <div>28 Jun</div>
+                <div>29 Jun</div>
+                <div>30 Jun</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-  
 };
 
 // Stat Card Component
@@ -319,36 +280,39 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
   return (
-    <Box bg="white" p={4} borderRadius="md" border="1px" borderColor="gray.200">
-      <Flex justify="space-between" mb={4}>
-        <Box p={2} borderRadius="full" bg="blue.50" color="blue.500">
+    <div className="stat-card">
+      <div className="flex justify-between mb-4">
+        <div className="stat-icon">
           {icon}
-        </Box>
-      </Flex>
-      <Box position="relative" mt={2}>
+        </div>
+      </div>
+      <div className="relative mt-2">
         {/* Mini chart - positioned absolutely to the right */}
-        <Box position="absolute" right="0" bottom="0">
-          <Flex h="40px" align="flex-end" gap={1}>
+        <div className="absolute right-0 bottom-0">
+          <div className="flex items-end gap-1 mini-chart-container">
             {[35, 25, 40, 30].map((height, i) => (
-              <Box key={i} w="12px" h={`${height}px`} bg={i === 2 ? "#2A7AB0" : "#0F172A"} borderRadius="2px" />
+              <div 
+                key={i} 
+                className={`mini-chart-bar ${i === 2 ? "mini-chart-bar-highlight" : "mini-chart-bar-normal"}`}
+                style={{ height: `${height}px` }}
+              />
             ))}
-          </Flex>
-        </Box>
+          </div>
+        </div>
 
-        <Text color="gray.500" fontSize="20px">
+        <div className="stat-title">
           {title}
-        </Text>
-        <Stat mt={1}>
-          <StatNumber fontSize="2xl">{value}</StatNumber>
-          <StatHelpText fontSize="xs" color={change >= 0 ? "blue.500" : "red.500"}>
-            <StatArrow type={change >= 0 ? "increase" : "decrease"} />
+        </div>
+        <div className="mt-1">
+          <div className="stat-number">{value}</div>
+          <div className={`stat-help ${change >= 0 ? 'text-green' : 'text-red'}`}>
+            <span className={change >= 0 ? 'stat-arrow-up' : 'stat-arrow-down'}></span>
             {Math.abs(change)}% from last week
-          </StatHelpText>
-        </Stat>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-  
 };
 
 export default EmployeeDashboardPage;

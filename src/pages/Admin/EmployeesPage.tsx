@@ -39,11 +39,11 @@ const EmployeesPage = () => {
       >
         <TabList
           bg="white"
-          borderBottom="8px solid #003153"
-          borderRight="10px solid #003153"
+          borderBottom="10px solid #003049"
+          borderRight="12px solid #003049"
           display="flex"
           width="100%"
-          mt="16px"
+          paddingTop="16px"
           sx={{
             "& > button": {
               fontWeight: "500",
@@ -61,7 +61,7 @@ const EmployeesPage = () => {
               zIndex: 1,
             },
             "& > button[aria-selected=true]": {
-              bg: "#003153",
+              bg: "#003049",
               color: "white",
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
