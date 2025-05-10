@@ -38,10 +38,10 @@ const ReturnRefundPage: React.FC = () => {
         const response = await axios.get(
           `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
         );
-        const data = response.data;
+        const info = response.data;
 
-        const items = data.items.map((item: any) => ({
-          id: item.id,
+        const items = info.items.map((item: any) => ({
+          id: item.itemId,
           name: item.productName,
           quantity: item.quantity,
           price: item.price,
@@ -51,9 +51,9 @@ const ReturnRefundPage: React.FC = () => {
         }));
 
         setInvoiceData({
-          invoiceNumber: data.id,
-          date: data.date,
-          totalAmount: data.totalAmount,
+          invoiceNumber: info.id,
+          date: info.date,
+          totalAmount: info.totalAmount,
           items,
         });
 
