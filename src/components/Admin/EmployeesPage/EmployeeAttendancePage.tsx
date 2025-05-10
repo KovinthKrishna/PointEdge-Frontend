@@ -5,7 +5,7 @@ import {
   Grid, GridItem, HStack, ChakraProvider, Spinner, useToast
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
-import { getAttendances, searchAttendances } from '../../services/apiService';
+import { getAttendances, searchAttendances } from '../../../services/employeeService';
 
 // Define interfaces
 interface AttendanceDTO {

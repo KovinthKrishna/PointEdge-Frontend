@@ -11,10 +11,10 @@ import ForgotPW from "./pages/ForgotPW";
 import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
-import EmployeeDashboardPage from "./pages/EmployeesPage/EmployeeDashboardPage";
-import EmployeeAttendancePage from "./pages/EmployeesPage/EmployeeAttendancePage";
-import TopPerformersPage from "./pages/EmployeesPage/TopPerformersPage";
-import ShiftReport1Page from "./pages/EmployeesPage/ShiftReport1Page";
+import EmployeeDashboardPage from "./components/Admin/EmployeesPage/EmployeeDashboardPage";
+import EmployeeAttendancePage from "./components/Admin/EmployeesPage/EmployeeAttendancePage";
+import TopPerformersPage from "./components/Admin/EmployeesPage/TopPerformersPage";
+import ShiftReport1Page from "./components/Admin/EmployeesPage/ShiftReport1Page";
 
 
 const router = createBrowserRouter([
