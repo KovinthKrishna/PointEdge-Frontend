@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig } from "axios";
-// import Discount from "../models/Discount";
 
 const baseURL = "http://localhost:8080/api/v1"; 
 const axiosInstance = axios.create({
@@ -28,7 +27,6 @@ class APIClient<T = any> {
     return res.data;
   };
 
-  // put = async (id: number, discountData: Discount, data: T & { id: number; }) => {
   put = async (data: T & { id: number; }) => {
     const res = await axiosInstance.put(`${this.endpoint}/${data.id}`, data);
     return res.data;

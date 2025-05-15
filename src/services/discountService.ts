@@ -21,23 +21,19 @@ const discountItemsClient = new APIClient<Discount[]>("/discount/get-discounts-b
 const discountCategoriesClient = new APIClient<Discount[]>("/discount/get-discounts-by-type/CATEGORY");
 const discountLoyaltiesClient = new APIClient<Discount[]>("/discount/get-discounts-by-type/LOYALTY");
 
-// In your discountService.ts
+// Fetch product names function
 export const fetchProductNames = async (): Promise<Array<{id: number, name: string}>> => {
   try {
     const response = await productNamesClient.getAll();
     
-    // Handle both array of strings and array of objects
     if (Array.isArray(response)) {
       if (typeof response[0] === 'string') {
-        // Convert array of strings to array of objects
         return response.map((name, index) => ({ id: index + 1, name }));
       } else if (response[0]?.id && response[0]?.name) {
-        // Already in correct format
         return response;
       }
     }
     
-    // Fallback to dummy data in correct format
     return [
       {id: 1, name: 'Product 1'},
       {id: 2, name: 'Product 2'},
@@ -54,23 +50,19 @@ export const fetchProductNames = async (): Promise<Array<{id: number, name: stri
 };
 
 
-// In your discountService.ts
+// Fetch category names function
 export const fetchCategoryNames = async (): Promise<Array<{id: number, name: string}>> => {
   try {
     const response = await categoryNamesClient.getAll();
-    
-    // Handle both array of strings and array of objects
+
     if (Array.isArray(response)) {
       if (typeof response[0] === 'string') {
-        // Convert array of strings to array of objects
         return response.map((name, index) => ({ id: index + 1, name }));
       } else if (response[0]?.id && response[0]?.name) {
-        // Already in correct format
         return response;
       }
     }
     
-    // Fallback to dummy data in correct format
     return [
       {id: 1, name: 'Category 1'},
       {id: 2, name: 'Category 2'},
@@ -246,12 +238,11 @@ export const fetchLoyaltyThresholds = async (): Promise<LoyaltyThresholds> => {
     return await loyaltyThresholdsClient.getAll();
   } catch (error) {
     console.error('Error fetching loyalty thresholds:', error);
-    // Return default values if API fails
     return {
       gold: 10000,
       silver: 5000,
       bronze: 2500,
-      points: 1000
+      points: 1
     };
   }
 };
@@ -351,7 +342,6 @@ export const fetchItemDiscounts = async (): Promise<Discount[]> => {
     return discounts;
   } catch (error) {
     console.error('Error fetching item discounts:', error);
-    // Return empty array instead of throwing to handle the error gracefully
     return [];
   }
 };
@@ -363,7 +353,6 @@ export const fetchCategoryDiscounts = async (): Promise<Discount[]> => {
     return discounts;
   } catch (error) {
     console.error('Error fetching Category discounts:', error);
-    // Return empty array instead of throwing to handle the error gracefully
     return [];
   }
 };
@@ -375,7 +364,6 @@ export const fetchLoyaltyDiscounts = async (): Promise<Discount[]> => {
     return discounts;
   } catch (error) {
     console.error('Error fetching Loyalty discounts:', error);
-    // Return empty array instead of throwing to handle the error gracefully
     return [];
   }
 };

@@ -1,4 +1,4 @@
-/* Animation Keyframes - Will be added via useEffect in the component */
+/* Animation Keyframes */
 @keyframes slideIn {
   from {
     transform: translateX(-100%);
