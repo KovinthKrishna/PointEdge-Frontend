@@ -136,8 +136,6 @@ export const searchCustomers = async (
   }
 };
 
-// services/customerService.ts
-
 // Get a single customer by phone number
 export const getCustomerByPhone = async (phone: string): Promise<Customer> => {
   const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
@@ -162,6 +160,7 @@ export const getCustomerByPhone = async (phone: string): Promise<Customer> => {
   }
 };
 
+// Delete a single customer by phone number
 export const deleteCustomer2 = async (phone: string): Promise<{ success: boolean, message?: string }> => {
   try {
     const response = await axios.delete(
@@ -217,8 +216,6 @@ export const updateCustomerById = async (id: number, customerData: Customer): Pr
 };
 
 // fetch coustomer count by tier
-
-// Add this to your customerService.ts
 export const fetchCustomerCountsByTier = async (): Promise<{
   GOLD: number;
   SILVER: number;
@@ -242,8 +239,6 @@ export const fetchCustomerCountsByTier = async (): Promise<{
 };
 
 // fetch tier by phone number
-
-// In services/customerService.ts
 export const getCustomerTierByPhone = async (phone: string): Promise<string> => {
   const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
   try {
@@ -268,9 +263,6 @@ export const getCustomerTierByPhone = async (phone: string): Promise<string> => 
 };
 
 // fetch orders
-
-// Add this to your customerService.ts file
-
 interface OrderData {
   id: string;
   date: string;
@@ -279,8 +271,7 @@ interface OrderData {
   points: number;
 }
 
-// Add this to your customerService.ts file
-
+/// Fetch customer orders by phone number
 export const fetchCustomerOrders = async (phone: string): Promise<OrderData[]> => {
   const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
   try {

@@ -103,7 +103,7 @@
 }
 
 .toggle-switch.active {
-  background: #4CAF50; /* Green when active */
+  background: #4CAF50; 
 }
 
 .toggle-switch-handle {
