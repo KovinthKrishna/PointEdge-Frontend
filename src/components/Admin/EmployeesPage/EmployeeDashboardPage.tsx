@@ -3,9 +3,9 @@ import employeeIcon from "../../../assets/employee-icon.png";
 import clockIcon from "../../../assets/clock-icon.png";
 import "./styles/EmployeeDashboard.css";
 
-// Sales Chart Component
+
 const SalesChart: React.FC = () => {
-  // Sample data for the chart
+ 
   const salesData = [
     { month: 'Jan', primary: 65, secondary: 45 },
     { month: 'Feb', primary: 85, secondary: 60 },
@@ -31,7 +31,7 @@ const SalesChart: React.FC = () => {
 
    return (
     <div className="chart-container">
-      {/* Chart grid lines - fixed positioning */}
+       {/* Chart grid lines - fixed positioning   */}
       <div className="chart-grid-lines">
         {[...Array(6)].map((_, i) => (
           <div 
@@ -67,7 +67,7 @@ const SalesChart: React.FC = () => {
 const EmployeeDashboardPage: React.FC = () => {
   return (
     <div className="dashboard-container">
-      {/* Stats Cards */}
+     
       <div className="grid grid-cols-3 gap-6 mb-6">
         <StatCard
           icon={
@@ -126,7 +126,6 @@ const EmployeeDashboardPage: React.FC = () => {
             </select>
           </div>
           
-          {/* Chart component */}
           <SalesChart />
           
           {/* Customer Stats */}
@@ -181,16 +180,18 @@ const EmployeeDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Side Charts */}
+        
+
         <div>
           <div className="flex flex-col gap-6">
-            {/* attendance Report */}
+            
             <div className="bg-white rounded-md p-4 border border-gray-200">
               <div className="flex justify-between mb-4">
                 <div className="font-medium">Attendance Report</div>
               </div>
               <div className="relative flex justify-center donut-container">
-                {/* Simplified donut chart */}
+                
+                {/*  donut chart */}
                 <div className="donut-chart">
                   <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <circle

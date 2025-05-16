@@ -1,33 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getAttendances, searchAttendances } from '../../../services/employeeService';
 import './styles/EmployeeAttendance.css';
+import {AttendanceDTO, EmployeeAttendance} from '../../../models/Attendance';
 
-// Define interfaces
-interface AttendanceDTO {
-  employeeId: number;
-  employeeName: string;
-  role: string;
-  clockIn: string;
-  clockOut: string;
-  totalHours: string;
-  otHours: string;
-  status: string;
-  avatar: string;
-  date: string;
-}
 
-interface EmployeeAttendance {
-  id: number;
-  attendanceId: number;
-  name: string;
-  role: string;
-  clockIn: string;
-  clockOut: string;
-  totalHours: string;
-  otHours: string;
-  status: string;
-  avatar: string;
-}
 
 const EmployeeAttendancePage = () => {
   const [employeeAttendances, setEmployeeAttendances] = useState<EmployeeAttendance[]>([]);
@@ -114,6 +90,7 @@ const EmployeeAttendancePage = () => {
       setEmployeeAttendances(formattedData);
     } catch (error) {
       console.error('Error searching:', error);
+      
       setToastMessage({
         title: 'Search failed',
         message: 'Could not search attendance records. Please try again.',
@@ -230,8 +207,15 @@ const EmployeeAttendancePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {employeeAttendances.map((attendance) => (
-                  <tr key={attendance.attendanceId || attendance.id}>
+                  {employeeAttendances.length === 0 ? (
+                  <tr>
+                  <td colSpan={8} className="empty-table-message">
+                     No employees found
+                  </td>
+                 </tr>
+               ) : (   
+                employeeAttendances.map((attendance) => (
+                 <tr key={attendance.id}>
                     <td>{attendance.id}</td>
                     <td>
                       <div className="flex align-center">
@@ -257,8 +241,9 @@ const EmployeeAttendancePage = () => {
                         {attendance.status}
                       </div>
                     </td>
-                  </tr>
-                ))}
+                  </tr>                  
+                ))
+                 )}
               </tbody>
             </table>
           )}

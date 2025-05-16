@@ -1,4 +1,3 @@
-import React from "react";
 import "./styles/ShiftReport2.css";
 
 // Define types for props

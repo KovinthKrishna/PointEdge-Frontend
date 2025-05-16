@@ -42,23 +42,8 @@ export const searchEmployees = async (query: string) => {
   return response.data;
 };
 
-export const clockIn = async (employeeId: number, time: string) => {
-  const response = await api.post(`/attendances/clock-in/${employeeId}?time=${time}`);
-  return response.data;
-};
-
-export const clockOut = async (employeeId: number, time: string) => {
-  const response = await api.post(`/attendances/clock-out/${employeeId}?time=${time}`);
-  return response.data;
-};
-
 export const fetchEmployeeAttendance = async () => {
   const response = await axios.get(`${API_BASE_URL}/employee-attendance`);
-  return response.data;
-};
-
-export const fetchSalesData = async () => {
-  const response = await axios.get(`${API_BASE_URL}/sales-data`);
   return response.data;
 };
 
@@ -67,7 +52,3 @@ export const fetchTopPerformers = async () => {
   return response.data;
 };
 
-export const fetchShiftReports = async () => {
-  const response = await axios.get(`${API_BASE_URL}/shift-reports`);
-  return response.data;
-};

@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles/TopPerformers.css";
+import { EmployeePerformance } from "../../../models/Performance";
 
-// Define employee performance data type
-interface EmployeePerformance {
-  id: string;
-  name: string;
-  avatar: string;
-  role: string;
-  orders: number;
-  sales: number;
-  workingHours: string;
-}
 
 // Sort types
 type SortField = "orders" | "sales" | "workingHours";
