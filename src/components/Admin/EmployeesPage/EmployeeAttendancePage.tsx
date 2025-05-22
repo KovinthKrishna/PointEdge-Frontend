@@ -175,11 +175,11 @@ const EmployeeAttendancePage = () => {
             />
           </div>
           <div className="flex gap-4">
-            <button 
+             <button 
               className={`button button-primary ${loading ? 'loading-button' : ''}`}
               onClick={handleSearch}
               disabled={loading}
-            >
+               >
               {loading && <div className="spinner spinner-small"></div>}
               Search
             </button>
@@ -244,6 +244,7 @@ const EmployeeAttendancePage = () => {
                   </tr>                  
                 ))
                  )}
+
               </tbody>
             </table>
           )}

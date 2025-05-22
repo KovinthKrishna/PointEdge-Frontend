@@ -1,66 +1,142 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import type React from "react";
 import ShiftReport2Page from "./ShiftReport2Page";
 import clockIcon from "../../../assets/clock-icon.png";
 import "./styles/ShiftReport1.css";
 
-// Sample data for the shift report
-const employeeData = [
-  {
-    id: "2236767",
-    name: "Devon Lane",
-    avatar: "https://bit.ly/ryan-florence",
-    role: "Cashier",
-    location: "Store 1",
-    isFirstRow: true,
-  },
-  {
-    id: "2377373",
-    name: "Eleanor Pena",
-    avatar: "https://bit.ly/kent-c-dodds",
-    role: "Cashier",
-    location: "Store 1",
-    isFirstRow: false,
-  },
-  {
-    id: "2345657",
-    name: "Floyd Miles",
-    avatar: "https://bit.ly/prosper-baba",
-    role: "Cashier",
-    location: "Store 2",
-    isFirstRow: false,
-  },
-  {
-    id: "2435412",
-    name: "Annette Black",
-    avatar: "https://bit.ly/code-beast",
-    role: "Cashier",
-    location: "Store 3",
-    isFirstRow: false,
-  },
-  {
-    id: "2435412",
-    name: "Annette Black",
-    avatar: "https://bit.ly/code-beast",
-    role: "Cashier",
-    location: "Store 3",
-    isFirstRow: false,
-  },
-  {
-    id: "2377373",
-    name: "Eleanor Pena",
-    avatar: "https://bit.ly/kent-c-dodds",
-    role: "Cashier",
-    location: "Store 1",
-    isFirstRow: false,
-  },
-];
+// Define the Employee interface with all required properties
+interface Employee {
+  id: number;
+  name: string;
+  avatar: string;
+  role: string;
+  status: string;
+  location: string;
+  isFirstRow?: boolean; // Optional UI property
+}
 
 const ShiftReport1Page: React.FC = () => {
-  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [showDetailedReport, setShowDetailedReport] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [totalShifts, setTotalShifts] = useState<number>(0);
+  const [totalHours, setTotalHours] = useState<string>("0h");
+  const [workingDays, setWorkingDays] = useState<number>(0);
 
-  const handleViewClick = (employee: any) => {
+  // Fetch employees data from backend
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:8080/api/employees");
+        
+        // Transform the data to match your UI requirements
+        const transformedEmployees = response.data.map((emp: any, index: number) => ({
+          id: emp.id,
+          name: emp.name,
+          role: emp.role || "Unknown",
+          avatar: emp.avatar || "",
+          status: emp.status || "Active",
+          location: emp.location || `Store ${(index % 3) + 1}`, // Use actual location if available
+          isFirstRow: index === 0
+        }));
+        
+        setEmployees(transformedEmployees);
+        setError(null);
+
+        // Fetch attendance summary data for stats cards
+        try {
+          const attendanceResponse = await axios.get("http://localhost:8080/api/attendances");
+          const attendanceData = attendanceResponse.data;
+          
+          // Calculate summary statistics
+          setTotalShifts(attendanceData.length);
+          
+          // Calculate total hours
+          let hours = 0;
+          attendanceData.forEach((attendance: any) => {
+            if (attendance.totalHours) {
+              const timeParts = attendance.totalHours.split(':');
+              if (timeParts.length >= 2) {
+                hours += parseInt(timeParts[0]) + (parseInt(timeParts[1]) / 60);
+              }
+            }
+          });
+          setTotalHours(`${Math.round(hours)}h`);
+          
+          // Calculate working days (unique dates)
+          const uniqueDates = new Set(
+            attendanceData.map((attendance: any) => attendance.date?.split('T')[0])
+              .filter((date: string | undefined) => date)
+          );
+          setWorkingDays(uniqueDates.size);
+        } catch (err) {
+          console.error("Error fetching attendance summary:", err);
+          // Use default values for stats
+        }
+      } catch (err) {
+        console.error("Error fetching employees:", err);
+        setError("Failed to load employee data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
+  // Search functionality
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      // If search is empty, fetch all employees
+      try {
+        const response = await axios.get("http://localhost:8080/api/employees");
+        const transformedEmployees = response.data.map((emp: any, index: number) => ({
+          id: emp.id,
+          name: emp.name,
+          role: emp.role || "Unknown",
+          avatar: emp.avatar || "",
+          status: emp.status || "Active",
+          location: emp.location || `Store ${(index % 3) + 1}`,
+          isFirstRow: index === 0
+        }));
+        setEmployees(transformedEmployees);
+      } catch (err) {
+        console.error("Error fetching employees:", err);
+        setError("Failed to load employee data. Please try again later.");
+      }
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.get(`http://localhost:8080/api/employees/search?query=${searchQuery}`);
+      
+      const transformedEmployees = response.data.map((emp: any, index: number) => ({
+        id: emp.id,
+        name: emp.name,
+        role: emp.role || "Unknown",
+        avatar: emp.avatar || "",
+        status: emp.status || "Active",
+        location: emp.location || `Store ${(index % 3) + 1}`,
+        isFirstRow: index === 0
+      }));
+      
+      setEmployees(transformedEmployees);
+      setError(null);
+    } catch (err) {
+      console.error("Error searching employees:", err);
+      setError("Failed to search employees. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewClick = (employee: Employee) => {
     setSelectedEmployee(employee);
     setShowDetailedReport(true);
   };
@@ -72,7 +148,16 @@ const ShiftReport1Page: React.FC = () => {
 
   // If detailed report is being shown, render the ShiftReport2Page component
   if (showDetailedReport && selectedEmployee) {
-    return <ShiftReport2Page employee={selectedEmployee} onBackClick={handleBackClick} />;
+    // Convert id to string to match ShiftReport2Page's expected type
+    const employeeForDetailView = {
+      ...selectedEmployee,
+      id: selectedEmployee.id.toString()
+    };
+    
+    return <ShiftReport2Page 
+      employee={employeeForDetailView} 
+      onBackClick={handleBackClick} 
+    />;
   }
 
   return (
@@ -89,31 +174,25 @@ const ShiftReport1Page: React.FC = () => {
               />
             }
             title="Total Shifts"
-            value="556"
+            value={totalShifts.toString()}
+            change={10}
+          />
+          <StatCard
+            icon={<img src={clockIcon} alt="Time Icon" className="stat-icon" />}
+            title="Total Working Hours"
+            value={totalHours}
             change={10}
           />
           <StatCard
             icon={
               <img
-                src={clockIcon}
-                alt="Time Icon"
+                src="https://cdn-icons-png.flaticon.com/512/8997/8997159.png"
+                alt="Calender Icon"
                 className="stat-icon"
               />
             }
-            title="Total Working Hours"
-            value="160h"
-            change={10}
-          />
-          <StatCard
-            icon={
-              <img 
-                src="https://cdn-icons-png.flaticon.com/512/8997/8997159.png" 
-                alt="Calender Icon" 
-                className="stat-icon" 
-              />
-            }
             title="Working Days"
-            value="10"
+            value={workingDays.toString()}
             change={10}
           />
         </div>
@@ -122,56 +201,76 @@ const ShiftReport1Page: React.FC = () => {
         <div className="search-bar">
           <div className="input-group">
             <div className="input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" 
-                  stroke="#A0AEC0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                  stroke="#A0AEC0"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
-            <input 
-              type="text" 
-              className="search-input" 
-              placeholder="Search by type,time, or others..." 
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search by name, role, etc..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </div>
-          <button className="search-button">
+          <button className="search-button" onClick={handleSearch}>
             Search
           </button>
         </div>
 
+        {/* Loading and Error States */}
+        {loading && <div className="loading-message">Loading employee data...</div>}
+        {error && <div className="error-message">{error}</div>}
+
         {/* Employee Shift Table */}
-        <div className="table-container">
-          <table className="shift-table">
-            <thead>
-              <tr>
-                <th>Employee ID</th>
-                <th>Employee name</th>
-                <th>Role</th>
-                <th>Location</th>
-                <th>Detailed Report</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employeeData.map((employee, index) => (
-                <tr key={`${employee.id}-${index}`}>
-                  <td>{employee.id}</td>
-                  <td>
-                    <span className="employee-name">{employee.name}</span>
-                  </td>
-                  <td>{employee.role}</td>
-                  <td>{employee.location}</td>
-                  <td>
-                    <button
-                      className="view-button"
-                      onClick={() => handleViewClick(employee)}
-                    >
-                      View
-                    </button>
-                  </td>
+        {!loading && !error && (
+          <div className="table-container">
+            <table className="shift-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Employee name</th>
+                  <th>Role</th>
+                  <th>Location</th>
+                  <th>Detailed Report</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {employees.map((employee, index) => (
+                  <tr key={`${employee.id}-${index}`}>
+                    <td>{employee.id}</td>
+                    <td>
+                      <span className="employee-name">{employee.name}</span>
+                    </td>
+                    <td>{employee.role}</td>
+                    <td>{employee.location}</td>
+                    <td>
+                      <button
+                        className="view-button"
+                        onClick={() => handleViewClick(employee)}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -189,9 +288,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
   return (
     <div className="stat-card">
       <div className="stat-header">
-        <div className="stat-icon-container">
-          {icon}
-        </div>
+        <div className="stat-icon-container">{icon}</div>
       </div>
       <div className="stat-title">{title}</div>
       <div className="stat-value">{value}</div>

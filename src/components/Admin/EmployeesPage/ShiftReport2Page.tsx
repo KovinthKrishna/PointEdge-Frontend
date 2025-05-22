@@ -1,13 +1,40 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./styles/ShiftReport2.css";
 
-// Define types for props
+// Define types for props and data
 interface Employee {
-  id: string;
+  id: string | number;
   name: string;
   avatar: string;
   role: string;
   location: string;
-  isFirstRow: boolean;
+  isFirstRow?: boolean;
+}
+
+interface Attendance {
+  employeeId: number;
+  employeeName: string;
+  role: string;
+  clockIn: string;
+  clockOut: string;
+  totalHours: string;
+  otHours: string;
+  status: string;
+  avatar: string;
+  date: string;
+}
+
+interface ShiftData {
+  shiftType: string;
+  startTime: string;
+  endTime: string;
+  break: string;
+  otHours: string;
+  location: string;
+  totalHours: string;
+  orders: string;
+  date: string; // Added date property
 }
 
 interface ShiftReport2PageProps {
@@ -16,73 +43,63 @@ interface ShiftReport2PageProps {
 }
 
 export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2PageProps) {
-  // Sample shift data based on employee ID
-  const getShiftData = (employeeId: string) => {
-    const shiftData: Record<string, any[]> = {
-      "2377373": [
-        {
-          shiftType: "Morning Shift",
-          startTime: "08:30:00",
-          endTime: "12:30:00",
-          break: "00:30:00",
-          otHours: "02:00:00",
-          location: "Store 1",
-          totalHours: "05:30:00",
-          orders: "125 orders",
-        },
-        {
-          shiftType: "Evening Shift",
-          startTime: "15:00:00",
-          endTime: "18:00:00",
-          break: "00:10:00",
-          otHours: "02:00:00",
-          location: "Store 2",
-          totalHours: "06:00:00",
-          orders: "98 orders",
-        },
-      ],
-      "2236767": [
-        {
-          shiftType: "Morning Shift",
-          startTime: "07:00:00",
-          endTime: "11:30:00",
-          break: "00:20:00",
-          otHours: "01:00:00",
-          location: "Store 1",
-          totalHours: "04:30:00",
-          orders: "110 orders",
-        },
-      ],
-      "2345657": [
-        {
-          shiftType: "Evening Shift",
-          startTime: "14:00:00",
-          endTime: "20:00:00",
-          break: "00:45:00",
-          otHours: "01:30:00",
-          location: "Store 2",
-          totalHours: "06:45:00",
-          orders: "145 orders",
-        },
-      ],
-      "2435412": [
-        {
-          shiftType: "Night Shift",
-          startTime: "20:00:00",
-          endTime: "02:00:00",
-          break: "00:30:00",
-          otHours: "00:00:00",
-          location: "Store 3",
-          totalHours: "06:30:00",
-          orders: "78 orders",
-        },
-      ],
+  const [shifts, setShifts] = useState<ShiftData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch attendance data for the employee
+    const fetchAttendanceData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`http://localhost:8080/api/attendances/employee/${employee.id}`);
+        
+        // Transform attendance data to shift data format
+        const transformedShifts = response.data.map((attendance: Attendance) => {
+          // Determine shift type based on clock-in time
+          const clockInHour = parseInt(attendance.clockIn?.split(':')[0] || "0", 10);
+          let shiftType = "Regular Shift";
+          
+          if (clockInHour >= 5 && clockInHour < 12) {
+            shiftType = "Morning Shift";
+          } else if (clockInHour >= 12 && clockInHour < 17) {
+            shiftType = "Afternoon Shift";
+          } else if (clockInHour >= 17 && clockInHour < 22) {
+            shiftType = "Evening Shift";
+          } else {
+            shiftType = "Night Shift";
+          }
+          
+          // Estimate break time (not stored in backend, so using a default)
+          const breakTime = "00:30:00";
+          
+          return {
+            shiftType,
+            startTime: attendance.clockIn || "N/A",
+            endTime: attendance.clockOut || "N/A",
+            break: breakTime,
+            otHours: attendance.otHours || "00:00:00",
+            location: employee.location,
+            totalHours: attendance.totalHours || "00:00:00",
+            orders: "N/A", // Orders data not available in current backend model
+            date: attendance.date // Store the date from attendance
+          };
+        });
+        
+        setShifts(transformedShifts);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching attendance data:", err);
+        setError("Failed to load shift data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    return shiftData[employeeId] || [];
-  };
-
-  const shifts = getShiftData(employee?.id);
+    if (employee && employee.id) {
+      fetchAttendanceData();
+    }
+  }, [employee]);
 
   // Inline styles to ensure back button visibility
   const navBarStyle = {
@@ -90,7 +107,7 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
     padding: "16px",
     backgroundColor: "white",
     borderBottom: "1px solid #e2e8f0",
-    justifyContent:  "flex-end",
+    justifyContent: "flex-end",
     alignItems: "center",
     width: "100%"
   };
@@ -136,7 +153,7 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
         <div className="employee-info">
           <div className="employee-avatar">
             <img
-              src={employee?.avatar || "https://bit.ly/kent-c-dodds"}
+              src={employee?.avatar || "https://bit.ly/default-avatar"}
               alt="Employee profile"
             />
           </div>
@@ -144,18 +161,22 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
           <div className="employee-details">
             <div className="detail-grid">
               <div className="detail-label">Name</div>
-              <div className="detail-value">: {employee?.name || "Eleanor Pena"}</div>
+              <div className="detail-value">: {employee?.name}</div>
               <div className="detail-label">ID</div>
-              <div className="detail-value">: {employee?.id || "2377373"}</div>
+              <div className="detail-value">: {employee?.id}</div>
               <div className="detail-label">Role</div>
-              <div className="detail-value">: {employee?.role || "Cashier"}</div>
+              <div className="detail-value">: {employee?.role}</div>
             </div>
           </div>
         </div>
 
+        {/* Loading and Error States */}
+        {loading && <div className="loading-message">Loading shift data...</div>}
+        {error && <div className="error-message">{error}</div>}
+
         {/* Shift Details Blocks */}
         <div className="shifts-container">
-          {shifts.length > 0 ? (
+          {!loading && !error && shifts.length > 0 ? (
             shifts.map((shift, index) => (
               <div key={index} className="shift-card">
                 <div className="shift-header">
@@ -234,8 +255,8 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
                     <div className="notes-container">
                       <div className="notes-header">Notes</div>
                       <div className="notes-content">
-                        {shift.shiftType} at {shift.location} with {shift.orders} processed. Total working time:{" "}
-                        {shift.totalHours} including {shift.otHours} overtime.
+                        {shift.shiftType} at {shift.location} on {new Date(shift.date).toLocaleDateString()}. 
+                        Total working time: {shift.totalHours} including {shift.otHours} overtime.
                       </div>
                     </div>
                   </div>
@@ -243,9 +264,11 @@ export default function ShiftReport2Page({ employee, onBackClick }: ShiftReport2
               </div>
             ))
           ) : (
-            <div className="no-shifts">
-              <div>No shift data available</div>
-            </div>
+            !loading && !error && (
+              <div className="no-shifts">
+                <div>No shift data available for this employee</div>
+              </div>
+            )
           )}
         </div>
       </div>

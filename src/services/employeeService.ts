@@ -26,7 +26,7 @@ export const getEmployees = async () => {
   return response.data;
 };
 
-// Add to apiService.ts
+
 export const searchAttendances = async (searchData: any) => {
   const response = await api.post('/attendances/search', searchData);
   return response.data;
