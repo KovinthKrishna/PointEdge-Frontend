@@ -26,6 +26,7 @@ const ShiftReport1Page: React.FC = () => {
   const [totalShifts, setTotalShifts] = useState<number>(0);
   const [totalHours, setTotalHours] = useState<string>("0h");
   const [workingDays, setWorkingDays] = useState<number>(0);
+  const [statsLoading, setStatsLoading] = useState<boolean>(true);
 
   // Fetch employees data from backend
   useEffect(() => {
@@ -47,37 +48,6 @@ const ShiftReport1Page: React.FC = () => {
         
         setEmployees(transformedEmployees);
         setError(null);
-
-        // Fetch attendance summary data for stats cards
-        try {
-          const attendanceResponse = await axios.get("http://localhost:8080/api/attendances");
-          const attendanceData = attendanceResponse.data;
-          
-          // Calculate summary statistics
-          setTotalShifts(attendanceData.length);
-          
-          // Calculate total hours
-          let hours = 0;
-          attendanceData.forEach((attendance: any) => {
-            if (attendance.totalHours) {
-              const timeParts = attendance.totalHours.split(':');
-              if (timeParts.length >= 2) {
-                hours += parseInt(timeParts[0]) + (parseInt(timeParts[1]) / 60);
-              }
-            }
-          });
-          setTotalHours(`${Math.round(hours)}h`);
-          
-          // Calculate working days (unique dates)
-          const uniqueDates = new Set(
-            attendanceData.map((attendance: any) => attendance.date?.split('T')[0])
-              .filter((date: string | undefined) => date)
-          );
-          setWorkingDays(uniqueDates.size);
-        } catch (err) {
-          console.error("Error fetching attendance summary:", err);
-          // Use default values for stats
-        }
       } catch (err) {
         console.error("Error fetching employees:", err);
         setError("Failed to load employee data. Please try again later.");
@@ -87,6 +57,59 @@ const ShiftReport1Page: React.FC = () => {
     };
 
     fetchEmployees();
+  }, []);
+
+  // Separate useEffect for fetching attendance stats
+  useEffect(() => {
+    const fetchAttendanceStats = async () => {
+      try {
+        setStatsLoading(true);
+        
+        // Get the first and last day of current month for filtering
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startDate = firstDay.toISOString().split('T')[0];
+        const endDate = now.toISOString().split('T')[0];
+        
+        const attendanceResponse = await axios.get(
+          `http://localhost:8080/api/attendances?startDate=${startDate}&endDate=${endDate}`
+        );
+        const attendanceData = attendanceResponse.data;
+        
+        // Calculate summary statistics
+        setTotalShifts(attendanceData.length);
+        
+        // Calculate total hours
+        let totalMinutes = 0;
+        attendanceData.forEach((attendance: any) => {
+          if (attendance.totalHours) {
+            const timeParts = attendance.totalHours.split(':');
+            if (timeParts.length >= 2) {
+              totalMinutes += parseInt(timeParts[0]) * 60;
+              totalMinutes += parseInt(timeParts[1]);
+            }
+          }
+        });
+        
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        setTotalHours(minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`);
+        
+        // Calculate working days (unique dates)
+        const uniqueDates = new Set(
+          attendanceData.map((attendance: any) => attendance.date?.split('T')[0])
+            .filter((date: string | undefined) => date)
+        );
+        setWorkingDays(uniqueDates.size);
+      } catch (err) {
+        console.error("Error fetching attendance summary:", err);
+        // Keep default values for stats
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchAttendanceStats();
   }, []);
 
   // Search functionality
@@ -175,13 +198,11 @@ const ShiftReport1Page: React.FC = () => {
             }
             title="Total Shifts"
             value={totalShifts.toString()}
-            change={10}
           />
           <StatCard
             icon={<img src={clockIcon} alt="Time Icon" className="stat-icon" />}
             title="Total Working Hours"
             value={totalHours}
-            change={10}
           />
           <StatCard
             icon={
@@ -192,8 +213,7 @@ const ShiftReport1Page: React.FC = () => {
               />
             }
             title="Working Days"
-            value={workingDays.toString()}
-            change={10}
+            value={workingDays.toString()}          
           />
         </div>
 
@@ -281,10 +301,9 @@ interface StatCardProps {
   icon: React.ReactNode;
   title: string;
   value: string;
-  change: number;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
+const StatCard: React.FC<StatCardProps> = ({ icon, title, value }) => {
   return (
     <div className="stat-card">
       <div className="stat-header">
@@ -293,8 +312,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
       <div className="stat-title">{title}</div>
       <div className="stat-value">{value}</div>
       <div className="stat-help-text">
-        <span className="stat-arrow-up"></span>
-        {change}% from last week
+        stats in this month
       </div>
     </div>
   );

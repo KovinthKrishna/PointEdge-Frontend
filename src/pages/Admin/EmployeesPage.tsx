@@ -1,3 +1,4 @@
+import React from 'react';
 import { Outlet } from "react-router-dom";
 import { Box, Tabs, TabList, Tab } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -29,32 +30,34 @@ const EmployeesPage = () => {
   return (
     <Box bg="white" w="100%">
       {/* Tabs Navigation */}
-      <Tabs
-        variant="unstyled"
-        onChange={handleTabChange}
+      <Tabs 
+        variant="unstyled" 
+        onChange={handleTabChange} 
         defaultIndex={getActiveTabIndex()}
         flex="1"
         display="flex"
-        flexDirection="column"     
+        flexDirection="column"
       >
-        <TabList
+        <TabList 
           bg="white"
-          borderBottom="10px solid #003049"
+          borderBottom="12px solid #003049"
           borderRight="12px solid #003049"
           display="flex"
           width="100%"
           paddingTop="16px"
+          height="5.8rem"
           sx={{
             "& > button": {
               fontWeight: "500",
-              fontSize: 16,
+              fontSize: "16px",
               py: 4,
               px: 8,
               borderBottom: "none",
-              borderTopRadius: "16px",
               flex: 1,
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
               textAlign: "center",
-              maxWidth: "200px",
+              maxWidth: "180px",
               backgroundColor: "white",
               color: "black",
               position: "relative",
@@ -65,8 +68,6 @@ const EmployeesPage = () => {
               color: "white",
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
-              borderBottomLeftRadius: 0,
-              borderBottomRightRadius: 0,
               zIndex: 2,
             },
             "& > button[aria-selected=false]": {

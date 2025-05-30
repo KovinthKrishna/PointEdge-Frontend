@@ -371,6 +371,21 @@
   height: 100%;
 }
 
+.weekly-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.weekly-bar-percent {
+  position: absolute;
+  top: -20px;
+  font-size: 0.75rem;
+  color: #4A5568;
+  font-weight: 500;
+}
+
 .weekly-bar {
   width: 20px;
   background-color: #2C5282;

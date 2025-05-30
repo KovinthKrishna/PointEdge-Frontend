@@ -1,37 +1,59 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import employeeIcon from "../../../assets/employee-icon.png";
 import clockIcon from "../../../assets/clock-icon.png";
 import "./styles/EmployeeDashboard.css";
 
+// Define interface for backend data
+interface EmployeeDashboardData {
+  // Overview Stats
+  totalEmployees: number;
+  activeEmployees: number;
+  onLeaveEmployees: number;
+  totalHoursWorked: string;
+  employeeChangePercent: number;
+  hoursChangePercent: number;
+  
+  // Productivity Chart Data
+  productivityData: {
+    month: string;
+    primary: number;
+    secondary: number;
+  }[];
+  
+  // Attendance Report Data
+  activeCount: number;
+  leaveCount: number;
+  activePercentage: number;
+  leavePercentage: number;
+  
+  // Weekly Attendance Data
+  weeklyAttendance: {
+    date: string;
+    dayOfWeek: string;
+    attendancePercentage: number;
+    height: number;
+  }[];
+}
 
-const SalesChart: React.FC = () => {
- 
-  const salesData = [
-    { month: 'Jan', primary: 65, secondary: 45 },
-    { month: 'Feb', primary: 85, secondary: 60 },
-    { month: 'Mar', primary: 50, secondary: 40 },
-    { month: 'Apr', primary: 70, secondary: 55 },
-    { month: 'May', primary: 80, secondary: 60 },
-    { month: 'Jun', primary: 75, secondary: 65 },
-    { month: 'Jul', primary: 70, secondary: 60 },
-    { month: 'Aug', primary: 60, secondary: 50 },
-    { month: 'Sep', primary: 55, secondary: 45 },
-    { month: 'Oct', primary: 65, secondary: 55 },
-    { month: 'Nov', primary: 75, secondary: 60 },
-    { month: 'Dec', primary: 85, secondary: 55 },
-  ];
+// Orders data will come from a separate endpoint
+interface OrderStats {
+  totalOrders: number;
+  orderChangePercent: number;
+}
 
+const SalesChart: React.FC<{ chartData: { month: string; primary: number; secondary: number }[] }> = ({ chartData }) => {
   // Find the maximum value to normalize the bar heights
-  const maxValue = Math.max(...salesData.flatMap(item => [item.primary, item.secondary]));
+  const maxValue = Math.max(...chartData.flatMap(item => [item.primary, item.secondary]));
   
   // Calculate the height of each bar relative to the maximum value
   const getBarHeight = (value: number): string => {
     return `${(value / maxValue) * 150}px`;
   };
 
-   return (
+  return (
     <div className="chart-container">
-       {/* Chart grid lines - fixed positioning   */}
+      {/* Chart grid lines - fixed positioning */}
       <div className="chart-grid-lines">
         {[...Array(6)].map((_, i) => (
           <div 
@@ -44,7 +66,7 @@ const SalesChart: React.FC = () => {
 
       {/* Chart bars - improved layout */}
       <div className="chart-bars-container">
-        {salesData.map((data, index) => (
+        {chartData.map((data, index) => (
           <div key={index} className="chart-month-column">
             <div className="chart-bars-wrapper">
               <div 
@@ -65,9 +87,86 @@ const SalesChart: React.FC = () => {
 };
 
 const EmployeeDashboardPage: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [dashboardData, setDashboardData] = useState<EmployeeDashboardData | null>(null);
+  const [orderStats, setOrderStats] = useState<OrderStats>({ totalOrders: 0, orderChangePercent: 0 });
+  
+  // Get current year
+  const currentYear = new Date().getFullYear();
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<EmployeeDashboardData>(
+          `http://localhost:8080/api/dashboard/employee-stats?year=${currentYear}`
+        );
+        setDashboardData(response.data);
+        
+        // Also fetch order stats (assuming you have this endpoint)
+        try {
+          const orderResponse = await axios.get<OrderStats>("http://localhost:8080/api/dashboard/order-stats");
+          setOrderStats(orderResponse.data);
+        } catch (orderErr) {
+          console.error("Error fetching order stats:", orderErr);
+          // Use default values for orders if endpoint not available
+          setOrderStats({
+            totalOrders: 1256,
+            orderChangePercent: 10
+          });
+        }
+        
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+        setError("Failed to load dashboard data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []); // No dependencies needed as we only fetch once on mount
+
+  // Show loading state
+  if (loading && !dashboardData) {
+    return <div className="loading-container">Loading dashboard data...</div>;
+  }
+
+  // Show error state
+  if (error && !dashboardData) {
+    return <div className="error-container">{error}</div>;
+  }
+
+  // Use default data if API call fails
+  const data = dashboardData || {
+    totalEmployees: 0,
+    activeEmployees: 0,
+    onLeaveEmployees: 0,
+    totalHoursWorked: "0h",
+    employeeChangePercent: 0,
+    hoursChangePercent: 0,
+    productivityData: Array(12).fill(0).map((_, i) => ({
+      month: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][i],
+      primary: 0,
+      secondary: 0
+    })),
+    activeCount: 0,
+    leaveCount: 0,
+    activePercentage: 0,
+    leavePercentage: 0,
+    weeklyAttendance: Array(7).fill(0).map(() => ({
+      date: "",
+      dayOfWeek: "",
+      attendancePercentage: 0,
+      height: 0
+    }))
+  };
+
   return (
     <div className="dashboard-container">
-     
       <div className="grid grid-cols-3 gap-6 mb-6">
         <StatCard
           icon={
@@ -79,9 +178,10 @@ const EmployeeDashboardPage: React.FC = () => {
             />
           }
           title="No. of Employees"
-          value="1,256"
-          change={10}
+          value={data.totalEmployees.toString()}
+          change={data.employeeChangePercent}
           chartData={[18, 25, 22, 20]}
+          customMessage="at present"
         />
         <StatCard
           icon={
@@ -93,7 +193,7 @@ const EmployeeDashboardPage: React.FC = () => {
             />
           }
           title="Total Sales"
-          value="$8,245.00"
+          value="$0"
           change={-0.5}
           chartData={[20, 15, 25, 18]}
         />
@@ -107,8 +207,8 @@ const EmployeeDashboardPage: React.FC = () => {
             />
           }
           title="Total Order"
-          value="1,256"
-          change={10}
+          value={orderStats.totalOrders.toString()}
+          change={orderStats.orderChangePercent}
           chartData={[15, 18, 25, 20]}
         />
       </div>
@@ -119,16 +219,14 @@ const EmployeeDashboardPage: React.FC = () => {
         <div className="bg-white rounded-md p-4 border border-blue-100">
           <div className="flex justify-between mb-4">
             <div className="font-medium">Employee Productivity</div>
-            <select className="select" defaultValue="2024">
-              <option value="2023">2024</option>
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-            </select>
+            <div className="font-medium">
+              {currentYear}
+            </div>
           </div>
           
-          <SalesChart />
+          <SalesChart chartData={data.productivityData} />
           
-          {/* Customer Stats */}
+          {/* Employee Stats */}
           <div className="flex justify-between mt-16">
             <div className="flex items-center">
               <div className="bg-blue-100 p-2 rounded-md mr-3">
@@ -143,13 +241,13 @@ const EmployeeDashboardPage: React.FC = () => {
                 <div className="text-sm text-gray-500">
                   Total Hours Worked
                 </div>
-                <div className="font-bold">10,52 h</div>
+                <div className="font-bold">{data.totalHoursWorked}</div>
               </div>
             </div>
 
             <div className="flex items-center">
-              <div className="badge badge-green mr-2">
-                ↑ 3%
+              <div className={`badge ${data.hoursChangePercent >= 0 ? 'badge-green' : 'badge-red'} mr-2`}>
+                {data.hoursChangePercent >= 0 ? '↑' : '↓'} {Math.abs(data.hoursChangePercent)}%
               </div>
             </div>
 
@@ -157,7 +255,7 @@ const EmployeeDashboardPage: React.FC = () => {
               <div className="bg-blue-100 p-2 rounded-md mr-3">
                 <img
                   src={employeeIcon}
-                  alt="Product Icon"
+                  alt="Employee Icon"
                   width="30"
                   height="30"
                 />
@@ -167,31 +265,27 @@ const EmployeeDashboardPage: React.FC = () => {
                   Total Employees
                 </div>
                 <div className="font-bold text-sm">
-                  250
+                  {data.totalEmployees}
                 </div>
               </div>
             </div>
 
             <div className="flex items-center">
-              <div className="badge badge-green mr-2">
-                ↑ 3%
+              <div className={`badge ${data.employeeChangePercent >= 0 ? 'badge-green' : 'badge-red'} mr-2`}>
+                {data.employeeChangePercent >= 0 ? '↑' : '↓'} {Math.abs(data.employeeChangePercent)}%
               </div>
             </div>
           </div>
         </div>
 
-        
-
         <div>
           <div className="flex flex-col gap-6">
-            
             <div className="bg-white rounded-md p-4 border border-gray-200">
               <div className="flex justify-between mb-4">
                 <div className="font-medium">Attendance Report</div>
               </div>
               <div className="relative flex justify-center donut-container">
-                
-                {/*  donut chart */}
+                {/* donut chart - use real percentages */}
                 <div className="donut-chart">
                   <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <circle
@@ -201,7 +295,7 @@ const EmployeeDashboardPage: React.FC = () => {
                       fill="none"
                       stroke="#2C5282"
                       strokeWidth="20"
-                      strokeDasharray="188.5 251.3"
+                      strokeDasharray={`${data.activePercentage * 2.51} 251.3`}
                       transform="rotate(-90 50 50)"
                     />
                     <circle
@@ -211,8 +305,8 @@ const EmployeeDashboardPage: React.FC = () => {
                       fill="none"
                       stroke="#B8B8B8"
                       strokeWidth="20"
-                      strokeDasharray="70.7 251.3"
-                      strokeDashoffset="-188.5"
+                      strokeDasharray={`${data.leavePercentage * 2.51} 251.3`}
+                      strokeDashoffset={`-${data.activePercentage * 2.51}`}
                       transform="rotate(-90 50 50)"
                     />
                     <circle cx="50" cy="50" r="20" fill="white" />
@@ -222,45 +316,43 @@ const EmployeeDashboardPage: React.FC = () => {
               <div className="flex justify-center mt-4 text-xs">
                 <div className="flex items-center mr-4">
                   <div className="donut-indicator donut-indicator-active"></div>
-                  <div>Active</div>
+                  <div>Active ({data.activePercentage}%)</div>
                 </div>
                 <div className="flex items-center mr-4">
                   <div className="donut-indicator donut-indicator-leave"></div>
-                  <div>Leave</div>
+                  <div>Leave ({data.leavePercentage}%)</div>
                 </div>
               </div>
             </div>
 
-            {/* Weekly Transaction */}
+            {/* Weekly Attendance Summary with Percentages */}
             <div className="bg-white rounded-md p-4 border border-gray-200">
               <div className="flex justify-between mb-4">
-                <div className="font-medium">Weekly Transaction Summary</div>
+                <div className="font-medium">Weekly Attendance Summary</div>
                 <div className="text-xs text-blue-500">
-                  Last 7 month
+                  Last 7 days
                 </div>
               </div>
               <div className="weekly-chart-container">
                 <div className="relative mt-3">
-                  {/* Mini chart */}
+                  {/* Mini chart with percentage labels */}
                   <div className="flex justify-between items-end weekly-bars-container">
-                    {[140, 100, 125, 85, 150, 110, 160].map((height, i) => (
-                      <div 
-                        key={i} 
-                        className="weekly-bar"
-                        style={{ height: `${height}px` }}
-                      />
+                    {data.weeklyAttendance.map((day, i) => (
+                      <div key={i} className="weekly-bar-container">
+                        <div className="weekly-bar-percent">{day.attendancePercentage}%</div>
+                        <div 
+                          className="weekly-bar"
+                          style={{ height: `${day.height}px` }}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
               </div>
               <div className="flex justify-between mt-4 text-xs text-gray-500">
-                <div>24 Jun</div>
-                <div>25 Jun</div>
-                <div>26 Jun</div>
-                <div>27 Jun</div>
-                <div>28 Jun</div>
-                <div>29 Jun</div>
-                <div>30 Jun</div>
+                {data.weeklyAttendance.map((day, i) => (
+                  <div key={i}>{day.dayOfWeek}</div>
+                ))}
               </div>
             </div>
           </div>
@@ -270,16 +362,17 @@ const EmployeeDashboardPage: React.FC = () => {
   );
 };
 
-// Stat Card Component
+// StatCard Component with Interface
 interface StatCardProps {
   icon: React.ReactNode;
   title: string;
   value: string;
   change: number;
   chartData: number[];
+  customMessage?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
+const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change, customMessage }) => {
   return (
     <div className="stat-card">
       <div className="flex justify-between mb-4">
@@ -306,9 +399,23 @@ const StatCard: React.FC<StatCardProps> = ({ icon, title, value, change }) => {
         </div>
         <div className="mt-1">
           <div className="stat-number">{value}</div>
-          <div className={`stat-help ${change >= 0 ? 'text-green' : 'text-red'}`}>
-            <span className={change >= 0 ? 'stat-arrow-up' : 'stat-arrow-down'}></span>
-            {Math.abs(change)}% from last week
+          <div 
+            className={`stat-help ${
+              customMessage === "at present" || (!customMessage && change >= 0) 
+                ? 'text-green' 
+                : (!customMessage && change < 0) 
+                  ? 'text-red' 
+                  : ''
+            }`}
+          >
+            {customMessage ? (
+              customMessage
+            ) : (
+              <>
+                <span className={change >= 0 ? 'stat-arrow-up' : 'stat-arrow-down'}></span>
+                {Math.abs(change)}% from last week
+              </>
+            )}
           </div>
         </div>
       </div>
