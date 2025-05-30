@@ -85,6 +85,38 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
     return phoneRegex.test(phone);
   };
   
+  // Style for animations
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+  
   // Show notification function
   const showNotification = (message: string, type: 'success' | 'error') => {
     setNotification({ message, type });
@@ -324,70 +356,187 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
     return `Rs ${amount.toFixed(2)}`;
   };
 
+  // Modal styles for delete confirmation
+  const overlayStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000
+  };
+
+  const modalStyle: React.CSSProperties = {
+    backgroundColor: 'white',
+    padding: '24px',
+    borderRadius: '12px',
+    maxWidth: '450px',
+    width: '100%',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    position: 'relative'
+  };
+
   return ReactDOM.createPortal(
-    <div className="customer-details-overlay">
-      <div className="customer-details-backdrop" onClick={onClose} />
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 99999,
+    }}>
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        zIndex: 1,
+      }} onClick={onClose} />
       
-      <div className="customer-details-container">
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        width: '100%',
+        maxWidth: '1000px',
+        height: '90vh',
+        maxHeight: '700px',
+        boxShadow: '0 2px 20px rgba(0, 0, 0, 0.3)',
+        zIndex: 2,
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+      }}>
         {/* Left Sidebar */}
-        <div className="customer-details-sidebar">
-          <button className="back-button" onClick={onClose}>
+        <div style={{
+          width: '40%',
+          backgroundColor: '#003049',
+          color: 'white',
+          padding: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+        }}>
+          <button 
+            onClick={onClose}
+            style={{
+              background: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              position: 'absolute',
+              top: '16px',
+              left: '16px',
+            }}
+          >
             <FaArrowLeft color="#003049" size={20} />
           </button>
           
           {/* Customer Summary */}
-          <div className="customer-summary">
+          <div style={{ textAlign: 'center', marginTop: '50px', marginBottom: '20px' }}>
             {loading ? (
-              <div className="loading-message">Loading customer info...</div>
+              <div style={{ textAlign: 'center', padding: '20px' }}>Loading customer info...</div>
             ) : error ? (
-              <div className="error-message">{error}</div>
+              <div style={{ textAlign: 'center', padding: '20px', color: '#FF3B30' }}>{error}</div>
             ) : customerData ? (
-              <div className="customer-card">
-                <div className="customer-tier">
+              <div style={{ 
+                backgroundColor: '#00253A',
+                borderRadius: '8px',
+                padding: '15px',
+                marginBottom: '20px',
+                textAlign: 'center',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '5px' }}>
                   {getTierIcon(customerTier)}
-                  <h3 style={{ color: getTierColor(customerTier) }}>
+                  <h3 style={{ 
+                    margin: 0,
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    color: getTierColor(customerTier)
+                  }}>
                     {getTierName(customerTier)}
                   </h3>
                 </div>
-                <div className="customer-id">
+                <div style={{ 
+                  fontSize: '12px',
+                  color: '#fff',
+                  marginBottom: '10px'
+                }}>
                   Customer ID {customerData.id}
                 </div>
-                <div className="customer-points">
+                <div style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  marginBottom: '5px',
+                  color:'#4CD964'
+                }}>
                   {customerData.points?.toFixed(2) || '0.00'}
                   <FaStar color="#4CD964" size={16} style={{ marginLeft: '8px' }} />
                 </div>
-                <div className="points-label">
+                <div style={{ 
+                  fontSize: '14px',
+                  color: '#fff'
+                }}>
                   Loyalty Points
                 </div>
               </div>
             ) : (
-              <div className="error-message">Customer not found</div>
+              <div style={{ textAlign: 'center', padding: '20px', color: '#FF3B30' }}>Customer not found</div>
             )}
           </div>
           
           {/* Order History */}
-          <div className="section-title">Order History</div>
+          <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>Order History</div>
           
-          <div className="orders-container">
+          <div style={{ flex: 1, overflow: 'auto' }}>
             {ordersLoading ? (
-              <div className="loading-message">Loading orders...</div>
+              <div style={{ textAlign: 'center', padding: '20px' }}>Loading orders...</div>
             ) : ordersError ? (
-              <div className="error-message">{ordersError}</div>
+              <div style={{ textAlign: 'center', padding: '20px', color: '#FF3B30' }}>{ordersError}</div>
             ) : orders.length === 0 ? (
-              <div className="empty-message">No order history found</div>
+              <div style={{ textAlign: 'center', padding: '20px' }}>No order history found</div>
             ) : (
               orders.map((order) => (
-                <div key={order.id} className="order-card">
-                  <div className="order-header">
-                    <div className="order-number">Order #{order.id}</div>
-                    <div className="order-date">{order.date}</div>
+                <div key={order.id} style={{
+                  backgroundColor: '#00253A',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  marginBottom: '10px',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ fontSize: '12px', color: '#CCC' }}>Order #{order.id}</div>
+                    <div style={{ fontSize: '12px', color: '#CCC' }}>{order.date}</div>
                   </div>
                   
-                  <div className="order-details">
-                    <div className="items-count">{order.items} items</div>
-                    <div className="order-amount">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: '14px' }}>{order.items} items</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                       <div>{formatCurrency(order.amount)}</div>
-                      <div className="points-badge">
+                      <div style={{ 
+                        backgroundColor: '#4CD964', 
+                        color: 'white', 
+                        padding: '2px 12px', 
+                        borderRadius: '12px',
+                        fontSize: '12px' 
+                      }}>
                         +{order.points.toFixed(2)}
                       </div>
                     </div>
@@ -399,31 +548,57 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
         </div>
         
         {/* Right Content */}
-        <div className="customer-details-content">
-          <div className="content-header">
-            <h1>Customer Details</h1>
-            <p>*Become a loyalty customer to access exclusive benefits*</p>
+        <div style={{
+          width: '60%',
+          padding: '30px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          <div style={{ marginBottom: '20px' }}>
+            <h1 style={{ marginBottom: '5px', fontSize: '22px' }}>Customer Details</h1>
+            <p style={{ color: '#999', margin: '0', fontSize: '13px' }}>*Become a loyalty customer to access exclusive benefits*</p>
           </div>
           
           {loading && !customerData ? (
-            <div className="loading-message">Loading customer details...</div>
+            <div style={{ textAlign: 'center', padding: '40px' }}>Loading customer details...</div>
           ) : error ? (
-            <div className="error-message">{error}</div>
+            <div style={{ textAlign: 'center', padding: '40px', color: '#FF3B30' }}>{error}</div>
           ) : !customerData ? (
-            <div className="error-message">Customer not found</div>
+            <div style={{ textAlign: 'center', padding: '40px', color: '#FF3B30' }}>Customer not found</div>
           ) : (
             <>
               {/* Customer Form */}
-              <div className="customer-form">
-                <h4>Customer's personal data</h4>
+              <div style={{ 
+                backgroundColor: '#f9f9f9',
+                borderRadius: '8px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <h4 style={{ 
+                  margin: '0 0 15px 0',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}>
+                  Customer's personal data
+                </h4>
                 
-                <div className="form-group">
-                  <label>Title</label>
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', color: '#666', fontSize: '13px' }}>Title</label>
                   <select
                     name="title"
                     value={customerData.title || 'MR'}
                     onChange={handleInputChange}
-                    className="form-control"
+                    style={{
+                      width: '100%',
+                      padding: '8px 10px',
+                      border: '1px solid #CCC',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      height: '40px',
+                      boxSizing: 'border-box',
+                      backgroundColor: 'white',
+                      cursor: 'pointer'
+                    }}
                   >
                     <option value="MR">Mr.</option>
                     <option value="MRS">Mrs.</option>
@@ -431,50 +606,80 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
                   </select>
                 </div>
                 
-                <div className={`form-group ${errors.name ? 'has-error' : ''}`}>
-                  <label>Name</label>
+                <div style={{ marginBottom: errors.name ? '5px' : '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', color: '#666', fontSize: '13px' }}>Name</label>
                   <input 
                     type="text"
                     name="name"
                     value={customerData.name || ''}
                     onChange={handleInputChange}
-                    className="form-control"
+                    style={{
+                      width: '100%',
+                      padding: '8px 10px',
+                      border: `1px solid ${errors.name ? '#FF3B30' : '#CCC'}`,
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      height: '40px',
+                      boxSizing: 'border-box',
+                      backgroundColor: 'white',
+                      cursor: 'text'
+                    }}
                   />
                   {errors.name && (
-                    <div className="error-text">
+                    <div style={{ color: '#FF3B30', fontSize: '12px', marginTop: '5px' }}>
                       {errors.name}
                     </div>
                   )}
                 </div>
                 
-                <div className={`form-group ${errors.email ? 'has-error' : ''}`}>
-                  <label>E-mail</label>
+                <div style={{ marginBottom: errors.email ? '5px' : '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', color: '#666', fontSize: '13px' }}>E-mail</label>
                   <input 
                     type="email"
                     name="email"
                     value={customerData.email || ''}
                     onChange={handleInputChange}
-                    className="form-control"
+                    style={{
+                      width: '100%',
+                      padding: '8px 10px',
+                      border: `1px solid ${errors.email ? '#FF3B30' : '#CCC'}`,
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      height: '40px',
+                      boxSizing: 'border-box',
+                      backgroundColor: 'white',
+                      cursor: 'text'
+                    }}
                   />
                   {errors.email && (
-                    <div className="error-text">
+                    <div style={{ color: '#FF3B30', fontSize: '12px', marginTop: '5px' }}>
                       {errors.email}
                     </div>
                   )}
                 </div>
                 
-                <div className={`form-group ${errors.phone ? 'has-error' : ''}`}>
-                  <label>Phone</label>
+                <div style={{ marginBottom: errors.phone ? '5px' : '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', color: '#666', fontSize: '13px' }}>Phone</label>
                   <input 
                     type="tel"
                     name="phone"
                     value={customerData.phone || ''}
                     onChange={handleInputChange}
                     maxLength={10}
-                    className="form-control"
+                    style={{
+                      width: '100%',
+                      padding: '8px 10px',
+                      border: `1px solid ${errors.phone ? '#FF3B30' : '#CCC'}`,
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      height: '40px',
+                      boxSizing: 'border-box',
+                      backgroundColor: 'white',
+                      cursor: 'text'
+                    }}
                   />
                   {errors.phone && (
-                    <div className="error-text">
+                    <div style={{ color: '#FF3B30', fontSize: '12px', marginTop: '5px' }}>
                       {errors.phone}
                     </div>
                   )}
@@ -482,11 +687,22 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
               </div>
               
               {/* Action Buttons */}
-              <div className="action-buttons">
+              <div style={{ display: 'flex', gap: '10px' }}>
                 <button 
                   onClick={handleDeleteClick}
                   disabled={loading}
-                  className="delete-button"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#FF3B30',
+                    border: '1px solid #FF3B30',
+                    borderRadius: '6px',
+                    padding: '10px 15px',
+                    cursor: 'pointer',
+                    flex: 1,
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    opacity: loading ? 0.5 : 1
+                  }}
                 >
                   Delete Customer
                 </button>
@@ -494,7 +710,18 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
                 <button 
                   onClick={handleSaveChanges}
                   disabled={loading}
-                  className="save-button"
+                  style={{
+                    backgroundColor: '#1C1C1E',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '10px 15px',
+                    cursor: 'pointer',
+                    flex: 1,
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    opacity: loading ? 0.5 : 1
+                  }}
                 >
                   Save Changes
                 </button>
@@ -506,38 +733,90 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
       
       {/* Delete Confirmation Modal */}
       {showDeleteConfirmation && (
-        <div className="modal-overlay">
-          <div className="modal-container">
-            <div className="modal-header">
-              <h3>Confirm Delete</h3>
+        <div style={overlayStyle}>
+          <div style={modalStyle}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete</h3>
               <button 
                 onClick={handleCloseConfirmation}
-                className="close-button"
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  padding: '8px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#6B7280',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <FaTimes size={16} />
               </button>
             </div>
-            <p className="modal-message">
+            <p style={{ 
+              margin: '0 0 20px 0', 
+              color: '#4B5563', 
+              fontSize: '14px', 
+              lineHeight: '1.5'
+            }}>
               Are you sure you want to delete this customer? This action cannot be undone.
             </p>
             
             {deleteError && (
-              <div className="modal-error">
+              <div style={{ 
+                backgroundColor: '#FEF2F2', 
+                color: '#B91C1C', 
+                padding: '12px', 
+                borderRadius: '6px', 
+                marginTop: '12px',
+                marginBottom: '16px',
+                fontSize: '14px',
+                border: '1px solid #FECACA'
+              }}>
                 {deleteError}
               </div>
             )}
             
-            <div className="modal-footer">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
               <button
                 onClick={handleCloseConfirmation}
-                className="cancel-button"
+                style={{
+                  padding: '8px 16px',
+                  background: '#F9FAFB',
+                  border: '1px solid #D1D5DB',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
                 disabled={isDeleting}
-                className="confirm-button"
+                style={{
+                  padding: '8px 16px',
+                  background: '#EF4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: isDeleting ? 'default' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  opacity: isDeleting ? 0.7 : 1,
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
+                onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
               >
                 {isDeleting ? 'Deleting...' : 'Delete'}
               </button>
