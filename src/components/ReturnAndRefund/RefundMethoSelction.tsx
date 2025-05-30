@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, VStack, Text, useToast, HStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { CreditCard, Wallet } from "lucide-react";
+import { CreditCard, Repeat, Wallet } from "lucide-react";
 import ActionButtons from "./ActionButtons";
 
 interface RefundMethodSelectionProps {
@@ -23,6 +23,7 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   const methods = [
     { label: "Cash", icon: Wallet },
     { label: "Card", icon: CreditCard },
+    { label: "Exchange", icon: Repeat },
   ];
 
   const handleCardSelect = (method: string) => {

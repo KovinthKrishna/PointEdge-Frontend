@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { InvoiceItem } from "../models/Invoice";
+import Product from "../models/Product";
 
 interface UseRefundProcessorParams {
   invoiceNumber: string;
@@ -19,7 +20,7 @@ const useRefundProcessor = ({
 }: UseRefundProcessorParams) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const processRefund = async (method: string) => {
+  const processRefund = async (method: string, product?: Product) => {
     setIsProcessing(true);
     try {
       const refundRequest = {
@@ -30,6 +31,7 @@ const useRefundProcessor = ({
           refundAmount: item.refundAmount,
         })),
         refundMethod: method,
+        exchange:product,
         totalAmount,
       };
 

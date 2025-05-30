@@ -96,7 +96,6 @@ const ReturnRefundPage: React.FC = () => {
         })),
         refundMethod: method,
         totalAmount: totalRefundAmount,
-        reason: "",
       };
 
       await axios.post(

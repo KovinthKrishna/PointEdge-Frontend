@@ -2,7 +2,7 @@ import React from "react";
 import ItemSelection from "./ItemSelection";
 import RefundMethodSelection from "./RefundMethoSelction";
 import RefundResult from "./RefundResults";
-import { RefundStep } from "./ReturnRefundContainer";
+import { RefundStep } from "../../models/RefundStep";
 import { InvoiceItem, Invoice } from "../../models/Invoice";
 
 interface RefundStepRendererProps {

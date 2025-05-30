@@ -10,12 +10,7 @@ import { useItemSelection } from "../../hooks/useItemSelection";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
 import { useReturnFlowSteps } from "../../hooks/UseReturnFlowSteps";
 import { InvoiceItem } from "../../models/Invoice";
-
-export enum RefundStep {
-  ITEM_SELECTION,
-  REFUND_METHOD_SELECTION,
-  REFUND_RESULT,
-}
+import Product from "../../models/Product";
 
 const ReturnRefundContainer: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -29,6 +24,11 @@ const ReturnRefundContainer: React.FC = () => {
     useItemSelection(invoiceData?.items || []);
 
   const [refundSuccess, setRefundSuccess] = useState(false);
+
+  const [isExchangeMode, setIsExchangeMode] = useState(false);
+  const [replacementProduct, setReplacementProduct] = useState<Product | null>(
+    null
+  );
 
   const { processRefund } = useRefundProcessor({
     invoiceNumber: invoiceNumber!,
@@ -46,8 +46,20 @@ const ReturnRefundContainer: React.FC = () => {
 
   const handleRefundMethodSelection = async (method: string) => {
     setRefundMethod(method);
+    if (method === "Exchange") {
+      setIsExchangeMode(true);
+    } else {
+      if (invoiceNumber) {
+        await processRefund(method);
+        goToNext();
+      }
+    }
+  };
+
+  const handleReplacementProductSelect = async (product: Product) => {
+    setReplacementProduct(product);
     if (invoiceNumber) {
-      await processRefund(method);
+      await processRefund("Exchange", product); // Update your hook to accept product
       goToNext();
     }
   };

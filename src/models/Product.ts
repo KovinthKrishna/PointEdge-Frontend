@@ -2,6 +2,7 @@ import Brand from "./Brand";
 import Category from "./Category";
 
 export default interface Product {
+  imageUrl: string | undefined;
   id: number;
   name: string;
   barcode: string | null;
