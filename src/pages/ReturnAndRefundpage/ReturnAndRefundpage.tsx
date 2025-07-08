@@ -9,6 +9,9 @@ import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
 import { InvoiceItem, Invoice } from "../../models/Invoice";
+import Product from "../../models/Product";
+import useRefundProcessor from "../../hooks/useRefundProcessor";
+import { Toast } from "@chakra-ui/react";
 
 enum RefundStep {
   ITEM_SELECTION,
@@ -29,14 +32,31 @@ const ReturnRefundPage: React.FC = () => {
   const [totalRefundAmount, setTotalRefundAmount] = useState(0);
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [itemSelections, setItemSelections] = useState<InvoiceItem[]>([]);
+  const [replacementProduct, setReplacementProduct] = useState<Product | null>(
+    null
+  );
 
-  const toast = useToast();
+  const toastUI = useToast();
+
+  const { processRefund, processExchange, isProcessing } = useRefundProcessor({
+    invoiceNumber: invoiceNumber!,
+    selectedItems,
+    totalAmount: totalRefundAmount,
+    onSuccess: () => {
+      setRefundSuccess(true);
+      toastUI({ title: "Success", status: "success", isClosable: true });
+    },
+    onFailure: () => {
+      setRefundSuccess(false);
+      toastUI({ title: "Failed", status: "error", isClosable: true });
+    },
+  });
 
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
+          `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
         );
         const info = response.data;
 
@@ -51,7 +71,7 @@ const ReturnRefundPage: React.FC = () => {
         }));
 
         setInvoiceData({
-          invoiceNumber: info.id,
+          invoiceNumber: info.invoiceNumber,
           date: info.date,
           totalAmount: info.totalAmount,
           items,
@@ -60,7 +80,7 @@ const ReturnRefundPage: React.FC = () => {
         setItemSelections(items);
       } catch (error) {
         console.error("Failed to fetch invoice", error);
-        toast({
+        toastUI({
           title: "Error",
           description: "Failed to fetch invoice details.",
           status: "error",
@@ -73,7 +93,7 @@ const ReturnRefundPage: React.FC = () => {
     if (invoiceNumber) {
       fetchInvoice();
     }
-  }, [invoiceNumber, toast]);
+  }, [invoiceNumber, toastUI]);
 
   const handleItemSelection = (items: InvoiceItem[]) => {
     setItemSelections(items);
@@ -83,29 +103,17 @@ const ReturnRefundPage: React.FC = () => {
     setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);
   };
 
-  const handleRefundMethodSelection = async (method: string) => {
+  const handleRefundMethodSelection = async (
+    method: string,
+    product?: Product
+  ) => {
     setRefundMethod(method);
 
-    try {
-      const refundRequest = {
-        invoiceNumber: invoiceNumber!,
-        items: selectedItems.map((item) => ({
-          itemId: item.id,
-          quantity: item.returnQuantity,
-          reason: item.reason || "",
-        })),
-        refundMethod: method,
-        totalAmount: totalRefundAmount,
-      };
-
-      await axios.post(
-        "http://localhost:8080/api/returns/process",
-        refundRequest
-      );
-      setRefundSuccess(true);
-    } catch (error) {
-      console.error("Refund processing failed", error);
-      setRefundSuccess(false);
+    if (method === "Exchange" && product) {
+      setReplacementProduct(product);
+      await processExchange(product);
+    } else {
+      await processRefund(method);
     }
 
     setCurrentStep(RefundStep.REFUND_RESULT);
