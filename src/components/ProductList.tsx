@@ -4,8 +4,15 @@ import useProductsVisibilityStore from "../store/useProductsVisibilityStore";
 import Pagination from "./Pagination";
 import ProductCard from "./ProductCard";
 import StatusMessage from "./StatusMessage";
+import Product from "../models/Product";
 
-const ProductList = ({ isAdmin }: { isAdmin: boolean }) => {
+const ProductList = ({
+  isAdmin,
+  onProductClick,
+}: {
+  isAdmin: boolean;
+  onProductClick?: (product: Product) => void;
+}) => {
   const isShowingHiddenProducts = useProductsVisibilityStore(
     (s) => s.isShowingHiddenProducts
   );
@@ -29,7 +36,13 @@ const ProductList = ({ isAdmin }: { isAdmin: boolean }) => {
         marginBottom={6}
       >
         {products.content.map((product) => (
-          <ProductCard key={product.id} product={product} isAdmin={isAdmin} />
+          <div
+            key={product.id}
+            onClick={() => onProductClick?.(product)}
+            style={{ cursor: onProductClick ? "pointer" : "default" }}
+          >
+            <ProductCard key={product.id} product={product} isAdmin={isAdmin} />
+          </div>
         ))}
       </SimpleGrid>
       <Pagination page={products.page} />

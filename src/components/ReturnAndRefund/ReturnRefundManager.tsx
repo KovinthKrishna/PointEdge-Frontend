@@ -21,7 +21,7 @@ const ReturnRefundManager: React.FC = () => {
     try {
       // Validate invoice existence before navigating
       await axios.get(
-        `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
+        `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
       );
 
       // Navigate to ReturnRefundPage with invoice number as query param

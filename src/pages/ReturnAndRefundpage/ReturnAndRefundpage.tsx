@@ -8,14 +8,15 @@ import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoS
 import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
+import CardRefundContainer from "../../components/ReturnAndRefund/CardRefundContainer";
 import { InvoiceItem, Invoice } from "../../models/Invoice";
 import Product from "../../models/Product";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
-import { Toast } from "@chakra-ui/react";
 
 enum RefundStep {
   ITEM_SELECTION,
   REFUND_METHOD_SELECTION,
+  CARD_REFUND_DETAILS,
   REFUND_RESULT,
 }
 
@@ -32,23 +33,26 @@ const ReturnRefundPage: React.FC = () => {
   const [totalRefundAmount, setTotalRefundAmount] = useState(0);
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [itemSelections, setItemSelections] = useState<InvoiceItem[]>([]);
+  const [showCardForm, setShowCardForm] = useState(false);
   const [replacementProduct, setReplacementProduct] = useState<Product | null>(
     null
   );
 
   const toastUI = useToast();
 
-  const { processRefund, processExchange, isProcessing } = useRefundProcessor({
+  const { processRefund, isProcessing } = useRefundProcessor({
     invoiceNumber: invoiceNumber!,
     selectedItems,
     totalAmount: totalRefundAmount,
     onSuccess: () => {
       setRefundSuccess(true);
       toastUI({ title: "Success", status: "success", isClosable: true });
+      setCurrentStep(RefundStep.REFUND_RESULT);
     },
     onFailure: () => {
       setRefundSuccess(false);
       toastUI({ title: "Failed", status: "error", isClosable: true });
+      setCurrentStep(RefundStep.REFUND_RESULT);
     },
   });
 
@@ -109,14 +113,11 @@ const ReturnRefundPage: React.FC = () => {
   ) => {
     setRefundMethod(method);
 
-    if (method === "Exchange" && product) {
-      setReplacementProduct(product);
-      await processExchange(product);
+    if (method === "Card") {
+      setCurrentStep(RefundStep.CARD_REFUND_DETAILS);
     } else {
-      await processRefund(method);
+      await processRefund(method, product);
     }
-
-    setCurrentStep(RefundStep.REFUND_RESULT);
   };
 
   const handleCancel = () => {
@@ -147,10 +148,35 @@ const ReturnRefundPage: React.FC = () => {
           />
         );
       case RefundStep.REFUND_METHOD_SELECTION:
-        return (
+        return showCardForm ? (
+          <CardRefundContainer
+            invoiceNumber={invoiceNumber!}
+            selectedItems={selectedItems}
+            totalAmount={totalRefundAmount}
+            onSuccess={() => {
+              setRefundSuccess(true);
+              setCurrentStep(RefundStep.REFUND_RESULT);
+              setShowCardForm(false);
+            }}
+            onFailure={() => {
+              setRefundSuccess(false);
+              setCurrentStep(RefundStep.REFUND_RESULT);
+              setShowCardForm(false);
+            }}
+            onCancel={() => setShowCardForm(false)}
+          />
+        ) : (
           <RefundMethodSelection
             totalAmount={totalRefundAmount}
-            onSubmit={handleRefundMethodSelection}
+            onSubmit={(method) => {
+              setRefundMethod(method);
+              if (method === "Card") {
+                setShowCardForm(true);
+              } else {
+                processRefund(method); // continue flow for Cash or Exchange
+                setCurrentStep(RefundStep.REFUND_RESULT);
+              }
+            }}
             onCancel={handleCancel}
           />
         );
@@ -178,7 +204,7 @@ const ReturnRefundPage: React.FC = () => {
       <StepHeader
         currentStep={currentStep}
         stepLabels={stepLabels}
-        progressValue={0}
+        progressValue={currentStep * 33}
       />
       <StepWrapper currentStep={currentStep}>{renderStep()}</StepWrapper>
     </Box>

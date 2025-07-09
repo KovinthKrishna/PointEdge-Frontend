@@ -1,51 +1,90 @@
-import { SimpleGrid } from "@chakra-ui/react";
-import useProducts from "../../hooks/useProducts";
-import useProductsVisibilityStore from "../../store/useProductsVisibilityStore";
-import Pagination from "../Pagination";
-import StatusMessage from "../StatusMessage";
-import ReturnProductCard from "./ReturnProductCard";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Heading,
+  Input,
+  SimpleGrid,
+  Text,
+  Button,
+  VStack,
+  Spinner,
+} from "@chakra-ui/react";
 import Product from "../../models/Product";
 
-type Props = {
-  onSelect: (product: Product) => void;
-  isAdmin: boolean;
-};
+interface Props {
+  onSelectReplacement: (product: Product) => void;
+}
 
-const ReturnProductSelector = ({ onSelect, isAdmin }: Props) => {
-  const isShowingHiddenProducts = useProductsVisibilityStore(
-    (s) => s.isShowingHiddenProducts
-  );
+const ReturnProductSelector: React.FC<Props> = ({ onSelectReplacement }) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const {
-    data: products,
-    error,
-    isLoading,
-  } = useProducts(
-    isAdmin ? (isShowingHiddenProducts ? true : undefined) : false
-  );
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/products`);
+        const data = await response.json();
+        setProducts(data);
+        setFilteredProducts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setLoading(false);
+      }
+    };
 
-  if (error) return <StatusMessage message={error.message} />;
-  if (isLoading) return <StatusMessage message="Loading, please wait..." />;
+    fetchProducts();
+  }, []);
 
-  return products && products.content.length > 0 ? (
-    <>
-      <SimpleGrid
-        columns={{ base: 2, md: 4, xl: 6 }}
-        spacing={4}
-        marginBottom={6}
-      >
-        {products.content.map((product) => (
-          <ReturnProductCard
+  useEffect(() => {
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [searchQuery, products]);
+
+  if (loading) {
+    return <Spinner size="lg" />;
+  }
+
+  return (
+    <Box>
+      <Heading size="md" mb={4}>
+        Select Replacement Product
+      </Heading>
+      <Input
+        placeholder="Search by product name..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        mb={4}
+      />
+      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+        {filteredProducts.map((product) => (
+          <Box
             key={product.id}
-            product={product}
-            onSelect={() => onSelect(product)}
-          />
+            p={4}
+            borderWidth="1px"
+            borderRadius="md"
+            boxShadow="sm"
+          >
+            <VStack spacing={2} align="start">
+              <Text fontWeight="bold">{product.name}</Text>
+              <Text>Brand: {product.brand?.name}</Text>
+              <Text>Price: Rs. {product.price.toFixed(2)}</Text>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                onClick={() => onSelectReplacement(product)}
+              >
+                Select
+              </Button>
+            </VStack>
+          </Box>
         ))}
       </SimpleGrid>
-      <Pagination page={products.page} />
-    </>
-  ) : (
-    <StatusMessage message="No products available for return" />
+    </Box>
   );
 };
 

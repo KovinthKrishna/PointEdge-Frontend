@@ -1,3 +1,4 @@
+// useRefundProcessor.ts (Updated)
 import { useState } from "react";
 import axios from "axios";
 import { InvoiceItem } from "../models/Invoice";
@@ -23,29 +24,40 @@ const useRefundProcessor = ({
   const processRefund = async (method: string, product?: Product) => {
     setIsProcessing(true);
     try {
-      const refundRequest = {
+      const payload: any = {
         invoiceNumber,
-        items: selectedItems.map((item) => ({
-          id: item.id,
-          returnQuantity: item.returnQuantity,
-          refundAmount: item.refundAmount,
-        })),
         refundMethod: method,
-        exchange:product,
         totalAmount,
+        items: selectedItems.map((item) => ({
+          itemId: item.id,
+          quantity: item.returnQuantity,
+          reason: item.reason || "",
+        })),
       };
 
-      await axios.post("http://localhost:8080/api/returns/refund", refundRequest);
+      if (method === "Exchange" && product) {
+        payload.replacementProductId = product.id;
+      }
+
+      const url =
+        method === "Card"
+          ? "http://localhost:8080/api/return-exchange/refund/card"
+          : "http://localhost:8080/api/return-exchange/refund";
+
+      await axios.post(url, payload);
       onSuccess();
     } catch (error) {
-      console.error("Refund processing failed", error);
+      console.error("Refund processing failed:", error);
       onFailure();
     } finally {
       setIsProcessing(false);
     }
   };
 
-  return { processRefund, isProcessing };
+  return {
+    processRefund,
+    isProcessing,
+  };
 };
 
 export default useRefundProcessor;

@@ -8,14 +8,18 @@ interface RefundMethodSelectionProps {
   totalAmount: number;
   onSubmit: (method: string) => void;
   onCancel: () => void;
+  onExchangeSelect?: () => void;
+  onCardPayment?: () => void;
 }
 
-const MotionBox = motion.create(Box);
+const MotionBox = motion(Box);
 
 const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   totalAmount,
   onSubmit,
   onCancel,
+  onExchangeSelect,
+  onCardPayment,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const toast = useToast();
@@ -48,8 +52,19 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   };
 
   const handleConfirm = () => {
-    if (selectedMethod) {
-      onSubmit(selectedMethod);
+    if (!selectedMethod) return;
+
+    switch (selectedMethod) {
+      case "Exchange":
+        onSubmit(selectedMethod);
+        break;
+      case "Card":
+        onSubmit(selectedMethod);
+        break;
+      case "Cash":
+      default:
+        onSubmit(selectedMethod);
+        break;
     }
   };
 
