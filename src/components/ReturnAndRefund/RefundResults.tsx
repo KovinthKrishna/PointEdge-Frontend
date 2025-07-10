@@ -29,6 +29,10 @@ const RefundResult: React.FC<RefundResultProps> = ({
   onPrint,
   onBack,
 }) => {
+  const displayAmount = method === "Exchange" ? 0 : amount;
+  const amountLabel =
+    method === "Exchange" ? "Amount Adjusted" : "Amount Refunded";
+
   return (
     <Box
       bg="white"
@@ -57,11 +61,16 @@ const RefundResult: React.FC<RefundResultProps> = ({
         <Divider my={2} />
 
         <Text fontSize="lg" fontWeight="medium">
-          Amount Refunded:{" "}
-          <Text as="span" color="green" fontWeight="bold">
-            Rs {amount.toFixed(2)}
+          {amountLabel}:{" "}
+          <Text
+            as="span"
+            color={method === "Exchange" ? "blue.500" : "green.500"}
+            fontWeight="bold"
+          >
+            Rs {displayAmount.toFixed(2)}
           </Text>
         </Text>
+
         <Text fontSize="md" color="darkBlue">
           Refund Method: <strong>{method}</strong>
         </Text>

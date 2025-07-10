@@ -1,4 +1,3 @@
-// useRefundProcessor.ts (Updated)
 import { useState } from "react";
 import axios from "axios";
 import { InvoiceItem } from "../models/Invoice";
@@ -21,28 +20,35 @@ const useRefundProcessor = ({
 }: UseRefundProcessorParams) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const processRefund = async (method: string, product?: Product) => {
+  const processRefund = async (method: string) => {
     setIsProcessing(true);
     try {
-      const payload: any = {
-        invoiceNumber,
-        refundMethod: method,
-        totalAmount,
-        items: selectedItems.map((item) => ({
-          itemId: item.id,
-          quantity: item.returnQuantity,
-          reason: item.reason || "",
-        })),
-      };
+      const isExchange = method === "Exchange";
+      const url = isExchange
+        ? "http://localhost:8080/api/return-exchange/exchange"
+        : method === "Card"
+        ? "http://localhost:8080/api/return-exchange/refund/card"
+        : "http://localhost:8080/api/return-exchange/refund";
 
-      if (method === "Exchange" && product) {
-        payload.replacementProductId = product.id;
-      }
-
-      const url =
-        method === "Card"
-          ? "http://localhost:8080/api/return-exchange/refund/card"
-          : "http://localhost:8080/api/return-exchange/refund";
+      const payload: any = isExchange
+        ? {
+            invoiceNumber,
+            returnedItems: selectedItems.map((item) => ({
+              itemId: item.id,
+              quantity: item.returnQuantity,
+              reason: item.reason || "",
+            })),
+          }
+        : {
+            invoiceNumber,
+            refundMethod: method,
+            totalAmount,
+            items: selectedItems.map((item) => ({
+              itemId: item.id,
+              quantity: item.returnQuantity,
+              reason: item.reason || "",
+            })),
+          };
 
       await axios.post(url, payload);
       onSuccess();

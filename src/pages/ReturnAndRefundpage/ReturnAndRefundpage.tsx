@@ -107,16 +107,14 @@ const ReturnRefundPage: React.FC = () => {
     setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);
   };
 
-  const handleRefundMethodSelection = async (
-    method: string,
-    product?: Product
-  ) => {
+  const handleRefundMethodSelection = async (method: string) => {
     setRefundMethod(method);
 
     if (method === "Card") {
       setCurrentStep(RefundStep.CARD_REFUND_DETAILS);
     } else {
-      await processRefund(method, product);
+      await processRefund(method); // includes handling "Exchange"
+      setCurrentStep(RefundStep.REFUND_RESULT);
     }
   };
 
@@ -169,12 +167,11 @@ const ReturnRefundPage: React.FC = () => {
           <RefundMethodSelection
             totalAmount={totalRefundAmount}
             onSubmit={(method) => {
-              setRefundMethod(method);
               if (method === "Card") {
+                setRefundMethod("Card");
                 setShowCardForm(true);
               } else {
-                processRefund(method); // continue flow for Cash or Exchange
-                setCurrentStep(RefundStep.REFUND_RESULT);
+                handleRefundMethodSelection(method);
               }
             }}
             onCancel={handleCancel}
@@ -184,7 +181,7 @@ const ReturnRefundPage: React.FC = () => {
         return (
           <RefundResult
             success={refundSuccess}
-            amount={totalRefundAmount}
+            amount={refundMethod === "Exchange" ? 0 : totalRefundAmount}
             method={refundMethod}
             invoiceNumber={invoiceNumber!}
             onClose={() => {
