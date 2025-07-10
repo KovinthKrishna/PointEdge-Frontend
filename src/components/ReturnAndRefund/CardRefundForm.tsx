@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { InvoiceItem } from "../../models/Invoice";
 
 export interface BankDetails {
   bankName: string;
@@ -40,7 +39,7 @@ const CardRefundForm: React.FC<Props> = ({
     formState: { errors, isValid },
   } = useForm<BankDetails>({
     defaultValues,
-    mode: "onChange", // allows realtime validation
+    mode: "onChange",
   });
 
   const onSubmit = (data: BankDetails) => {
