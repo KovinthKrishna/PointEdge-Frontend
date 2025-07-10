@@ -36,7 +36,7 @@ const UpdateProduct = ({ product }: Props) => {
         borderColor="darkBlue"
         borderRadius={24}
       >
-        <ModalHeader textAlign="center" fontSize={32}>
+        <ModalHeader textAlign="center" fontSize={{ base: 24, lg: 32 }}>
           Update {product.name}
         </ModalHeader>
         <ModalCloseButton />
