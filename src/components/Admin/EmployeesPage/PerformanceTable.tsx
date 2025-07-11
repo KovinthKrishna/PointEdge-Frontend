@@ -1,0 +1,106 @@
+import React from "react";
+import { EmployeePerformance } from "../../../models/Performance";
+import PerformanceSorting from "./PerformanceSorting";
+import { SortField, SortDirection } from "../../../hooks/useTopPerformers";
+
+interface PerformanceTableProps {
+  employees: EmployeePerformance[];
+  loading: boolean;
+  sortField: SortField;
+  sortDirection: SortDirection;
+  handleSort: (field: SortField) => void;
+  formatCurrency: (amount: number) => string;
+}
+
+const PerformanceTable: React.FC<PerformanceTableProps> = ({
+  employees,
+  loading,
+  sortField,
+  sortDirection,
+  handleSort,
+  formatCurrency,
+}) => {
+  return (
+    <div className="table-container">
+      {loading ? (
+        <div className="spinner-container">
+          <div className="spinner"></div>
+        </div>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th style={{ width: "15%" }}>Employee ID</th>
+              <th style={{ width: "20%" }}>Employee NAME</th>
+              <th style={{ width: "15%" }}>Role</th>
+              <PerformanceSorting
+                title="Orders"
+                field="orders"
+                currentSortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+                width="16%"
+              />
+              <PerformanceSorting
+                title="Sales"
+                field="sales"
+                currentSortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+                width="18%"
+              />
+              <PerformanceSorting
+                title="Working Hours"
+                field="workingHours"
+                currentSortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+                width="16%"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            {employees.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="empty-table-message">
+                  No employees found
+                </td>
+              </tr>
+            ) : (
+              employees.map((employee) => (
+                <tr key={employee.id}>
+                  <td>{employee.id}</td>
+                  <td>
+                    <div className="employee-name-cell">
+                      <div className="avatar">
+                        {employee.avatar ? (
+                          <img src={employee.avatar} alt={employee.name} />
+                        ) : (
+                          <div className="avatar-fallback">
+                            {employee.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .substring(0, 2)
+                              .toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <span>{employee.name}</span>
+                    </div>
+                  </td>
+                  <td>{employee.role}</td>
+                  <td>{employee.orders} orders</td>
+                  <td>{formatCurrency(employee.sales)}</td>
+                  <td>{employee.workingHours}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+};
+
+export default PerformanceTable;

@@ -2,23 +2,22 @@ import React, { useState, useEffect } from "react";
 import "./styles/TopPerformers.css";
 import { EmployeePerformance } from "../../../models/Performance";
 
-
 // Sort types
 type SortField = "orders" | "sales" | "workingHours";
 type SortDirection = "asc" | "desc";
 
 const TopPerformersPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortField, setSortField] = useState<SortField | null>("sales"); // Default sort by sales
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortField, setSortField] = useState<SortField>("sales"); // Default sort by sales
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [employees, setEmployees] = useState<EmployeePerformance[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeRange, setTimeRange] = useState("all");
+  const [timeRange, setTimeRange] = useState<string>("all");
 
   // Fetch data from backend based on sort and filter options
   useEffect(() => {
-    const fetchEmployeePerformance = async () => {
+    const fetchEmployeePerformance = async (): Promise<void> => {
       setLoading(true);
       setError(null);
       
@@ -46,7 +45,7 @@ const TopPerformersPage: React.FC = () => {
           throw new Error("Failed to fetch employee performance data");
         }
         
-        const data = await response.json();
+        const data = await response.json() as EmployeePerformance[];
         setEmployees(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred while fetching data");
@@ -60,7 +59,7 @@ const TopPerformersPage: React.FC = () => {
   }, [sortField, sortDirection, timeRange]);
   
   // Handle search submit
-  const handleSearch = async () => {
+  const handleSearch = async (): Promise<void> => {
     if (!searchQuery.trim()) {
       return;
     }
@@ -75,7 +74,7 @@ const TopPerformersPage: React.FC = () => {
         throw new Error("Failed to search employees");
       }
       
-      const data = await response.json();
+      const data = await response.json() as EmployeePerformance[];
       setEmployees(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred while searching");
@@ -86,7 +85,7 @@ const TopPerformersPage: React.FC = () => {
   };
   
   // Handle sorting
-  const handleSort = (field: SortField) => {
+  const handleSort = (field: SortField): void => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -96,12 +95,12 @@ const TopPerformersPage: React.FC = () => {
   };
 
   // Format currency
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number): string => {
     return `$${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
   };
 
   // Handle key press for search
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       handleSearch();
     }
