@@ -15,7 +15,8 @@ import EmployeeDashboardPage from "./components/Admin/EmployeesPage/EmployeeDash
 import EmployeeAttendancePage from "./components/Admin/EmployeesPage/EmployeeAttendancePage";
 import TopPerformersPage from "./components/Admin/EmployeesPage/TopPerformersPage";
 import ShiftReport1Page from "./components/Admin/EmployeesPage/ShiftReport1Page";
-
+import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
+import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,16 @@ const router = createBrowserRouter([
   {
     path: "forgotpw",
     element: <ForgotPW />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "clock-in",
+    element: <ClockInPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "clock-out",
+    element: <ClockOutPage />,
     errorElement: <ErrorPage />,
   },
 
