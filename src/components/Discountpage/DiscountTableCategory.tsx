@@ -129,8 +129,8 @@ const DiscountTableCategory: React.FC<DiscountTableCategoryProps> = ({ onEditDis
     loadData();
 
     const intervalId = setInterval(() => {
-      setDiscounts(prev => [...prev]); // Force re-render to update remaining times
-    }, 1000); // Update every second for live countdown
+      setDiscounts(prev => [...prev]); 
+    }, 1000); 
 
     return () => clearInterval(intervalId);
   }, []);

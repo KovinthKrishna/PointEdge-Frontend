@@ -1,0 +1,7 @@
+export enum RefundStep {
+    ITEM_SELECTION,
+    REFUND_METHOD_SELECTION,
+    CARD_REFUND_DETAILS,
+    REFUND_RESULT,
+  }
+  

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { InvoiceItem } from "../models/Invoice";
+import Product from "../models/Product";
 
 interface UseRefundProcessorParams {
   invoiceNumber: string;
@@ -22,28 +23,47 @@ const useRefundProcessor = ({
   const processRefund = async (method: string) => {
     setIsProcessing(true);
     try {
-      const refundRequest = {
-        invoiceNumber,
-        items: selectedItems.map((item) => ({
-          id: item.id,
-          returnQuantity: item.returnQuantity,
-          refundAmount: item.refundAmount,
-        })),
-        refundMethod: method,
-        totalAmount,
-      };
+      const isExchange = method === "Exchange";
+      const url = isExchange
+        ? "http://localhost:8080/api/return-exchange/exchange"
+        : method === "Card"
+        ? "http://localhost:8080/api/return-exchange/refund/card"
+        : "http://localhost:8080/api/return-exchange/refund";
 
-      await axios.post("http://localhost:8080/api/returns/refund", refundRequest);
+      const payload: any = isExchange
+        ? {
+            invoiceNumber,
+            returnedItems: selectedItems.map((item) => ({
+              itemId: item.id,
+              quantity: item.returnQuantity,
+              reason: item.reason || "",
+            })),
+          }
+        : {
+            invoiceNumber,
+            refundMethod: method,
+            totalAmount,
+            items: selectedItems.map((item) => ({
+              itemId: item.id,
+              quantity: item.returnQuantity,
+              reason: item.reason || "",
+            })),
+          };
+
+      await axios.post(url, payload);
       onSuccess();
     } catch (error) {
-      console.error("Refund processing failed", error);
+      console.error("Refund processing failed:", error);
       onFailure();
     } finally {
       setIsProcessing(false);
     }
   };
 
-  return { processRefund, isProcessing };
+  return {
+    processRefund,
+    isProcessing,
+  };
 };
 
 export default useRefundProcessor;

@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { RefundStep } from "../components/ReturnAndRefund/ReturnRefundContainer";
+import { RefundStep } from "../models/RefundStep";
 
 export const useReturnFlowSteps = () => {
   const [currentStep, setCurrentStep] = useState<RefundStep>(
     RefundStep.ITEM_SELECTION
   );
 
-  const goToNext = () => setCurrentStep((prev) => prev + 1);
-  const goToPrev = () => setCurrentStep((prev) => prev - 1);
+  const goToNext = () => setCurrentStep((prev: number) => prev + 1);
+  const goToPrev = () => setCurrentStep((prev: number) => prev - 1);
   const reset = () => setCurrentStep(RefundStep.ITEM_SELECTION);
 
   const stepLabels = ["Select Items", "Choose Refund Method", "Refund Result"];

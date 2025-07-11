@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@chakra-ui/react";
+import { Box, Button, HStack, Icon, Text } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
 import {
   Modal,
@@ -13,6 +13,7 @@ import {
 import { FormControl, FormLabel } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import React from "react";
+import { WarningIcon } from "@chakra-ui/icons";
 
 // Prop types for the component
 interface InvoiceModalProps {
@@ -33,13 +34,32 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
   const handleSubmit = async () => {
     if (!invoiceNumber.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter an invoice number",
-        status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "solid",
+        render: () => (
+          <Box
+            bg="darkBlue"
+            color="white"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+            maxW="sm"
+            mx="auto"
+          >
+            <HStack spacing={3}>
+              <Icon as={WarningIcon} color="white" boxSize={5} />
+              <Box>
+                <Text fontWeight="bold" fontSize="md">
+                  Error
+                </Text>
+                <Text fontSize="sm">Please enter an invoice number</Text>
+              </Box>
+            </HStack>
+          </Box>
+        ),
       });
+
       return;
     }
 
@@ -47,13 +67,6 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     try {
       await onSubmit(invoiceNumber);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Invalid invoice number or invoice not found",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     } finally {
       setIsLoading(false);
     }

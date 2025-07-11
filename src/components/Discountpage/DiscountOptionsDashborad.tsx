@@ -189,7 +189,7 @@ const DiscountOptionsDashboard: React.FC<DiscountOptionsDashboardProps> = ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000
+    zIndex: 10000
   };
 
   const modalStyle: React.CSSProperties = {

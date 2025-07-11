@@ -1,8 +1,16 @@
-import { Box, useDisclosure, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Icon,
+  useDisclosure,
+  useToast,
+  Text,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ReturnRefundButton from "./ReturnRefundButton";
 import InvoiceModal from "./InvoiceModal";
+import { WarningIcon } from "@chakra-ui/icons";
 
 const ReturnRefundManager: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -13,7 +21,7 @@ const ReturnRefundManager: React.FC = () => {
     try {
       // Validate invoice existence before navigating
       await axios.get(
-        `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
+        `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
       );
 
       // Navigate to ReturnRefundPage with invoice number as query param
@@ -22,11 +30,32 @@ const ReturnRefundManager: React.FC = () => {
     } catch (error) {
       console.error("Error fetching invoice:", error);
       toast({
-        title: "Invoice Not Found",
-        description: "The invoice number you entered is invalid.",
-        status: "error",
         duration: 3000,
         isClosable: true,
+        render: () => (
+          <Box
+            bg="darkBlue"
+            color="white"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+            maxW="sm"
+            mx="auto"
+          >
+            <HStack spacing={3}>
+              <Icon as={WarningIcon} color="white" boxSize={5} />
+              <Box>
+                <Text fontWeight="bold" fontSize="md">
+                  Error
+                </Text>
+                <Text fontSize="sm">
+                  The invoice number you entered is invalid.
+                </Text>
+              </Box>
+            </HStack>
+          </Box>
+        ),
       });
     }
   };

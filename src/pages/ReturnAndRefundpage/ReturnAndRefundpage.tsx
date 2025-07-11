@@ -8,29 +8,16 @@ import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoS
 import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
-//import ReturnStepContainer from "../../components/ReturnAndRefund/ReturnStepContainer";
+import CardRefundContainer from "../../components/ReturnAndRefund/CardRefundContainer";
+import { InvoiceItem, Invoice } from "../../models/Invoice";
+import Product from "../../models/Product";
+import useRefundProcessor from "../../hooks/useRefundProcessor";
 
 enum RefundStep {
   ITEM_SELECTION,
   REFUND_METHOD_SELECTION,
+  CARD_REFUND_DETAILS,
   REFUND_RESULT,
-}
-
-export interface InvoiceItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  returnQuantity: number;
-  refundAmount: number;
-  total: number;
-}
-
-export interface Invoice {
-  invoiceNumber: string;
-  date: string;
-  items: InvoiceItem[];
-  totalAmount: number;
 }
 
 const ReturnRefundPage: React.FC = () => {
@@ -46,19 +33,39 @@ const ReturnRefundPage: React.FC = () => {
   const [totalRefundAmount, setTotalRefundAmount] = useState(0);
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [itemSelections, setItemSelections] = useState<InvoiceItem[]>([]);
+  const [showCardForm, setShowCardForm] = useState(false);
+  const [replacementProduct, setReplacementProduct] = useState<Product | null>(
+    null
+  );
 
-  const toast = useToast();
+  const toastUI = useToast();
+
+  const { processRefund, isProcessing } = useRefundProcessor({
+    invoiceNumber: invoiceNumber!,
+    selectedItems,
+    totalAmount: totalRefundAmount,
+    onSuccess: () => {
+      setRefundSuccess(true);
+      toastUI({ title: "Success", status: "success", isClosable: true });
+      setCurrentStep(RefundStep.REFUND_RESULT);
+    },
+    onFailure: () => {
+      setRefundSuccess(false);
+      toastUI({ title: "Failed", status: "error", isClosable: true });
+      setCurrentStep(RefundStep.REFUND_RESULT);
+    },
+  });
 
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
+          `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
         );
-        const data = response.data;
+        const info = response.data;
 
-        const items = data.items.map((item: any) => ({
-          id: item.id,
+        const items = info.items.map((item: any) => ({
+          id: item.itemId,
           name: item.productName,
           quantity: item.quantity,
           price: item.price,
@@ -68,16 +75,16 @@ const ReturnRefundPage: React.FC = () => {
         }));
 
         setInvoiceData({
-          invoiceNumber: data.id,
-          date: data.date,
-          totalAmount: data.totalAmount,
+          invoiceNumber: info.invoiceNumber,
+          date: info.date,
+          totalAmount: info.totalAmount,
           items,
         });
 
         setItemSelections(items);
       } catch (error) {
         console.error("Failed to fetch invoice", error);
-        toast({
+        toastUI({
           title: "Error",
           description: "Failed to fetch invoice details.",
           status: "error",
@@ -90,7 +97,7 @@ const ReturnRefundPage: React.FC = () => {
     if (invoiceNumber) {
       fetchInvoice();
     }
-  }, [invoiceNumber, toast]);
+  }, [invoiceNumber, toastUI]);
 
   const handleItemSelection = (items: InvoiceItem[]) => {
     setItemSelections(items);
@@ -103,29 +110,12 @@ const ReturnRefundPage: React.FC = () => {
   const handleRefundMethodSelection = async (method: string) => {
     setRefundMethod(method);
 
-    try {
-      const refundRequest = {
-        invoiceNumber: invoiceNumber!,
-        items: selectedItems.map((item) => ({
-          id: item.id,
-          returnQuantity: item.returnQuantity,
-          refundAmount: item.refundAmount,
-        })),
-        refundMethod: method,
-        totalAmount: totalRefundAmount,
-      };
-
-      await axios.post(
-        "http://localhost:8080/api/returns/refund",
-        refundRequest
-      );
-      setRefundSuccess(true);
-    } catch (error) {
-      console.error("Refund processing failed", error);
-      setRefundSuccess(false);
+    if (method === "Card") {
+      setCurrentStep(RefundStep.CARD_REFUND_DETAILS);
+    } else {
+      await processRefund(method); // includes handling "Exchange"
+      setCurrentStep(RefundStep.REFUND_RESULT);
     }
-
-    setCurrentStep(RefundStep.REFUND_RESULT);
   };
 
   const handleCancel = () => {
@@ -156,10 +146,34 @@ const ReturnRefundPage: React.FC = () => {
           />
         );
       case RefundStep.REFUND_METHOD_SELECTION:
-        return (
+        return showCardForm ? (
+          <CardRefundContainer
+            invoiceNumber={invoiceNumber!}
+            selectedItems={selectedItems}
+            totalAmount={totalRefundAmount}
+            onSuccess={() => {
+              setRefundSuccess(true);
+              setCurrentStep(RefundStep.REFUND_RESULT);
+              setShowCardForm(false);
+            }}
+            onFailure={() => {
+              setRefundSuccess(false);
+              setCurrentStep(RefundStep.REFUND_RESULT);
+              setShowCardForm(false);
+            }}
+            onCancel={() => setShowCardForm(false)}
+          />
+        ) : (
           <RefundMethodSelection
             totalAmount={totalRefundAmount}
-            onSubmit={handleRefundMethodSelection}
+            onSubmit={(method) => {
+              if (method === "Card") {
+                setRefundMethod("Card");
+                setShowCardForm(true);
+              } else {
+                handleRefundMethodSelection(method);
+              }
+            }}
             onCancel={handleCancel}
           />
         );
@@ -167,7 +181,7 @@ const ReturnRefundPage: React.FC = () => {
         return (
           <RefundResult
             success={refundSuccess}
-            amount={totalRefundAmount}
+            amount={refundMethod === "Exchange" ? 0 : totalRefundAmount}
             method={refundMethod}
             invoiceNumber={invoiceNumber!}
             onClose={() => {
@@ -187,7 +201,7 @@ const ReturnRefundPage: React.FC = () => {
       <StepHeader
         currentStep={currentStep}
         stepLabels={stepLabels}
-        progressValue={0}
+        progressValue={currentStep * 33}
       />
       <StepWrapper currentStep={currentStep}>{renderStep()}</StepWrapper>
     </Box>
