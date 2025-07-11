@@ -5,7 +5,6 @@ import {
   Input,
   Button,
   Divider,
-  HStack,
   Flex,
   Box,
   Image,
@@ -70,7 +69,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             boxShadow: "0 0 0 1px #0085ca",
           }}
         />
-        <Button ml={2} bg="#002a45" color="white" _hover={{ bg: "#003b62" }}>
+        <Button
+          ml={2}
+          bg="#002a45"
+          color="white"
+          _hover={{ bg: "#003b62" }}
+          onClick={() => onApplyDiscount(discountCode)}
+        >
           Apply
         </Button>
       </Flex>
