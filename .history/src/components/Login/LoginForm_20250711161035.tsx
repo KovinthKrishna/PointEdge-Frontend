@@ -37,20 +37,13 @@ const LoginForm: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const { token, role } = await login(data.username, data.password);
+      const token = await login(data.username, data.password);
       localStorage.setItem("token", token);
-      localStorage.setItem("role", role); // ✅ store role
-
-      // ✅ redirect based on role
-      if (role === "ADMIN") {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      navigate("/"); // redirect to dashboard or home
     } catch (error: any) {
       setAlertTitle("Login Failed");
       setAlertDescription(error.message || "Something went wrong");
-      setIsAlertOpen(true); // 🚨 show alert popup
+      setIsAlertOpen(true); // 🚨 Open the popup alert
     }
   };
 
