@@ -1,4 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
+<<<<<<< HEAD
+// import Discount from "../models/Discount";
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 const baseURL = "http://localhost:8080/api/v1"; 
 const axiosInstance = axios.create({
@@ -27,6 +31,10 @@ class APIClient<T = any> {
     return res.data;
   };
 
+<<<<<<< HEAD
+  // put = async (id: number, discountData: Discount, data: T & { id: number; }) => {
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   put = async (data: T & { id: number; }) => {
     const res = await axiosInstance.put(`${this.endpoint}/${data.id}`, data);
     return res.data;

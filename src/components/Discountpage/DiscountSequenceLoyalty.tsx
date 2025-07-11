@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import React, { useState } from 'react';
+=======
 import { useState } from 'react';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 const LaTeXLikeArray = () => {
   const numbers = [0, 2, 3, 4, '...', 10];

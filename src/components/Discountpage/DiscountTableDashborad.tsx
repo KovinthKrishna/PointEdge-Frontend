@@ -10,7 +10,11 @@ import {
   fetchCategoryNames
 } from '../../services/discountService';
 import Discount from '../../models/Discount';
+<<<<<<< HEAD
+
+=======
 import './styles/DiscountTable.css';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 interface DiscountNameMap {
   [key: number]: string;
 }
@@ -24,18 +28,49 @@ interface NotificationProps {
   type: 'success' | 'error';
 }
 
+<<<<<<< HEAD
+// Modal Portal Component
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 const ModalPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const modalRoot = document.getElementById('modal-root');
   if (!modalRoot) return null;
   return ReactDOM.createPortal(children, modalRoot);
 };
 
+<<<<<<< HEAD
+// Notification Component
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+      {type === 'success' ? 
+        <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
+        <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+=======
 const Notification: React.FC<NotificationProps> = ({ message, type }) => {
   return (
     <div className={`discount-notification discount-notification--${type}`}>
       {type === 'success' ? 
         <FaCheck className="discount-notification__icon" /> : 
         <FaTimes className="discount-notification__icon" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       }
       {message}
     </div>
@@ -48,13 +83,21 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
   const [categoryNames, setCategoryNames] = useState<DiscountNameMap>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< HEAD
+  const [discountCount, setDiscountCount] = useState<number>(0);
+=======
   const [, setDiscountCount] = useState<number>(0);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
   const [discountToDelete, setDiscountToDelete] = useState<number | undefined>(undefined);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [notification, setNotification] = useState<NotificationProps | null>(null);
 
+<<<<<<< HEAD
+  // Table column widths
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const columnWidths = {
     name: '15%',
     type: '18%',
@@ -66,6 +109,10 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     actions: '10%'
   };
 
+<<<<<<< HEAD
+  // Create modal root element on component mount
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   useEffect(() => {
     const modalRoot = document.getElementById('modal-root');
     if (!modalRoot) {
@@ -82,6 +129,41 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     };
   }, []);
 
+<<<<<<< HEAD
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const showNotification = (message: string, type: 'success' | 'error') => {
     setNotification({ message, type });
     setTimeout(() => {
@@ -124,12 +206,42 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     loadData();
 
     const intervalId = setInterval(() => {
+<<<<<<< HEAD
+      setDiscounts(prev => [...prev]); // Force re-render to update remaining times
+    }, 1000); // Update every second for live countdown
+=======
       setDiscounts(prev => [...prev]);
     }, 1000);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
     return () => clearInterval(intervalId);
   }, []);
 
+<<<<<<< HEAD
+  // Helper functions for status display
+  const getStatusDot = (status: boolean) => ({
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: status ? '#10B981' : '#EF4444',
+    display: 'inline-block',
+    marginRight: '6px',
+  });
+
+  const getStatusStyle = (status: boolean) => ({
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    backgroundColor: status ? '#ECFDF5' : '#FEF2F2',
+    color: status ? '#10B981' : '#EF4444',
+    fontSize: '12px',
+    fontWeight: '600',
+    whiteSpace: 'nowrap',
+  });
+
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const formatDiscountValue = (discount: Discount) => {
     if (discount.percentage) {
       return `${discount.percentage}%`;
@@ -143,6 +255,10 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     if (!dateString) return '-';
     try {
       const date = dateString instanceof Date ? dateString : new Date(dateString);
+<<<<<<< HEAD
+      // Add 5 hours and 30 minutes to convert UTC to Sri Lankan time
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       const sriLankanDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
       return format(sriLankanDate, "yyyy-MM-dd HH:mm");
     } catch (e) {
@@ -150,11 +266,41 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     }
   };
 
+<<<<<<< HEAD
+  const getRemainingTimeStyle = (remainingTime: string) => {
+    if (remainingTime === 'Expired') {
+      return { color: '#EF4444', fontWeight: 'bold' };
+    }
+    
+    // Check if remaining time is less than 60 minutes
+    const timeParts = remainingTime.split(' ');
+    const days = parseInt(timeParts[0]) || 0;
+    const hours = parseInt(timeParts[1]) || 0;
+    const minutes = parseInt(timeParts[2]) || 0;
+    
+    const totalMinutes = (days * 24 * 60) + (hours * 60) + minutes;
+    
+    if (totalMinutes < 60) {
+      return { color: '#F59E0B', fontWeight: 'bold' }; // Orange for less than 60 minutes
+    }
+    
+    return { color: '#3B82F6' }; // Blue for normal
+  };
+
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const getRemainingTime = (startDate: string | undefined, duration: string) => {
     if (!startDate) return '-';
     
     try {
+<<<<<<< HEAD
+      // Parse the start date in UTC
       const start = new Date(startDate);
+      
+      // Parse duration (e.g., "8 Hours")
+=======
+      const start = new Date(startDate);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       const durationMatch = duration.match(/(\d+)\s*(hour|day|minute|second|week|month|year)s?/i);
       
       if (!durationMatch) return '-';
@@ -162,6 +308,40 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
       const value = parseInt(durationMatch[1]);
       const unit = durationMatch[2].toLowerCase();
       
+<<<<<<< HEAD
+      // Calculate end date in UTC
+      const endDate = new Date(start);
+      
+      switch (unit) {
+        case 'hour':
+          endDate.setHours(endDate.getHours() + value);
+          break;
+        case 'day':
+          endDate.setDate(endDate.getDate() + value);
+          break;
+        case 'week':
+          endDate.setDate(endDate.getDate() + (value * 7));
+          break;
+        case 'month':
+          endDate.setMonth(endDate.getMonth() + value);
+          break;
+        case 'year':
+          endDate.setFullYear(endDate.getFullYear() + value);
+          break;
+        case 'minute':
+          endDate.setMinutes(endDate.getMinutes() + value);
+          break;
+        case 'second':
+          endDate.setSeconds(endDate.getSeconds() + value);
+          break;
+      }
+      
+      // Add 5 hours and 30 minutes to the end date for Sri Lankan time
+      endDate.setHours(endDate.getHours() + 5);
+      endDate.setMinutes(endDate.getMinutes() + 30);
+      
+      // Get current time in UTC
+=======
       const endDate = new Date(start);
       
       switch (unit) {
@@ -177,11 +357,19 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
       endDate.setHours(endDate.getHours() + 5);
       endDate.setMinutes(endDate.getMinutes() + 30);
       
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       const now = new Date();
       
       if (endDate <= now) return 'Expired';
       
+<<<<<<< HEAD
+      // Calculate differences in milliseconds
       const diff = endDate.getTime() - now.getTime();
+      
+      // Convert to days, hours, minutes, seconds
+=======
+      const diff = endDate.getTime() - now.getTime();
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -215,13 +403,21 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
 
   const displayStatus = (isActive: boolean) => {
     return (
+<<<<<<< HEAD
+      <div style={getStatusStyle(isActive)}>
+        <span style={getStatusDot(isActive)}></span>
+=======
       <div className={`discount-status ${isActive ? 'discount-status--active' : 'discount-status--inactive'}`}>
         <span className={`discount-status__dot ${isActive ? 'discount-status__dot--active' : 'discount-status__dot--inactive'}`}></span>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         {isActive ? 'Active' : 'Inactive'}
       </div>
     );
   };
 
+<<<<<<< HEAD
+  // Delete confirmation handlers
+=======
   const getRemainingTimeClass = (remainingTime: string) => {
     if (remainingTime === 'Expired') return 'discount-time-remaining--expired';
     
@@ -237,6 +433,7 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     return 'discount-time-remaining--normal';
   };
 
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const handleDeleteClick = (discountId: number | undefined) => {
     if (!discountId) return;
     setDiscountToDelete(discountId);
@@ -279,14 +476,96 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
     }
   };
 
+<<<<<<< HEAD
+  // Modal styles
+  const overlayStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000
+  };
+
+  const modalStyle: React.CSSProperties = {
+    backgroundColor: 'white',
+    padding: '24px',
+    borderRadius: '12px',
+    maxWidth: '450px',
+    width: '100%',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    position: 'relative'
+  };
+
+  // Table container styles
+  const tableContainerStyle: React.CSSProperties = {
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+    background: 'white',
+    overflow: 'hidden',
+    border: '1px solid #EAECF0',
+    marginBottom: '24px'
+  };
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '200px',
+        color: '#6B7280',
+        fontSize: '15px'
+      }}>
+        Loading discounts...
+      </div>
+    );
+=======
   if (loading) {
     return <div className="discount-loading">Loading discounts...</div>;
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   }
 
   if (error) {
     return (
+<<<<<<< HEAD
+      <div style={{ 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '60px',
+        color: '#dc3545',
+        backgroundColor: '#fff1f0',
+        borderLeft: '4px solid #dc3545',
+        borderRadius: '4px',
+        padding: '0 20px',
+        margin: '20px auto',
+        maxWidth: '600px',
+        fontSize: '14px',
+        fontWeight: '500',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        gap: '8px'
+      }}>
+        <div style={{
+          width: '18px',
+          height: '18px',
+          borderRadius: '50%',
+          backgroundColor: '#dc3545',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          flexShrink: 0
+        }}>!</div>
+=======
       <div className="discount-error">
         <div className="discount-error__icon">!</div>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         {error}
       </div>
     );
@@ -294,6 +573,91 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
 
   return (
     <div>
+<<<<<<< HEAD
+      <div style={tableContainerStyle}>
+        <div style={{ overflowX: 'auto' }}>
+          {discounts.length === 0 ? (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px', 
+              color: '#6B7280',
+              fontSize: '15px'
+            }}>
+              No discounts found.
+            </div>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, minWidth: '800px' }}>
+              <thead>
+                <tr style={{ 
+                  background: '#F9FAFB', 
+                  textAlign: 'left',
+                  borderBottom: '1px solid #EAECF0'
+                }}>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.name,
+                    whiteSpace: 'nowrap'
+                  }}>Name</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.type,
+                    whiteSpace: 'nowrap'
+                  }}>Type</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.startDate,
+                    whiteSpace: 'nowrap'
+                  }}>Start Date & Time</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.duration,
+                    whiteSpace: 'nowrap'
+                  }}>Duration</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.remaining,
+                    whiteSpace: 'nowrap'
+                  }}>Time Left</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.status,
+                    whiteSpace: 'nowrap'
+                  }}>Status</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.discount,
+                    whiteSpace: 'nowrap'
+                  }}>Discount</th>
+                  <th style={{ 
+                    padding: '14px 16px', 
+                    fontSize: '14px', 
+                    fontWeight: 'bold', 
+                    color: '#374151',
+                    width: columnWidths.actions,
+                    whiteSpace: 'nowrap'
+                  }}>Actions</th>
+=======
       <div className="discount-table-container">
         <div style={{ overflowX: 'auto' }}>
           {discounts.length === 0 ? (
@@ -310,16 +674,123 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
                   <th className="discount-table__header-cell" style={{ width: columnWidths.status }}>Status</th>
                   <th className="discount-table__header-cell" style={{ width: columnWidths.discount }}>Discount</th>
                   <th className="discount-table__header-cell" style={{ width: columnWidths.actions }}>Actions</th>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 </tr>
               </thead>
               <tbody>
                 {discounts.map((discount, index) => {
                   const remainingTime = getRemainingTime(discount.startDate, discount.duration);
+<<<<<<< HEAD
+                  const remainingStyle = getRemainingTimeStyle(remainingTime);
+=======
                   const remainingClass = getRemainingTimeClass(remainingTime);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                   
                   return (
                     <tr 
                       key={discount.id} 
+<<<<<<< HEAD
+                      style={{ 
+                        borderBottom: '1px solid #EAECF0',
+                        backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F9FAFB'
+                      }}
+                    >
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        fontWeight: '500', 
+                        color: '#111827',
+                        width: columnWidths.name,
+                        maxWidth: '0',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {discount.name}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        color: '#374151',
+                        width: columnWidths.type,
+                        maxWidth: '0',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {getFormattedType(discount)}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        color: '#374151',
+                        width: columnWidths.startDate,
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {formatDate(discount.startDate)}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        color: '#374151',
+                        width: columnWidths.duration,
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {discount.duration}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        ...remainingStyle,
+                        width: columnWidths.remaining,
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {remainingTime}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        width: columnWidths.status
+                      }}>
+                        {displayStatus(discount.isActive)}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px', 
+                        fontWeight: '500',
+                        width: columnWidths.discount,
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {formatDiscountValue(discount)}
+                      </td>
+                      <td style={{ 
+                        padding: '14px 16px', 
+                        fontSize: '14px',
+                        width: columnWidths.actions
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          gap: '16px', 
+                          alignItems: 'center'
+                        }}>
+                          <button
+                            onClick={() => discount.id !== undefined && onEditDiscount(discount.id)}
+                            title="Edit Discount"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              padding: '6px',
+                              cursor: 'pointer',
+                              color: '#3B82F6',
+                              borderRadius: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'background-color 0.2s',
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+=======
                       className={`discount-table__row ${index % 2 === 0 ? 'discount-table__row--even' : 'discount-table__row--odd'}`}
                     >
                       <td className="discount-table__cell discount-table__cell--name" style={{ width: columnWidths.name }}>
@@ -349,13 +820,31 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
                             onClick={() => discount.id !== undefined && onEditDiscount(discount.id)}
                             title="Edit Discount"
                             className="discount-action-button discount-action-button--edit"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                           >
                             <FaEdit size={16} />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(discount.id)}
                             title="Delete Discount"
+<<<<<<< HEAD
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              padding: '6px',
+                              cursor: 'pointer',
+                              color: '#EF4444',
+                              borderRadius: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'background-color 0.2s',
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEF2F2'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+=======
                             className="discount-action-button discount-action-button--delete"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                           >
                             <FaTrash size={16} />
                           </button>
@@ -370,6 +859,31 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
         </div>
       </div>
 
+<<<<<<< HEAD
+      {/* Delete Confirmation Modal using Portal */}
+      {showDeleteConfirmation && (
+        <ModalPortal>
+          <div style={overlayStyle}>
+            <div style={modalStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#111827' }}>Confirm Delete</h3>
+                <button 
+                  onClick={handleCloseConfirmation}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    padding: '8px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#6B7280',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+=======
       {showDeleteConfirmation && (
         <ModalPortal>
           <div className="discount-modal-overlay">
@@ -379,31 +893,90 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
                 <button 
                   onClick={handleCloseConfirmation}
                   className="discount-modal__close-button"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 >
                   <FaTimes size={16} />
                 </button>
               </div>
+<<<<<<< HEAD
+              <p style={{ 
+                margin: '0 0 20px 0', 
+                color: '#4B5563', 
+                fontSize: '14px', 
+                lineHeight: '1.5'
+              }}>
+=======
               <p className="discount-modal__message">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 Are you sure you want to delete this discount? This action cannot be undone.
               </p>
               
               {deleteError && (
+<<<<<<< HEAD
+                <div style={{ 
+                  backgroundColor: '#FEF2F2', 
+                  color: '#B91C1C', 
+                  padding: '12px', 
+                  borderRadius: '6px', 
+                  marginTop: '12px',
+                  marginBottom: '16px',
+                  fontSize: '14px',
+                  border: '1px solid #FECACA'
+                }}>
+=======
                 <div className="discount-modal__error">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                   {deleteError}
                 </div>
               )}
               
+<<<<<<< HEAD
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                <button
+                  onClick={handleCloseConfirmation}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#F9FAFB',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+=======
               <div className="discount-modal__footer">
                 <button
                   onClick={handleCloseConfirmation}
                   className="discount-modal__cancel-button"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmDelete}
                   disabled={isDeleting}
+<<<<<<< HEAD
+                  style={{
+                    padding: '8px 16px',
+                    background: '#EF4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: isDeleting ? 'default' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    opacity: isDeleting ? 0.7 : 1,
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
+                  onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
+=======
                   className="discount-modal__confirm-button"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>
@@ -413,6 +986,10 @@ const DiscountTableDashboard: React.FC<DiscountTableDashboardProps> = ({ onEditD
         </ModalPortal>
       )}
 
+<<<<<<< HEAD
+      {/* Notification Component */}
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );

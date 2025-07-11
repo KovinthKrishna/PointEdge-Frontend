@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTrash, FaFlag, FaPlus, FaTimes, FaCheck } from 'react-icons/fa';
+<<<<<<< HEAD
+import discountClient, { deleteAllDiscounts, fetchDiscountCount } from '../../services/discountService';
+=======
 import { deleteAllDiscounts, fetchDiscountCount } from '../../services/discountService';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 interface DiscountOptionsDashboardProps {
   onReportClick: () => void;
@@ -189,7 +193,11 @@ const DiscountOptionsDashboard: React.FC<DiscountOptionsDashboardProps> = ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+<<<<<<< HEAD
+    zIndex: 1000
+=======
     zIndex: 10000
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   };
 
   const modalStyle: React.CSSProperties = {

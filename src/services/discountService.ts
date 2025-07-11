@@ -17,23 +17,45 @@ const discountLoyaltyCountClient = new APIClient("/discount/count-by-type/LOYALT
 const loyaltyThresholdsClient = new APIClient("/discount/loyalty-thresholds");
 const allDiscountsClient = new APIClient<Discount[]>("/discount/get-all-discounts");
 const singleDiscountClient = new APIClient<Discount>("/discount/get-discount-by-id");
+<<<<<<< HEAD
+const discountDeleteById = new APIClient<Discount>("/discount/delete-discount-by-id");
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 const discountItemsClient = new APIClient<Discount[]>("/discount/get-discounts-by-type/ITEM");
 const discountCategoriesClient = new APIClient<Discount[]>("/discount/get-discounts-by-type/CATEGORY");
 const discountLoyaltiesClient = new APIClient<Discount[]>("/discount/get-discounts-by-type/LOYALTY");
 
+<<<<<<< HEAD
+// In your discountService.ts
+=======
 // Fetch product names function
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 export const fetchProductNames = async (): Promise<Array<{id: number, name: string}>> => {
   try {
     const response = await productNamesClient.getAll();
     
+<<<<<<< HEAD
+    // Handle both array of strings and array of objects
+    if (Array.isArray(response)) {
+      if (typeof response[0] === 'string') {
+        // Convert array of strings to array of objects
+        return response.map((name, index) => ({ id: index + 1, name }));
+      } else if (response[0]?.id && response[0]?.name) {
+        // Already in correct format
+=======
     if (Array.isArray(response)) {
       if (typeof response[0] === 'string') {
         return response.map((name, index) => ({ id: index + 1, name }));
       } else if (response[0]?.id && response[0]?.name) {
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         return response;
       }
     }
     
+<<<<<<< HEAD
+    // Fallback to dummy data in correct format
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     return [
       {id: 1, name: 'Product 1'},
       {id: 2, name: 'Product 2'},
@@ -50,6 +72,20 @@ export const fetchProductNames = async (): Promise<Array<{id: number, name: stri
 };
 
 
+<<<<<<< HEAD
+// In your discountService.ts
+export const fetchCategoryNames = async (): Promise<Array<{id: number, name: string}>> => {
+  try {
+    const response = await categoryNamesClient.getAll();
+    
+    // Handle both array of strings and array of objects
+    if (Array.isArray(response)) {
+      if (typeof response[0] === 'string') {
+        // Convert array of strings to array of objects
+        return response.map((name, index) => ({ id: index + 1, name }));
+      } else if (response[0]?.id && response[0]?.name) {
+        // Already in correct format
+=======
 // Fetch category names function
 export const fetchCategoryNames = async (): Promise<Array<{id: number, name: string}>> => {
   try {
@@ -59,10 +95,15 @@ export const fetchCategoryNames = async (): Promise<Array<{id: number, name: str
       if (typeof response[0] === 'string') {
         return response.map((name, index) => ({ id: index + 1, name }));
       } else if (response[0]?.id && response[0]?.name) {
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         return response;
       }
     }
     
+<<<<<<< HEAD
+    // Fallback to dummy data in correct format
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     return [
       {id: 1, name: 'Category 1'},
       {id: 2, name: 'Category 2'},
@@ -238,11 +279,19 @@ export const fetchLoyaltyThresholds = async (): Promise<LoyaltyThresholds> => {
     return await loyaltyThresholdsClient.getAll();
   } catch (error) {
     console.error('Error fetching loyalty thresholds:', error);
+<<<<<<< HEAD
+    // Return default values if API fails
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     return {
       gold: 10000,
       silver: 5000,
       bronze: 2500,
+<<<<<<< HEAD
+      points: 1000
+=======
       points: 1
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     };
   }
 };
@@ -322,6 +371,18 @@ export const updateDiscount = async (id: number, discountData: Discount): Promis
 // Delete a single discount by ID
 export const deleteDiscount = async (discountId: number): Promise<{ success: boolean, message?: string }> => {
   try {
+<<<<<<< HEAD
+    const response = await axios.delete(
+      `http://localhost:8080/api/v1/discount/delete-discount-by-id/${discountId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     
     console.log(`Discount with ID ${discountId} deleted successfully`);
     return { success: true, message: 'Discount deleted successfully' };
@@ -342,6 +403,10 @@ export const fetchItemDiscounts = async (): Promise<Discount[]> => {
     return discounts;
   } catch (error) {
     console.error('Error fetching item discounts:', error);
+<<<<<<< HEAD
+    // Return empty array instead of throwing to handle the error gracefully
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     return [];
   }
 };
@@ -353,6 +418,10 @@ export const fetchCategoryDiscounts = async (): Promise<Discount[]> => {
     return discounts;
   } catch (error) {
     console.error('Error fetching Category discounts:', error);
+<<<<<<< HEAD
+    // Return empty array instead of throwing to handle the error gracefully
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     return [];
   }
 };
@@ -364,6 +433,10 @@ export const fetchLoyaltyDiscounts = async (): Promise<Discount[]> => {
     return discounts;
   } catch (error) {
     console.error('Error fetching Loyalty discounts:', error);
+<<<<<<< HEAD
+    // Return empty array instead of throwing to handle the error gracefully
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     return [];
   }
 };

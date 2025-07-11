@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+<<<<<<< HEAD
+import { FaArrowLeft, FaAward, FaCrown, FaMedal, FaStar, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
+=======
 import { FaArrowLeft, FaAward, FaCrown, FaMedal, FaStar, FaCheck, FaTimes } from 'react-icons/fa';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 import { 
   getCustomerByPhone, 
   updateCustomerById, 
@@ -9,7 +13,10 @@ import {
   fetchCustomerOrders
 } from '../../services/customerService';
 import Customer from '../../models/Customer';
+<<<<<<< HEAD
+=======
 import './styles/CustomerDetails.css';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 interface CustomerDetailsPopupProps {
   onClose: () => void;
@@ -34,7 +41,28 @@ interface NotificationProps {
 // Notification Component
 const Notification: React.FC<NotificationProps> = ({ message, type }) => {
   return (
+<<<<<<< HEAD
+    <div className={`notification ${type}`} style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      padding: '12px 24px',
+      borderRadius: '4px',
+      fontWeight: 500,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      animation: 'slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards',
+      minWidth: '250px',
+      backgroundColor: type === 'success' ? '#F0FFF4' : '#FFF1F0',
+      borderLeft: `5px solid ${type === 'success' ? '#28A745' : '#DC3545'}`,
+      color: type === 'success' ? '#28A745' : '#DC3545',
+    }}>
+=======
     <div className={`notification ${type}`}>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       {type === 'success' ? 
         <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} /> : 
         <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
@@ -116,7 +144,11 @@ const CustomerDetails: React.FC<CustomerDetailsPopupProps> = ({
       document.head.removeChild(style);
     };
   }, []);
+<<<<<<< HEAD
+
+=======
   
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   // Show notification function
   const showNotification = (message: string, type: 'success' | 'error') => {
     setNotification({ message, type });

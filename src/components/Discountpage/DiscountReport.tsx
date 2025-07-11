@@ -186,6 +186,10 @@ const BarChart = ({ data, colors }: { data: BarChartData[]; colors: string[] }) 
           <React.Fragment key={dayIndex}>
             {dataPoint.values.map((value, valueIndex) => {
               const barWidth = 3;
+<<<<<<< HEAD
+              const groupWidth = dataPoint.values.length * (barWidth + 1);
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               const x = dayIndex * 15 + valueIndex * (barWidth + 1);
               const height = (value / maxValue) * chartHeight;
               const y = chartHeight - height;
@@ -229,7 +233,11 @@ const DonutChart = ({ segments, centerText, centerTextColor = "#00669B" }: Donut
   const circumference = 2 * Math.PI * radius;
   let currentOffset = 0;
   
+<<<<<<< HEAD
+  const chartSegments = segments.map((segment, index) => {
+=======
   const chartSegments = segments.map((segment) => {
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     const percentage = total > 0 ? segment.value / total : 0;
     const dashArray = percentage * circumference;
     const dashOffset = -currentOffset;
@@ -718,6 +726,23 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   };
 
   const createBarChartData = (period: string) => {
+<<<<<<< HEAD
+    const totals = getOrderTotalsForPeriod(period);
+    const maxValue = Math.max(totals.totalLoyaltyAmount, totals.totalItemAmount, totals.totalCategoryAmount);
+    
+    // Normalize values to be between 10-100 for the chart
+    const normalize = (value: number) => {
+      return 10 + (value / maxValue) * 90;
+    };
+
+    return Array(10).fill(null).map((_, i) => ({
+      values: [
+        normalize(totals.totalLoyaltyAmount * (0.7 + Math.random() * 0.3)),
+        normalize(totals.totalItemAmount * (0.7 + Math.random() * 0.3)),
+        normalize(totals.totalCategoryAmount * (0.7 + Math.random() * 0.3))
+      ]
+    }));
+=======
     const totals = getDiscountTotalsForPeriod(period);
     
     // Calculate the relative distribution of discount types
@@ -736,6 +761,7 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
       { values: [loyaltyPercent * 0.3, itemPercent * 0.5, categoryPercent * 0.2] },
       { values: [loyaltyPercent * 0.8, itemPercent * 0.1, categoryPercent * 0.1] }
     ];
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   };
   
   const getLoyaltySegments = (period: string) => {

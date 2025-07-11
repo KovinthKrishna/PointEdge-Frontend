@@ -80,7 +80,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   const [categorySearch, setCategorySearch] = useState('');
   const [percentageSearch, setPercentageSearch] = useState('');
   const [amountSearch, setAmountSearch] = useState('');
+<<<<<<< HEAD
+  const [tierSearch, setTierSearch] = useState('');
+=======
   const [] = useState('');
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const [durationSearch, setDurationSearch] = useState('');
   
   // Add new states
@@ -592,22 +596,48 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
     item.value.toString().includes(amountSearch)
   );
   
+<<<<<<< HEAD
+  const filteredTiers = tiers.filter(item => 
+    item.name.toLowerCase().includes(tierSearch.toLowerCase())
+  );
+  
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const filteredDurations = durations.filter(item => 
     item.value.toLowerCase().includes(durationSearch.toLowerCase())
   );
 
   // Notification component
   const NotificationContainer = () => (
+<<<<<<< HEAD
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '20px',
+      zIndex: 1000,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: '10px'
+    }}>
+=======
     <div className="notification-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       {notifications.map(notification => (
         <div 
           key={notification.id}
           className={`notification ${notification.type}`}
         >
           {notification.type === 'success' ? (
+<<<<<<< HEAD
+            <FaCheck style={{ marginRight: '10px', fontSize: '1.2em' }} />
+          ) : (
+            <FaTimes style={{ marginRight: '10px', fontSize: '1.2em' }} />
+=======
             <FaCheck className="notification-icon" />
           ) : (
             <FaTimes className="notification-icon" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
           )}
           {notification.message}
         </div>
@@ -615,6 +645,20 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
     </div>
   );
   return (
+<<<<<<< HEAD
+    <div style={{ padding: '16px' }}>
+      <NotificationContainer />
+      
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '16px'
+      }}>
+        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Create New Discount</h1>
+        
+        <div style={{ display: 'flex', gap: '10px' }}>
+=======
     <div className="discount-add-container">
       <NotificationContainer />
       
@@ -622,11 +666,16 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
         <h1>Create New Discount</h1>
         
         <div className="discount-add-buttons">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
           <button 
             onClick={onBack}
             className="back-btn"
           >
+<<<<<<< HEAD
+            <FaArrowLeft style={{ marginRight: '8px', fontSize: '14px', color: '#666' }} />
+=======
             <FaArrowLeft className="back-icon" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             Back to Discounts
           </button>
           <button 
@@ -638,6 +687,38 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
         </div>
       </div>
       
+<<<<<<< HEAD
+      <div style={{ 
+        background: '#fff', 
+        border: '1px solid #eee', 
+        borderRadius: '4px', 
+        padding: '16px'
+      }}>
+        {/* Discount Type with Enable Toggle */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'flex-start',
+          marginBottom: '16px' 
+        }}>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Discount Type</h3>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => setDiscountType('item')}
+                className={`discount-type-btn ${discountType === 'item' ? 'active' : ''}`}
+                style={{
+                  padding: '6px 10px',
+                  background: discountType === 'item' ? '#008ED8' : '#f5f5f5',
+                  color: discountType === 'item' ? 'white' : '#333',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  opacity: 1,
+                  fontSize: '13px',
+                  transition: 'all 0.2s ease'
+                }}
+=======
       <div className="discount-add-form-container">
         {/* Discount Type with Enable Toggle */}
         <div className="discount-type-container">
@@ -647,23 +728,93 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
               <button 
                 onClick={() => setDiscountType('item')}
                 className={`discount-type-btn ${discountType === 'item' ? 'active' : ''}`}
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               >
                 Item Discount
               </button>
               <button 
                 onClick={() => setDiscountType('category')}
                 className={`discount-type-btn ${discountType === 'category' ? 'active' : ''}`}
+<<<<<<< HEAD
+                style={{
+                  padding: '6px 10px',
+                  background: discountType === 'category' ? '#008ED8' : '#f5f5f5',
+                  color: discountType === 'category' ? 'white' : '#333',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  opacity: 1,
+                  fontSize: '13px',
+                  transition: 'all 0.2s ease'
+                }}
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               >
                 Category Discount
               </button>
               <button 
                 onClick={() => setDiscountType('loyalty')}
                 className={`discount-type-btn ${discountType === 'loyalty' ? 'active' : ''}`}
+<<<<<<< HEAD
+                style={{
+                  padding: '6px 10px',
+                  background: discountType === 'loyalty' ? '#008ED8' : '#f5f5f5',
+                  color: discountType === 'loyalty' ? 'white' : '#333',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  opacity: 1,
+                  fontSize: '13px',
+                  transition: 'all 0.2s ease'
+                }}
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               >
                 Loyalty Discount
               </button>
             </div>
           </div>
+<<<<<<< HEAD
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            marginLeft: '16px',
+            marginTop: '28px' 
+          }}>
+            <div 
+              onClick={() => setEnableDiscount(!enableDiscount)}
+              style={{
+                width: '36px',
+                height: '18px',
+                background: enableDiscount ? '#4CAF50' : '#F44336', // green or red background
+                borderRadius: '9px',
+                position: 'relative',
+                cursor: 'pointer',
+                marginRight: '8px',
+                transition: 'background 0.2s ease'
+              }}
+            >
+              <div style={{
+                width: '14px',
+                height: '14px',
+                background: 'white',
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '2px',
+                left: enableDiscount ? '20px' : '2px',
+                transition: 'left 0.2s'
+              }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <FaCircle 
+                style={{ 
+                  color: enableDiscount ? '#4CAF50' : '#F44336', // green or red dot
+                  fontSize: '9px', 
+                  marginRight: '4px' 
+                }} 
+              />
+              <span style={{ fontSize: '13px' }}>
+=======
           <div className="discount-toggle-container">
             <div 
               onClick={() => setEnableDiscount(!enableDiscount)}
@@ -674,6 +825,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
             <div className="toggle-label">
               <FaCircle className={`toggle-icon ${enableDiscount ? 'active' : 'inactive'}`} />
               <span>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 {enableDiscount ? 'Active' : 'Inactive'}
               </span>
             </div>
@@ -681,18 +833,31 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
         </div>
 
         {/* Two column layout for form fields */}
+<<<<<<< HEAD
+        <div style={{ display: 'flex', flexWrap: 'wrap', margin: '0 -8px' }}>
+          {/* Left Column */}
+          <div style={{ flex: '1 1 50%', minWidth: '280px', padding: '0 8px' }}>
+            {/* Discount Name Dropdown */}
+            <div className="dropdown-container" ref={dropdownRefs.discountName}>
+              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Discount Name</h3>
+=======
         <div className="discount-form-columns">
           {/* Left Column */}
           <div className="discount-form-column">
             {/* Discount Name Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.discountName}>
               <h3>Discount Name</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               <div 
                 className="dropdown-header"
                 onClick={() => toggleDropdown('discountName')}
               >
                 <span>{selectedDiscountName ? selectedDiscountName.name : 'Select discount name'}</span>
+<<<<<<< HEAD
+                <FaChevronDown style={{ fontSize: '11px' }} />
+=======
                 <FaChevronDown className="dropdown-chevron" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               </div>
               {dropdownOpen.discountName && (
                 <div className={`dropdown-list ${checkDropdownPosition('discountName') ? 'upward' : ''}`}>
@@ -701,7 +866,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, discountName: true }))}
                       className="add-new-btn"
                     >
+<<<<<<< HEAD
+                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+=======
                       <FaPlus className="add-new-icon" /> Add New
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -731,7 +900,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
+<<<<<<< HEAD
+                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+=======
                   <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     {isLoading.discountNames ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (
@@ -767,13 +940,21 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
             {/* Item Search Dropdown (shown for Item Discount) */}
             {discountType === 'item' && (
               <div className="dropdown-container" ref={dropdownRefs.item}>
+<<<<<<< HEAD
+                <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Select Item</h3>
+=======
                 <h3>Select Item</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 <div 
                   className="dropdown-header"
                   onClick={() => toggleDropdown('item')}
                 >
                   <span>{selectedItem ? selectedItem.name : 'Select Item'}</span>
+<<<<<<< HEAD
+                  <FaChevronDown style={{ fontSize: '11px' }} />
+=======
                   <FaChevronDown className="dropdown-chevron" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 </div>
                 {dropdownOpen.item && (
                   <div className={`dropdown-list ${checkDropdownPosition('item') ? 'upward' : ''}`}>
@@ -792,7 +973,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                         className="dropdown-search-input"
                       />
                     </div>
+<<<<<<< HEAD
+                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+=======
                     <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                       {isLoading.items ? (
                         <div className="dropdown-item">Loading...</div>
                       ) : filteredItems.length > 0 ? (
@@ -831,13 +1016,21 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
             {/* Category Dropdown */}
             {discountType === 'category' && (
               <div className="dropdown-container" ref={dropdownRefs.category}>
+<<<<<<< HEAD
+                <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Select Category</h3>
+=======
                 <h3>Select Category</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 <div 
                   className="dropdown-header"
                   onClick={() => toggleDropdown('category')}
                 >
                   <span>{selectedCategory ? selectedCategory.name : 'Select category'}</span>
+<<<<<<< HEAD
+                  <FaChevronDown style={{ fontSize: '11px' }} />
+=======
                   <FaChevronDown className="dropdown-chevron" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 </div>
                 {dropdownOpen.category && (
                   <div className={`dropdown-list ${checkDropdownPosition('category') ? 'upward' : ''}`}>
@@ -856,7 +1049,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                         className="dropdown-search-input"
                       />
                     </div>
+<<<<<<< HEAD
+                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+=======
                     <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                       {isLoading.categories ? (
                         <div className="dropdown-item">Loading...</div>
                       ) : filteredCategories.length > 0 ? (
@@ -894,17 +1091,29 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   
             {/* Tier Dropdown - Always visible */}
             <div className="dropdown-container" ref={dropdownRefs.tier}>
+<<<<<<< HEAD
+              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Select Tier</h3>
+=======
               <h3>Select Tier</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               <div 
                 className="dropdown-header"
                 onClick={() => toggleDropdown('tier')}
               >
                 <span>{selectedTier ? selectedTier.name : 'Select tier'}</span>
+<<<<<<< HEAD
+                <FaChevronDown style={{ fontSize: '11px' }} />
+              </div>
+              {dropdownOpen.tier && (
+                <div className={`dropdown-list ${checkDropdownPosition('tier') ? 'upward' : ''}`}>
+                  <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+=======
                 <FaChevronDown className="dropdown-chevron" />
               </div>
               {dropdownOpen.tier && (
                 <div className={`dropdown-list ${checkDropdownPosition('tier') ? 'upward' : ''}`}>
                   <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     <div 
                       onClick={() => {
                         setSelectedTier(null);
@@ -933,16 +1142,27 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
           </div>
   
           {/* Right Column */}
+<<<<<<< HEAD
+          <div style={{ flex: '1 1 50%', minWidth: '280px', padding: '0 8px' }}>
+            {/* Percentage Dropdown */}
+            <div className="dropdown-container" ref={dropdownRefs.percentage}>
+              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Percentage</h3>
+=======
           <div className="discount-form-column">
             {/* Percentage Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.percentage}>
               <h3>Percentage</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               <div 
                 className={`dropdown-header ${selectedAmount ? 'dropdown-disabled' : ''}`}
                 onClick={() => !selectedAmount && toggleDropdown('percentage')}
               >
                 <span>{selectedPercentage ? `${selectedPercentage.value}%` : 'Select percentages'}</span>
+<<<<<<< HEAD
+                <FaChevronDown style={{ fontSize: '11px' }} />
+=======
                 <FaChevronDown className="dropdown-chevron" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               </div>
               {dropdownOpen.percentage && !selectedAmount && (
                 <div className={`dropdown-list ${checkDropdownPosition('percentage') ? 'upward' : ''}`}>
@@ -951,7 +1171,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, percentage: true }))}
                       className="add-new-btn"
                     >
+<<<<<<< HEAD
+                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+=======
                       <FaPlus className="add-new-icon" /> Add New
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -984,7 +1208,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
+<<<<<<< HEAD
+                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+=======
                   <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     {isLoading.percentages ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (
@@ -1019,13 +1247,21 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   
             {/* Amount Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.amount}>
+<<<<<<< HEAD
+              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Amount</h3>
+=======
               <h3>Amount</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               <div 
                 className={`dropdown-header ${selectedPercentage ? 'dropdown-disabled' : ''}`}
                 onClick={() => !selectedPercentage && toggleDropdown('amount')}
               >
                 <span>{selectedAmount ? `${selectedAmount.currency} ${selectedAmount.value.toFixed(2)}` : 'Select amounts'}</span>
+<<<<<<< HEAD
+                <FaChevronDown style={{ fontSize: '11px' }} />
+=======
                 <FaChevronDown className="dropdown-chevron" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               </div>
               {dropdownOpen.amount && !selectedPercentage && (
                 <div className={`dropdown-list ${checkDropdownPosition('amount') ? 'upward' : ''}`}>
@@ -1034,7 +1270,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, amount: true }))}
                       className="add-new-btn"
                     >
+<<<<<<< HEAD
+                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+=======
                       <FaPlus className="add-new-icon" /> Add New
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -1066,7 +1306,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
+<<<<<<< HEAD
+                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+=======
                   <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     {isLoading.amounts ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (
@@ -1101,13 +1345,21 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
   
             {/* Duration Dropdown */}
             <div className="dropdown-container" ref={dropdownRefs.duration}>
+<<<<<<< HEAD
+              <h3 style={{ marginBottom: '8px', fontSize: '1rem' }}>Duration</h3>
+=======
               <h3>Duration</h3>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               <div 
                 className="dropdown-header"
                 onClick={() => toggleDropdown('duration')}
               >
                 <span>{selectedDuration ? selectedDuration.value : 'Select durations'}</span>
+<<<<<<< HEAD
+                <FaChevronDown style={{ fontSize: '11px' }} />
+=======
                 <FaChevronDown className="dropdown-chevron" />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               </div>
               {dropdownOpen.duration && (
                 <div className={`dropdown-list ${checkDropdownPosition('duration') ? 'upward' : ''}`}>
@@ -1116,7 +1368,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       onClick={() => setIsAddingNew(prev => ({ ...prev, duration: true }))}
                       className="add-new-btn"
                     >
+<<<<<<< HEAD
+                      <FaPlus style={{ fontSize: '10px', marginRight: '6px' }} /> Add New
+=======
                       <FaPlus className="add-new-icon" /> Add New
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     </div>
                   ) : (
                     <div className="add-new-container">
@@ -1146,7 +1402,11 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
                       className="dropdown-search-input"
                     />
                   </div>
+<<<<<<< HEAD
+                  <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+=======
                   <div className="dropdown-items-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                     {isLoading.durations ? (
                       <div className="dropdown-item">Loading...</div>
                     ) : (

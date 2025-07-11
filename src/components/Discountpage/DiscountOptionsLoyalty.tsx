@@ -210,7 +210,11 @@ const CustomerLoyaltyOptions: React.FC<DiscountOptionsLoyaltyProps> = ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+<<<<<<< HEAD
+    zIndex: 1000
+=======
     zIndex: 10000
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   };
 
   const modalStyle: React.CSSProperties = {

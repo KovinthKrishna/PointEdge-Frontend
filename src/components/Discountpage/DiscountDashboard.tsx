@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import React, { useState } from "react";
+=======
 import { useState } from "react";
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 import DiscountTabBar from "./DiscountTabBar";
 import DiscountOptionsDashboard from "./DiscountOptionsDashborad";
 import DiscountTableDashboard from "./DiscountTableDashborad";
@@ -63,7 +67,12 @@ const DiscountDashboard = () => {
         return (
           <>
             <DiscountOptionsItem
+<<<<<<< HEAD
+              onReportClick={() => setShowReport(true)}
+              onAddClick={() => setShowAddForm(true)}
+=======
               onAddClick={() => setShowAddForm(true)} itemCount={0}            
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             />
             <DiscountTableItem 
               onEditDiscount={(id) => setEditingDiscountId(id)}
@@ -75,8 +84,14 @@ const DiscountDashboard = () => {
         return (
           <>
             <DiscountOptionsCategory
+<<<<<<< HEAD
+              onReportClick={() => setShowReport(true)}
+              onAddClick={() => setShowAddForm(true)}
+            />
+=======
               onAddClick={() => setShowAddForm(true)} categoryCount={0}          
              />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             <DiscountTableCategory 
               onEditDiscount={(id) => setEditingDiscountId(id)}
             />
@@ -88,6 +103,10 @@ const DiscountDashboard = () => {
           <>
             <DiscountOptionsLoyalty
               onSettingsClick={() => setShowSettings(true)}
+<<<<<<< HEAD
+              onDeleteClick={() => console.log('Delete clicked')} 
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
               loyaltyCount={0}
               onAddClick={() => setShowAddForm(true)}
             />

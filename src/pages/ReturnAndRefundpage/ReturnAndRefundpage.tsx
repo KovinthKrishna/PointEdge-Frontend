@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+import React from "react";
+import { Box, Heading, Container } from "@chakra-ui/react";
+import ReturnRefundManager from "../../components/ReturnRefund/ReturnRefundManager";
+
+const ReturnRefundPage: React.FC = () => {
+  return (
+    <Container maxW="container.md" py={10}>
+      <Heading mb={6}>Return & Refund</Heading>
+      <Box>
+        <ReturnRefundManager />
+      </Box>
+    </Container>
+=======
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
@@ -205,6 +219,7 @@ const ReturnRefundPage: React.FC = () => {
       />
       <StepWrapper currentStep={currentStep}>{renderStep()}</StepWrapper>
     </Box>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   );
 };
 
