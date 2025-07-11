@@ -6,11 +6,13 @@ import {
 } from "@chakra-ui/react";
 import { Controller, Control, FieldErrors } from "react-hook-form";
 
+//  type checking in the form
 interface LoginFormInputs {
   username: string;
   password: string;
 }
 
+//defines the props
 interface UsernameInputProps {
   control: Control<LoginFormInputs>;
   errors: FieldErrors<LoginFormInputs>;
@@ -23,8 +25,10 @@ const UsernameInput: React.FC<UsernameInputProps> = ({ control, errors }) => {
       <Controller
         name="username"
         control={control}
-        defaultValue=""
-        render={({ field }) => <Input {...field} borderWidth="2px" />}
+        defaultValue="@gmail.com"
+        render={({ field }) => (
+          <Input {...field} borderWidth="2px" fontSize="13px" />
+        )}
       />
       <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
     </FormControl>
