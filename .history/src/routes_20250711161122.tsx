@@ -38,8 +38,16 @@ const router = createBrowserRouter([
           {
             path: "customers",
             element: <DiscountsPage />,
-            handle: { showCustomerModal: true },
+            handle: {
+<<<<<<< HEAD
+              showCustomerModal: true,
+            },
           },
+=======
+              showCustomerModal: true 
+            }
+          }
+>>>>>>> 869dcb43f45bc9aaced767b7881b702e2c8864fd
         ],
       },
       {
