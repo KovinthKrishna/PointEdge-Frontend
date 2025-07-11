@@ -34,7 +34,16 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
   return (
     <VStack align="stretch" spacing={6}>
       <InvoiceSummary invoice={invoiceData} />
-      <ItemTable items={items} onItemChange={setItems} />
+      <ItemTable
+        items={items}
+        onItemChange={setItems}
+        header1="Item"
+        header2="Qty Purchased"
+        header3="Qty to Return"
+        header4="Unit Price"
+        header5="Refund"
+        header6="Reason"
+      />
       <RefundSummary items={items} />
       <ActionButtons
         onSubmit={handleSubmit}

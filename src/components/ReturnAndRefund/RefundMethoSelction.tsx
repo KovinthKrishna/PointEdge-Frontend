@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Box, VStack, Text, useToast, HStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { CreditCard, Wallet } from "lucide-react";
+import { CreditCard, Repeat, Wallet } from "lucide-react";
 import ActionButtons from "./ActionButtons";
 
 interface RefundMethodSelectionProps {
   totalAmount: number;
   onSubmit: (method: string) => void;
   onCancel: () => void;
+  onExchangeSelect?: () => void;
+  onCardPayment?: () => void;
 }
 
 const MotionBox = motion(Box);
@@ -16,6 +18,8 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   totalAmount,
   onSubmit,
   onCancel,
+  onExchangeSelect,
+  onCardPayment,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const toast = useToast();
@@ -23,6 +27,7 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   const methods = [
     { label: "Cash", icon: Wallet },
     { label: "Card", icon: CreditCard },
+    { label: "Exchange", icon: Repeat },
   ];
 
   const handleCardSelect = (method: string) => {
@@ -47,15 +52,26 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   };
 
   const handleConfirm = () => {
-    if (selectedMethod) {
-      onSubmit(selectedMethod);
+    if (!selectedMethod) return;
+
+    switch (selectedMethod) {
+      case "Exchange":
+        onSubmit(selectedMethod);
+        break;
+      case "Card":
+        onSubmit(selectedMethod);
+        break;
+      case "Cash":
+      default:
+        onSubmit(selectedMethod);
+        break;
     }
   };
 
   return (
     <VStack spacing={6}>
       <Text fontSize="xl" fontWeight="bold" color="darkBlue">
-        Total Refund Amount: Rs {totalAmount}
+        Total Refund Amount: Rs {totalAmount.toFixed(2)}
       </Text>
 
       <Text fontSize="md" color="gray.600">

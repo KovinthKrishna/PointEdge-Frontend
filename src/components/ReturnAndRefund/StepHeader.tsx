@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, VStack } from "@chakra-ui/react";
-import { RefundStep } from "./ReturnRefundContainer";
+import { RefundStep } from "../../models/RefundStep";
 
 interface StepHeaderProps {
   currentStep: RefundStep;
