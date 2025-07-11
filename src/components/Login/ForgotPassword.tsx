@@ -1,12 +1,9 @@
 import { Text } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
-interface ForgotPasswordProps {
-  onForgotPassword: () => void;
-}
+const ForgotPassword: React.FC = () => {
+  const navigate = useNavigate();
 
-const ForgotPassword: React.FC<ForgotPasswordProps> = ({
-  onForgotPassword,
-}) => {
   return (
     <Text
       fontSize="xs"
@@ -15,7 +12,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({
       textAlign="center"
       cursor="pointer"
       _hover={{ textDecoration: "underline" }}
-      onClick={onForgotPassword}
+      onClick={() => navigate("/forgot-password")}
     >
       I forgot my password
     </Text>
