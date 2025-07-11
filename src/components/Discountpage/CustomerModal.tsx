@@ -1,13 +1,24 @@
+<<<<<<< HEAD
 // CustomerModal.tsx
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 import { useMatches, useNavigate, useSearchParams } from "react-router-dom";
 import CustomerOrders from "./CustomerFind";
 import CustomerAdd from "./CustomerAdd";
 import CustomerDetails from "./CustomerDetails";
+<<<<<<< HEAD
+=======
+import "./styles/CustomerModal.css";
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 export const CustomerModal = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+<<<<<<< HEAD
   const view = searchParams.get("view") ;
+=======
+  const view = searchParams.get("view");
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
   // Get valid views from route handle
   const matches = useMatches();
@@ -28,7 +39,11 @@ export const CustomerModal = () => {
           throw new Error("Function not implemented.");
         } } />;
       case 'add':
+<<<<<<< HEAD
         return <CustomerAdd onClose={handleClose} onCustomerAdded={function (newCustomer: { phone: string; }): void {
+=======
+        return <CustomerAdd onClose={handleClose} onCustomerAdded={function (): void {
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
           throw new Error("Function not implemented.");
         } } />;
       case 'orders':
@@ -37,6 +52,7 @@ export const CustomerModal = () => {
     }
   };
 
+<<<<<<< HEAD
   const overlayStyle: React.CSSProperties = {
     position: "fixed",
     top: 0,
@@ -66,8 +82,18 @@ export const CustomerModal = () => {
   return (
     <div style={overlayStyle}>
       <div style={containerStyle}>
+=======
+  return (
+    <div className="customer-modal-overlay">
+      <div className="customer-modal-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         {renderContent()}
       </div>
     </div>
   );
 };
+<<<<<<< HEAD
+=======
+
+export default CustomerModal;
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc

@@ -10,6 +10,10 @@ import {
   fetchCategoryNames
 } from '../../services/discountService';
 import Discount from '../../models/Discount';
+<<<<<<< HEAD
+=======
+import './styles/DiscountTable.css';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 interface DiscountNameMap {
   [key: number]: string;
@@ -24,6 +28,7 @@ interface NotificationProps {
   type: 'success' | 'error';
 }
 
+<<<<<<< HEAD
 // Notification Component
 const Notification: React.FC<NotificationProps> = ({ message, type }) => {
   return (
@@ -54,12 +59,16 @@ const Notification: React.FC<NotificationProps> = ({ message, type }) => {
   );
 };
 
+=======
+// Modal Portal component - same as DiscountTableDashboard
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 const ModalPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const modalRoot = document.getElementById('modal-root');
   if (!modalRoot) return null;
   return ReactDOM.createPortal(children, modalRoot);
 };
 
+<<<<<<< HEAD
 const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount }) => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [productNames, setProductNames] = useState<DiscountNameMap>({});
@@ -67,12 +76,35 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [discountCount, setDiscountCount] = useState<number>(0);
+=======
+// Notification Component - updated class names
+const Notification: React.FC<NotificationProps> = ({ message, type }) => {
+  return (
+    <div className={`discount-notification discount-notification--${type}`}>
+      {type === 'success' ? 
+        <FaCheck className="discount-notification__icon" /> : 
+        <FaTimes className="discount-notification__icon" />
+      }
+      {message}
+    </div>
+  );
+};
+
+const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount }) => {
+  const [discounts, setDiscounts] = useState<Discount[]>([]);
+  const [productNames, setProductNames] = useState<DiscountNameMap>({});
+  const [, setCategoryNames] = useState<DiscountNameMap>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [, setDiscountCount] = useState<number>(0);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
   const [discountToDelete, setDiscountToDelete] = useState<number | undefined>(undefined);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [notification, setNotification] = useState<NotificationProps | null>(null);
 
+<<<<<<< HEAD
   // Create modal root element on component mount
   useEffect(() => {
     const modalRoot = document.createElement('div');
@@ -84,6 +116,8 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     };
   }, []);
 
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   // Table column widths
   const columnWidths = {
     name: '15%',
@@ -96,6 +130,7 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     actions: '10%'
   };
 
+<<<<<<< HEAD
   // Add animation styles
   useEffect(() => {
     const style = document.createElement('style');
@@ -125,6 +160,22 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     
     return () => {
       document.head.removeChild(style);
+=======
+  // Create modal root element on component mount
+  useEffect(() => {
+    const modalRoot = document.getElementById('modal-root');
+    if (!modalRoot) {
+      const newModalRoot = document.createElement('div');
+      newModalRoot.id = 'modal-root';
+      document.body.appendChild(newModalRoot);
+    }
+    
+    return () => {
+      const modalRoot = document.getElementById('modal-root');
+      if (modalRoot && modalRoot.parentNode) {
+        modalRoot.parentNode.removeChild(modalRoot);
+      }
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     };
   }, []);
 
@@ -176,6 +227,7 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     return () => clearInterval(intervalId);
   }, []);
 
+<<<<<<< HEAD
   // Helper functions for status display
   const getStatusDot = (status: boolean) => ({
     width: '8px',
@@ -198,6 +250,8 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     whiteSpace: 'nowrap',
   });
 
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   const formatDiscountValue = (discount: Discount) => {
     if (discount.percentage) {
       return `${discount.percentage}%`;
@@ -219,9 +273,15 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     }
   };
 
+<<<<<<< HEAD
   const getRemainingTimeStyle = (remainingTime: string) => {
     if (remainingTime === 'Expired') {
       return { color: '#EF4444', fontWeight: 'bold' };
+=======
+  const getRemainingTimeClass = (remainingTime: string) => {
+    if (remainingTime === 'Expired') {
+      return 'discount-time-remaining--expired';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     }
     
     // Check if remaining time is less than 60 minutes
@@ -233,10 +293,17 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     const totalMinutes = (days * 24 * 60) + (hours * 60) + minutes;
     
     if (totalMinutes < 60) {
+<<<<<<< HEAD
       return { color: '#F59E0B', fontWeight: 'bold' }; // Orange for less than 60 minutes
     }
     
     return { color: '#3B82F6' }; // Blue for normal
+=======
+      return 'discount-time-remaining--warning'; // Orange for less than 60 minutes
+    }
+    
+    return 'discount-time-remaining--normal'; // Blue for normal
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   };
 
   const getRemainingTime = (startDate: string | undefined, duration: string) => {
@@ -317,10 +384,18 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     return 'Item Discount';
   };
 
+<<<<<<< HEAD
   const displayStatus = (isActive: boolean) => {
     return (
       <div style={getStatusStyle(isActive)}>
         <span style={getStatusDot(isActive)}></span>
+=======
+  // Updated to use the same class names as DiscountTableDashboard
+  const displayStatus = (isActive: boolean) => {
+    return (
+      <div className={`discount-status ${isActive ? 'discount-status--active' : 'discount-status--inactive'}`}>
+        <span className={`discount-status__dot ${isActive ? 'discount-status__dot--active' : 'discount-status__dot--inactive'}`}></span>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         {isActive ? 'Active' : 'Inactive'}
       </div>
     );
@@ -369,6 +444,7 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
     }
   };
 
+<<<<<<< HEAD
   // Modal styles
   const overlayStyle: React.CSSProperties = {
     position: 'fixed',
@@ -413,6 +489,11 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
         color: '#6B7280',
         fontSize: '15px'
       }}>
+=======
+  if (loading) {
+    return (
+      <div className="discount-loading">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         Loading item discounts...
       </div>
     );
@@ -420,6 +501,7 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
 
   if (error) {
     return (
+<<<<<<< HEAD
       <div style={{ 
         display: 'flex',
         justifyContent: 'center',
@@ -449,12 +531,17 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
           fontSize: '12px',
           flexShrink: 0
         }}>!</div>
+=======
+      <div className="discount-error">
+        <div className="discount-error__icon">!</div>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         {error}
       </div>
     );
   }
 
   return (
+<<<<<<< HEAD
     <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={tableContainerStyle}>
         <div style={{ overflowX: 'auto' }}>
@@ -539,16 +626,42 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                     width: columnWidths.actions,
                     whiteSpace: 'nowrap'
                   }}>Actions</th>
+=======
+    <div>
+      <div className="discount-table-container">
+        <div style={{ overflowX: 'auto' }}>
+          {discounts.length === 0 ? (
+            <div className="discount-empty-state">
+              No item discounts found.
+            </div>
+          ) : (
+            <table className="discount-table">
+              <thead>
+                <tr className="discount-table__header">
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.name }}>Name</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.type }}>Item</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.startDate }}>Start Date & Time</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.duration }}>Duration</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.remaining }}>Time Left</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.status }}>Status</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.discount }}>Discount</th>
+                  <th className="discount-table__header-cell" style={{ width: columnWidths.actions }}>Actions</th>
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 </tr>
               </thead>
               <tbody>
                 {discounts.map((discount, index) => {
                   const remainingTime = getRemainingTime(discount.startDate, discount.duration);
+<<<<<<< HEAD
                   const remainingStyle = getRemainingTimeStyle(remainingTime);
+=======
+                  const remainingClass = getRemainingTimeClass(remainingTime);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                   
                   return (
                     <tr 
                       key={discount.id} 
+<<<<<<< HEAD
                       style={{ 
                         borderBottom: '1px solid #EAECF0',
                         backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F9FAFB'
@@ -649,12 +762,44 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                             }}
                             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
                             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+=======
+                      className={`discount-table__row ${index % 2 === 0 ? 'discount-table__row--even' : 'discount-table__row--odd'}`}
+                    >
+                      <td className="discount-table__cell discount-table__cell--name" style={{ width: columnWidths.name }}>
+                        {discount.name}
+                      </td>
+                      <td className="discount-table__cell discount-table__cell--type" style={{ width: columnWidths.type }}>
+                        {getFormattedType(discount)}
+                      </td>
+                      <td className="discount-table__cell" style={{ width: columnWidths.startDate }}>
+                        {formatDate(discount.startDate)}
+                      </td>
+                      <td className="discount-table__cell" style={{ width: columnWidths.duration }}>
+                        {discount.duration}
+                      </td>
+                      <td className={`discount-table__cell discount-time-remaining ${remainingClass}`} style={{ width: columnWidths.remaining }}>
+                        {remainingTime}
+                      </td>
+                      <td className="discount-table__cell" style={{ width: columnWidths.status }}>
+                        {displayStatus(discount.isActive)}
+                      </td>
+                      <td className="discount-table__cell discount-table__cell--discount" style={{ width: columnWidths.discount }}>
+                        {formatDiscountValue(discount)}
+                      </td>
+                      <td className="discount-table__cell" style={{ width: columnWidths.actions }}>
+                        <div className="discount-actions">
+                          <button
+                            onClick={() => discount.id !== undefined && onEditDiscount(discount.id)}
+                            title="Edit Discount"
+                            className="discount-action-button discount-action-button--edit"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                           >
                             <FaEdit size={16} />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(discount.id)}
                             title="Delete Discount"
+<<<<<<< HEAD
                             style={{
                               background: 'none',
                               border: 'none',
@@ -669,6 +814,9 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                             }}
                             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEF2F2'}
                             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+=======
+                            className="discount-action-button discount-action-button--delete"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                           >
                             <FaTrash size={16} />
                           </button>
@@ -685,6 +833,7 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
 
       {showDeleteConfirmation && (
         <ModalPortal>
+<<<<<<< HEAD
           <div style={overlayStyle}>
             <div style={modalStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -705,20 +854,34 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                   }}
                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
                   onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+=======
+          <div className="discount-modal-overlay">
+            <div className="discount-modal">
+              <div className="discount-modal__header">
+                <h3 className="discount-modal__title">Confirm Delete</h3>
+                <button 
+                  onClick={handleCloseConfirmation}
+                  className="discount-modal__close-button"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 >
                   <FaTimes size={16} />
                 </button>
               </div>
+<<<<<<< HEAD
               <p style={{ 
                 margin: '0 0 20px 0', 
                 color: '#4B5563', 
                 fontSize: '14px', 
                 lineHeight: '1.5'
               }}>
+=======
+              <p className="discount-modal__message">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 Are you sure you want to delete this item discount? This action cannot be undone.
               </p>
               
               {deleteError && (
+<<<<<<< HEAD
                 <div style={{ 
                   backgroundColor: '#FEF2F2', 
                   color: '#B91C1C', 
@@ -729,10 +892,14 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                   fontSize: '14px',
                   border: '1px solid #FECACA'
                 }}>
+=======
+                <div className="discount-modal__error">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                   {deleteError}
                 </div>
               )}
               
+<<<<<<< HEAD
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
                 <button
                   onClick={handleCloseConfirmation}
@@ -749,12 +916,19 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                   }}
                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
                   onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+=======
+              <div className="discount-modal__footer">
+                <button
+                  onClick={handleCloseConfirmation}
+                  className="discount-modal__cancel-button"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmDelete}
                   disabled={isDeleting}
+<<<<<<< HEAD
                   style={{
                     padding: '8px 16px',
                     background: '#EF4444',
@@ -769,6 +943,9 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
                   }}
                   onMouseOver={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#DC2626')}
                   onMouseOut={(e) => !isDeleting && (e.currentTarget.style.backgroundColor = '#EF4444')}
+=======
+                  className="discount-modal__confirm-button"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>
@@ -778,7 +955,10 @@ const DiscountTableItem: React.FC<DiscountTableItemProps> = ({ onEditDiscount })
         </ModalPortal>
       )}
 
+<<<<<<< HEAD
       {/* Notification Component */}
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       {notification && <Notification message={notification.message} type={notification.type} />}
     </div>
   );

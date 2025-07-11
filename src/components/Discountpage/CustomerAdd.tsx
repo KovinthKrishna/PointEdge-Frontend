@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import ReactDOM from 'react-dom';
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 import { FaArrowLeft, FaCheck, FaTimes } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import shopping from '../../assets/shopping.png';

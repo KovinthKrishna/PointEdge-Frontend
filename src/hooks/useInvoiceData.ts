@@ -11,7 +11,11 @@ export const useInvoiceData = (invoiceNumber: string | null) => {
     const fetchInvoice = async () => {
       try {
         const response = await axios.get(
+<<<<<<< HEAD
           `http://localhost:8080/api/returns/invoice/${invoiceNumber}`
+=======
+          `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         );
         const data = response.data;
         const items: InvoiceItem[] = data.items.map((item: any) => ({

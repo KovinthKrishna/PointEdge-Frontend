@@ -85,7 +85,14 @@ export const deleteCustomer = async (customerId: number): Promise<{ success: boo
     );
     
     console.log(`Customer with ID ${customerId} deleted successfully`);
+<<<<<<< HEAD
     return { success: true, message: 'Customer deleted successfully' };
+=======
+    return { 
+      success: response.status === 200, 
+      message: 'Customer deleted successfully' 
+    };
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
   } catch (error) {
     console.error(`Error deleting customer with ID ${customerId}:`, error);
     if (axios.isAxiosError(error)) {
@@ -133,8 +140,11 @@ export const searchCustomers = async (
   }
 };
 
+<<<<<<< HEAD
 // services/customerService.ts
 
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 // Get a single customer by phone number
 export const getCustomerByPhone = async (phone: string): Promise<Customer> => {
   const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
@@ -159,6 +169,10 @@ export const getCustomerByPhone = async (phone: string): Promise<Customer> => {
   }
 };
 
+<<<<<<< HEAD
+=======
+// Delete a single customer by phone number
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 export const deleteCustomer2 = async (phone: string): Promise<{ success: boolean, message?: string }> => {
   try {
     const response = await axios.delete(
@@ -214,8 +228,11 @@ export const updateCustomerById = async (id: number, customerData: Customer): Pr
 };
 
 // fetch coustomer count by tier
+<<<<<<< HEAD
 
 // Add this to your customerService.ts
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 export const fetchCustomerCountsByTier = async (): Promise<{
   GOLD: number;
   SILVER: number;
@@ -239,8 +256,11 @@ export const fetchCustomerCountsByTier = async (): Promise<{
 };
 
 // fetch tier by phone number
+<<<<<<< HEAD
 
 // In services/customerService.ts
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 export const getCustomerTierByPhone = async (phone: string): Promise<string> => {
   const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
   try {
@@ -265,9 +285,12 @@ export const getCustomerTierByPhone = async (phone: string): Promise<string> => 
 };
 
 // fetch orders
+<<<<<<< HEAD
 
 // Add this to your customerService.ts file
 
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 interface OrderData {
   id: string;
   date: string;
@@ -276,8 +299,12 @@ interface OrderData {
   points: number;
 }
 
+<<<<<<< HEAD
 // Add this to your customerService.ts file
 
+=======
+/// Fetch customer orders by phone number
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 export const fetchCustomerOrders = async (phone: string): Promise<OrderData[]> => {
   const formattedPhone = phone.startsWith('0') ? phone : `0${phone}`;
   try {

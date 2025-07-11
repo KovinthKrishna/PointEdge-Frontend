@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaStar, FaCrown, FaAward, FaMedal, FaCheck } from 'react-icons/fa';
 import { fetchLoyaltyThresholds, updateLoyaltyThresholds } from '../../services/discountService';
+<<<<<<< HEAD
+=======
+import './styles/DiscountLoyaltySettings.css';
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
 
 interface DiscountLoyaltySettingsProps {
   onBack: () => void;
@@ -61,7 +65,11 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
       setLoading(prev => ({ ...prev, saving: true }));
       setError(null);
       
+<<<<<<< HEAD
       const updated = await updateLoyaltyThresholds(thresholds);
+=======
+      await updateLoyaltyThresholds(thresholds);
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       
       setNotification({
         show: true,
@@ -90,6 +98,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
 
   if (loading.fetching) {
     return (
+<<<<<<< HEAD
       <div style={{ 
         padding: '20px',
         display: 'flex',
@@ -97,13 +106,20 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
         alignItems: 'center',
         height: '200px'
       }}>
+=======
+      <div className="loading-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
         <div>Loading loyalty thresholds...</div>
       </div>
     );
   }
 
   return (
+<<<<<<< HEAD
     <div style={{ padding: '20px' }}>
+=======
+    <div className="loyalty-settings-container">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
       {/* Notification */}
       {notification.show && (
         <div className={`notification ${notification.type}`}>
@@ -116,6 +132,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
         </div>
       )}
 
+<<<<<<< HEAD
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -124,6 +141,11 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
       }}>
         <h1 style={{ margin: 0 }}>Loyalty Points Settings</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
+=======
+      <div className="settings-header">
+        <h1>Loyalty Points Settings</h1>
+        <div className="header-buttons">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
           <button 
             onClick={onBack}
             disabled={loading.saving}
@@ -163,6 +185,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
       </div>
       
       {error && (
+<<<<<<< HEAD
         <div style={{ 
           color: 'red', 
           marginBottom: '15px',
@@ -170,10 +193,14 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           background: '#ffebee',
           borderRadius: '4px'
         }}>
+=======
+        <div className="error-message">
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
           {error}
         </div>
       )}
       
+<<<<<<< HEAD
       <div style={{ 
         background: '#fff', 
         border: '1px solid #eee', 
@@ -202,6 +229,20 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               marginRight: '8px'
             }}>
               <FaStar style={{ color: 'white', fontSize: '10px' }} />
+=======
+      <div className={`settings-card ${loading.saving ? 'disabled' : ''}`}>
+        {/* Gold Membership */}
+        <div className="setting-item">
+          <div className="setting-label">
+            <FaCrown className="setting-icon gold-icon" />
+            <label className="setting-label-text">
+              Loyalty Points Required for Gold Membership
+            </label>
+          </div>
+          <div className="input-container">
+            <div className="point-circle">
+              <FaStar />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             </div>
             <input
               type="number"
@@ -209,6 +250,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               value={thresholds.gold}
               onChange={handleChange}
               disabled={loading.saving}
+<<<<<<< HEAD
               style={{
                 width: '100%',
                 padding: '8px',
@@ -216,11 +258,15 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
+=======
+              className="threshold-input"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             />
           </div>
         </div>
 
         {/* Silver Membership */}
+<<<<<<< HEAD
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
             <FaAward style={{ color: '#C0C0C0', fontSize: '16px', marginRight: '8px' }} />
@@ -240,6 +286,18 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               marginRight: '8px'
             }}>
               <FaStar style={{ color: 'white', fontSize: '10px' }} />
+=======
+        <div className="setting-item">
+          <div className="setting-label">
+            <FaAward className="setting-icon silver-icon" />
+            <label className="setting-label-text">
+              Loyalty Points Required for Silver Membership
+            </label>
+          </div>
+          <div className="input-container">
+            <div className="point-circle">
+              <FaStar />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             </div>
             <input
               type="number"
@@ -247,6 +305,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               value={thresholds.silver}
               onChange={handleChange}
               disabled={loading.saving}
+<<<<<<< HEAD
               style={{
                 width: '100%',
                 padding: '8px',
@@ -254,11 +313,15 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
+=======
+              className="threshold-input"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             />
           </div>
         </div>
 
         {/* Bronze Membership */}
+<<<<<<< HEAD
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
             <FaMedal style={{ color: '#CD7F32', fontSize: '16px', marginRight: '8px' }} />
@@ -278,6 +341,18 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               marginRight: '8px'
             }}>
               <FaStar style={{ color: 'white', fontSize: '10px' }} />
+=======
+        <div className="setting-item">
+          <div className="setting-label">
+            <FaMedal className="setting-icon bronze-icon" />
+            <label className="setting-label-text">
+              Loyalty Points Required for Bronze Membership
+            </label>
+          </div>
+          <div className="input-container">
+            <div className="point-circle">
+              <FaStar />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             </div>
             <input
               type="number"
@@ -285,6 +360,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               value={thresholds.bronze}
               onChange={handleChange}
               disabled={loading.saving}
+<<<<<<< HEAD
               style={{
                 width: '100%',
                 padding: '8px',
@@ -292,11 +368,15 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
+=======
+              className="threshold-input"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             />
           </div>
         </div>
 
         {/* Points Conversion */}
+<<<<<<< HEAD
         <div style={{ marginBottom: '15px' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
             <FaStar style={{ color: '#008ED8', fontSize: '16px', marginRight: '8px' }} />
@@ -316,6 +396,18 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               marginRight: '8px'
             }}>
               <FaStar style={{ color: 'white', fontSize: '10px' }} />
+=======
+        <div className="setting-item">
+          <div className="setting-label">
+            <FaStar className="setting-icon points-icon" />
+            <label className="setting-label-text">
+              Reward Points Earned per 100 Rupees (1 point = 1 Rupee)
+            </label>
+          </div>
+          <div className="input-container">
+            <div className="point-circle">
+              <FaStar />
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             </div>
             <input
               type="number"
@@ -323,6 +415,7 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
               value={thresholds.points}
               onChange={handleChange}
               disabled={loading.saving}
+<<<<<<< HEAD
               style={{
                 width: '100%',
                 padding: '8px',
@@ -330,10 +423,14 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
+=======
+              className="threshold-input"
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
             />
           </div>
         </div>
       </div>
+<<<<<<< HEAD
 
       {/* Notification Styles */}
       <style>{`
@@ -391,6 +488,8 @@ const DiscountLoyaltySettings: React.FC<DiscountLoyaltySettingsProps> = ({ onBac
           }
         }
       `}</style>
+=======
+>>>>>>> e70935b045fedb4beb118d29bb1806d96cce68bc
     </div>
   );
 };

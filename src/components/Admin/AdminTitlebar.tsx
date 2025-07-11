@@ -1,14 +1,15 @@
-import { Hide, HStack, Show, SimpleGrid } from "@chakra-ui/react";
-import useExtractSecondPathSegment from "../../hooks/useExtractSecondPathSegment";
+import { Heading, Hide, HStack, Show, SimpleGrid } from "@chakra-ui/react";
+import navItems from "../../data/navItems";
+import usePathSegment from "../../hooks/usePathSegment";
 import ProfileButton from "../ProfileButton";
 import SearchBox from "../SearchBox";
 import HamburgerMenu from "./HamburgerMenu";
 import Notifications from "./Notifications";
-import PageTitle from "./PageTitle";
 import SearchButton from "./SearchButton";
 
 const AdminTitlebar = () => {
-  const show = useExtractSecondPathSegment() !== "analysis";
+  const path = usePathSegment(1);
+  const currentPage = navItems.find((page) => page.url === path);
 
   return (
     <SimpleGrid
@@ -20,8 +21,10 @@ const AdminTitlebar = () => {
       spacing={2}
     >
       <HStack justifyContent="space-between" order={{ base: 2, lg: 1 }}>
-        <PageTitle />
-        <Hide above="lg">{show && <SearchButton />}</Hide>
+        <Heading color="darkBlue" fontSize={{ base: 32, lg: 40 }}>
+          {currentPage?.label}
+        </Heading>
+        <Hide above="lg">{currentPage?.isSearchable && <SearchButton />}</Hide>
       </HStack>
       <HStack justifyContent="space-between" order={{ base: 1, lg: 2 }}>
         <Hide above="lg">
@@ -32,7 +35,7 @@ const AdminTitlebar = () => {
           width={{ base: "auto", lg: "full" }}
           justifyContent="end"
         >
-          <Show above="lg">{show && <SearchBox />}</Show>
+          <Show above="lg">{currentPage?.isSearchable && <SearchBox />}</Show>
           <Notifications />
           <ProfileButton />
         </HStack>
