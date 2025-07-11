@@ -28,7 +28,6 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     firstName: "",
     lastName: "",
     phoneNumber: "",
-    dob: "",
     email: "",
     tempPassword: "",
     confirmPassword: "",
@@ -156,16 +155,6 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     placeholder="Email"
                     type="email"
                   />
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel> DOB</FormLabel>
-                  <Input
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleInputChange}
-                    type="date"
-                  ></Input>
                 </FormControl>
 
                 <FormControl isRequired>
