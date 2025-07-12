@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { Controller } from "react-hook-form";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useState } from "react"; // Hook to manage local state
 
 interface PasswordInputProps {
   control: any;

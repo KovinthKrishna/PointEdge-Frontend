@@ -10,6 +10,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   Stack,
   Flex,
 } from "@chakra-ui/react";
@@ -19,7 +20,6 @@ import axios from "axios";
 import LeftArrowButton from "./Common/LeftArrowButton";
 import PopupAlert from "./Common/PopupAlert";
 
-// Registration form component
 const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
@@ -28,9 +28,13 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     firstName: "",
     lastName: "",
     phoneNumber: "",
+    dob: "",
     email: "",
     tempPassword: "",
     confirmPassword: "",
+    role: "", // added
+    status: "", // added
+    avatar: "", // optional
   });
 
   // Popup state
@@ -44,12 +48,11 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const handlePopupClose = () => {
     setPopupOpen(false);
     if (popupStatus === "success") {
-      onClose(); // Close the registration modal only if success
+      onClose();
     }
   };
 
   const handleGoBack = () => {
-    // Handle the back button functionality, like closing the modal or navigating back
     onClose();
   };
 
@@ -57,10 +60,10 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  // const toast = useToast();
 
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -68,9 +71,7 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     });
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
-    // Validate form
     if (formData.tempPassword !== formData.confirmPassword) {
       setPopupStatus("error");
       setPopupTitle("Password Mismatch");
@@ -78,12 +79,25 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       setPopupOpen(true);
       return;
     }
+    if (!formData.role) {
+      setPopupStatus("error");
+      setPopupTitle("Missing Role");
+      setPopupDescription("Please select a role.");
+      setPopupOpen(true);
+      return;
+    }
+    if (!formData.status) {
+      setPopupStatus("error");
+      setPopupTitle("Missing Status");
+      setPopupDescription("Please select a status.");
+      setPopupOpen(true);
+      return;
+    }
 
     setIsLoading(true);
     try {
-      // Send data to the backend
       const response = await axios.post(
-        "http://localhost:8080/api/register",
+        "http://localhost:8080/api/employees/register",
         formData
       );
 
@@ -110,7 +124,6 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 
   return (
     <>
-      {/* Popup alert */}
       <PopupAlert
         isOpen={popupOpen}
         onClose={handlePopupClose}
@@ -129,13 +142,11 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           borderColor={"#003049"}
         >
           <LeftArrowButton onClick={handleGoBack} />
-
           <ModalHeader mt={10} mb={7} textAlign="center">
             Register a new Employee
           </ModalHeader>
           <ModalBody>
             <Stack direction="row" spacing={8} align="flex-start" h="100%">
-              {/* Right Section */}
               <Flex direction="column" flex="1">
                 <FormControl isRequired>
                   <FormLabel>First Name</FormLabel>
@@ -156,7 +167,15 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     type="email"
                   />
                 </FormControl>
-
+                <FormControl isRequired>
+                  <FormLabel>DOB</FormLabel>
+                  <Input
+                    name="dob"
+                    value={formData.dob}
+                    onChange={handleInputChange}
+                    type="date"
+                  />
+                </FormControl>
                 <FormControl isRequired>
                   <FormLabel>Temporary Password</FormLabel>
                   <InputGroup>
@@ -180,9 +199,43 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Role</FormLabel>
+                  <Select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    placeholder="Select Role"
+                  >
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="USER">USER</option>
+                    <option value="MANAGER">MANAGER</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Avatar URL</FormLabel>
+                  <Input
+                    name="avatar"
+                    value={formData.avatar}
+                    onChange={handleInputChange}
+                    placeholder="Avatar URL"
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                    placeholder="Select Status"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Suspended">Suspended</option>
+                  </Select>
+                </FormControl>
               </Flex>
 
-              {/* Left Section */}
               <Flex direction="column" flex="1">
                 <FormControl isRequired>
                   <FormLabel>Last Name</FormLabel>
