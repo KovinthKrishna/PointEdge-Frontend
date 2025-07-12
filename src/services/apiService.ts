@@ -1,7 +1,6 @@
-// filepath: c:\Users\DELL\Desktop\PointEdge-Frontend\src\services\apiService.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8080/api"; // Replace with your backend URL
+const API_BASE_URL = "http://localhost:8080/api"; 
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -70,6 +69,6 @@ export const fetchTopPerformers = async () => {
 };
 
 export const fetchShiftReports = async () => {
-  const response = await axios.get(`${API_BASE_URL}/shift-reports`);
+  const response = await api.get('/shift-reports');
   return response.data;
 };
