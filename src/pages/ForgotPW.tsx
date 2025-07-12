@@ -15,6 +15,7 @@ import bgImage from "../assets/1 1.png";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import PopupAlert from "../components/Common/PopupAlert";
+import axios from "axios";
 
 const ForgotPW: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -41,20 +42,23 @@ const ForgotPW: React.FC = () => {
     }
 
     setIsLoading(true);
-
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/forgot-password",
+        {
+          email: username,
+        }
+      );
 
       setPopupStatus("success");
-      setPopupTitle("Verification mail has sent.");
-      setPopupDescription("Check your email.");
-      setPopupOpen(true);
+      setPopupTitle("Verification mail sent.");
+      setPopupDescription("Check your inbox.");
     } catch (error) {
       setPopupStatus("error");
       setPopupTitle("Verification failed.");
-      setPopupDescription("Failed to send recovery email. Try again.");
-      setPopupOpen(true);
+      setPopupDescription("Something went wrong. Try again.");
     } finally {
+      setPopupOpen(true);
       setIsLoading(false);
     }
   };
