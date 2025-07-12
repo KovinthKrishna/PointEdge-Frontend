@@ -10,9 +10,8 @@ const EmployeesPage = () => {
   const getActiveTabIndex = () => {
     const path = location.pathname;
     if (path.includes("/attendance")) return 1;
-    if (path.includes("/sales-tracking")) return 2;
-    if (path.includes("/top-performers")) return 3;
-    if (path.includes("/shift-reports")) return 4;
+    if (path.includes("/top-performers")) return 2;
+    if (path.includes("/shift-reports")) return 3;
     return 0;
   };
   
@@ -21,7 +20,6 @@ const EmployeesPage = () => {
     const routes = [
       "/admin/employees",
       "/admin/employees/attendance",
-      "/admin/employees/sales-tracking",
       "/admin/employees/top-performers",
       "/admin/employees/shift-reports",
     ];
@@ -31,44 +29,44 @@ const EmployeesPage = () => {
   return (
     <Box bg="white" w="100%">
       {/* Tabs Navigation */}
-      <Tabs
-        variant="unstyled"
-        onChange={handleTabChange}
+      <Tabs 
+        variant="unstyled" 
+        onChange={handleTabChange} 
         defaultIndex={getActiveTabIndex()}
         flex="1"
         display="flex"
-        flexDirection="column"     
+        flexDirection="column"
       >
-        <TabList
+        <TabList 
           bg="white"
-          borderBottom="8px solid #003153"
-          borderRight="10px solid #003153"
+          borderBottom="12px solid #003049"
+          borderRight="12px solid #003049"
           display="flex"
           width="100%"
-          mt="16px"
+          paddingTop="16px"
+          height="5.8rem"
           sx={{
             "& > button": {
               fontWeight: "500",
-              fontSize: 16,
+              fontSize: "16px",
               py: 4,
               px: 8,
               borderBottom: "none",
-              borderTopRadius: "16px",
               flex: 1,
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
               textAlign: "center",
-              maxWidth: "200px",
+              maxWidth: "180px",
               backgroundColor: "white",
               color: "black",
               position: "relative",
               zIndex: 1,
             },
             "& > button[aria-selected=true]": {
-              bg: "#003153",
+              bg: "#003049",
               color: "white",
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
-              borderBottomLeftRadius: 0,
-              borderBottomRightRadius: 0,
               zIndex: 2,
             },
             "& > button[aria-selected=false]": {
@@ -79,7 +77,6 @@ const EmployeesPage = () => {
         >
           <Tab>Dashboard</Tab>
           <Tab>Employee Attendance</Tab>
-          <Tab>Sales Tracking</Tab>
           <Tab>Top Performers</Tab>
           <Tab>Shift Reports</Tab>
         </TabList>

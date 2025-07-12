@@ -1,8 +1,6 @@
-// filepath: c:\Users\DELL\Desktop\PointEdge-Frontend\src\services\apiService.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8080/api"; // Replace with your backend URL
-
+const API_BASE_URL = "http://localhost:8080/api"; 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -28,7 +26,7 @@ export const getEmployees = async () => {
   return response.data;
 };
 
-// Add to apiService.ts
+
 export const searchAttendances = async (searchData: any) => {
   const response = await api.post('/attendances/search', searchData);
   return response.data;
@@ -44,23 +42,8 @@ export const searchEmployees = async (query: string) => {
   return response.data;
 };
 
-export const clockIn = async (employeeId: number, time: string) => {
-  const response = await api.post(`/attendances/clock-in/${employeeId}?time=${time}`);
-  return response.data;
-};
-
-export const clockOut = async (employeeId: number, time: string) => {
-  const response = await api.post(`/attendances/clock-out/${employeeId}?time=${time}`);
-  return response.data;
-};
-
 export const fetchEmployeeAttendance = async () => {
   const response = await axios.get(`${API_BASE_URL}/employee-attendance`);
-  return response.data;
-};
-
-export const fetchSalesData = async () => {
-  const response = await axios.get(`${API_BASE_URL}/sales-data`);
   return response.data;
 };
 
@@ -69,7 +52,3 @@ export const fetchTopPerformers = async () => {
   return response.data;
 };
 
-export const fetchShiftReports = async () => {
-  const response = await axios.get(`${API_BASE_URL}/shift-reports`);
-  return response.data;
-};

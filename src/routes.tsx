@@ -11,11 +11,12 @@ import ForgotPW from "./pages/ForgotPW";
 import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
-import EmployeeDashboardPage from "./pages/EmployeeDashboardPage";
-import EmployeeAttendancePage from "./pages/EmployeeAttendancePage";
-import SalesTrackingPage from "./pages/SalesTrackingPage";
-import TopPerformersPage from "./pages/TopPerformersPage";
-import ShiftReport1Page from "./pages/ShiftReport1Page";
+import EmployeeDashboardPage from "./components/Admin/EmployeesPage/EmployeeDashboardPage";
+import EmployeeAttendancePage from "./components/Admin/EmployeesPage/EmployeeAttendancePage";
+import TopPerformersPage from "./components/Admin/EmployeesPage/TopPerformersPage";
+import ShiftReport1Page from "./components/Admin/EmployeesPage/ShiftReport1Page";
+import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
+import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
 
 const router = createBrowserRouter([
   {
@@ -50,7 +51,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <EmployeeDashboardPage /> },
           { path: "attendance", element: <EmployeeAttendancePage /> },
-          { path: "sales-tracking", element: <SalesTrackingPage /> },
           { path: "top-performers", element: <TopPerformersPage /> },
           { path: "shift-reports", element: <ShiftReport1Page /> },
         ],
@@ -70,6 +70,16 @@ const router = createBrowserRouter([
   {
     path: "forgotpw",
     element: <ForgotPW />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "clock-in",
+    element: <ClockInPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "clock-out",
+    element: <ClockOutPage />,
     errorElement: <ErrorPage />,
   },
 
