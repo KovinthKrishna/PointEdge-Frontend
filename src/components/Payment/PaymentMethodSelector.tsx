@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   VStack,
   Text,
@@ -11,13 +11,16 @@ import {
   useRadioGroup,
 } from "@chakra-ui/react";
 import { useRadio, UseRadioProps } from "@chakra-ui/react";
+import ModelBoxPopup from "../Common/ModelBoxPopup";
+import CardPaymentModal from "./CardPaymentModal";
+import CashPaymentModal from "./CashPaymentModal";
+import SplitPaymentModal from "./SplitPaymentModal";
 
 // Custom Radio Button Component
 function CustomRadioButton(
   props: UseRadioProps & { children: React.ReactNode }
 ) {
   const { getInputProps, getRadioProps } = useRadio(props);
-
   const input = getInputProps();
   const checkbox = getRadioProps();
 
@@ -77,7 +80,6 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   cardAmount,
   setCardAmount,
 }) => {
-  // Radio group hook
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "paymentMethod",
     defaultValue: selectedMethod,
@@ -85,6 +87,115 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   });
 
   const group = getRootProps();
+
+  const [cashInput, setCashInput] = useState(cashAmount.toString());
+  const [cardInput, setCardInput] = useState(cardAmount.toString());
+
+  const [showCashModal, setShowCashModal] = useState(false);
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [showSplitModal, setShowSplitModal] = useState(false);
+
+  useEffect(() => {
+    if (!splitEnabled) {
+      if (selectedMethod === "cash") {
+        setCashAmount(totalAmount);
+        setCardAmount(0);
+        setCashInput(totalAmount.toFixed(2));
+        setCardInput("0.00");
+      } else if (selectedMethod === "card") {
+        setCardAmount(totalAmount);
+        setCashAmount(0);
+        setCardInput(totalAmount.toFixed(2));
+        setCashInput("0.00");
+      }
+    }
+  }, [selectedMethod, splitEnabled, totalAmount]);
+
+  // --- Split logic: auto-adjust fields ---
+  useEffect(() => {
+    if (splitEnabled) {
+      // When cash changes, update card
+      const cashNum = parseFloat(cashInput);
+      if (!isNaN(cashNum) && document.activeElement?.id === "cash-input") {
+        const cardVal = Math.max(totalAmount - cashNum, 0);
+        setCardAmount(cardVal);
+        setCardInput(cardVal.toFixed(2));
+      }
+      // When card changes, update cash
+      const cardNum = parseFloat(cardInput);
+      if (!isNaN(cardNum) && document.activeElement?.id === "card-input") {
+        const cashVal = Math.max(totalAmount - cardNum, 0);
+        setCashAmount(cashVal);
+        setCashInput(cashVal.toFixed(2));
+      }
+    }
+    // eslint-disable-next-line
+  }, [cashInput, cardInput, splitEnabled, totalAmount]);
+
+  const handleCashChange = (val: string) => {
+    setCashInput(val);
+    const num = parseFloat(val);
+    if (!isNaN(num)) {
+      setCashAmount(num);
+    }
+  };
+
+  const handleCardChange = (val: string) => {
+    setCardInput(val);
+    const num = parseFloat(val);
+    if (!isNaN(num)) {
+      setCardAmount(num);
+    }
+  };
+
+  // Auto-calculate remaining amount on Enter key press
+  // for cash and card inputs
+
+  const handleCashKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && splitEnabled) {
+      const entered = parseFloat(cashInput);
+      if (!isNaN(entered)) {
+        const remaining = Math.max(totalAmount - entered, 0);
+        setCashAmount(entered);
+        setCardAmount(remaining);
+        setCardInput(remaining.toFixed(2));
+      }
+    }
+  };
+
+  const handleCardKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && splitEnabled) {
+      const entered = parseFloat(cardInput);
+      if (!isNaN(entered)) {
+        const remaining = Math.max(totalAmount - entered, 0);
+        setCardAmount(entered);
+        setCashAmount(remaining);
+        setCashInput(remaining.toFixed(2));
+      }
+    }
+  };
+
+  const formatOnBlur = (type: "cash" | "card") => {
+    if (type === "cash") {
+      setCashInput(cashAmount.toFixed(2));
+    } else {
+      setCardInput(cardAmount.toFixed(2));
+    }
+  };
+
+  const handleConfirmPayment = () => {
+    setShowCashModal(false);
+    setShowCardModal(false);
+    setShowSplitModal(false);
+
+    if (splitEnabled) {
+      setShowSplitModal(true);
+    } else if (selectedMethod === "cash") {
+      setShowCashModal(true);
+    } else if (selectedMethod === "card") {
+      setShowCardModal(true);
+    }
+  };
 
   return (
     <VStack align="start" spacing={5} width="100%">
@@ -123,18 +234,20 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       </Flex>
 
       <VStack align="start" spacing={6} width="100%">
-        {/* Cash Option with custom radio */}
         <Flex width="100%" justifyContent="space-between" alignItems="center">
           <CustomRadioButton {...getRadioProps({ value: "cash" })}>
             Cash
           </CustomRadioButton>
 
           <Input
+            id="cash-input"
             width="150px"
             placeholder="0.00"
             type="number"
-            value={cashAmount || ""}
-            onChange={(e) => setCashAmount(Number(e.target.value))}
+            value={cashInput}
+            onChange={(e) => handleCashChange(e.target.value)}
+            onBlur={() => formatOnBlur("cash")}
+            onKeyDown={handleCashKeyDown}
             isDisabled={selectedMethod !== "cash" && !splitEnabled}
             textAlign="right"
             borderColor="#ccc"
@@ -145,18 +258,20 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           />
         </Flex>
 
-        {/* Card Option with custom radio */}
         <Flex width="100%" justifyContent="space-between" alignItems="center">
           <CustomRadioButton {...getRadioProps({ value: "card" })}>
             Card
           </CustomRadioButton>
 
           <Input
+            id="card-input"
             width="150px"
             placeholder="0.00"
             type="number"
-            value={cardAmount || ""}
-            onChange={(e) => setCardAmount(Number(e.target.value))}
+            value={cardInput}
+            onChange={(e) => handleCardChange(e.target.value)}
+            onBlur={() => formatOnBlur("card")}
+            onKeyDown={handleCardKeyDown}
             isDisabled={selectedMethod !== "card" && !splitEnabled}
             textAlign="right"
             borderColor="#ccc"
@@ -177,11 +292,36 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         fontSize="18px"
         borderRadius="md"
         _hover={{ bg: "#003b62" }}
+        onClick={handleConfirmPayment}
       >
         Confirm Payment
       </Button>
 
-      {/* Add Customer Link */}
+      {/* Cash Payment Modal */}
+      <ModelBoxPopup
+        isOpen={showCashModal}
+        onClose={() => setShowCashModal(false)}
+      >
+        <CashPaymentModal
+          onClose={() => setShowCashModal(false)}
+          amount={totalAmount}
+        />
+      </ModelBoxPopup>
+
+      {/* Card Payment Modal */}
+      <ModelBoxPopup
+        isOpen={showCardModal}
+        onClose={() => setShowCardModal(false)}
+      >
+        <CardPaymentModal onClose={() => setShowCardModal(false)} />
+      </ModelBoxPopup>
+
+      {/* Split Payment Modal */}
+      <SplitPaymentModal
+        isOpen={showSplitModal}
+        onClose={() => setShowSplitModal(false)}
+      />
+
       <Flex justifyContent="center" width="100%">
         <Text color="#0085ca" fontSize="16px" cursor="pointer">
           + Add Customer

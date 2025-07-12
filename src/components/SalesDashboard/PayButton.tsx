@@ -10,7 +10,11 @@ const calculateTotal = (orderItems: OrderItem[]) => {
   );
 };
 
-const PayButton = () => {
+interface PayButtonProps {
+  onClick?: () => void;
+}
+
+const PayButton: React.FC<PayButtonProps> = ({ onClick }) => {
   const orderItems = useCartStore((s) => s.orderItems);
 
   return (
@@ -26,7 +30,7 @@ const PayButton = () => {
       borderRadius={8}
       color="white"
       disabled={orderItems.length === 0}
-      onClick={() => console.log(orderItems)}
+      onClick={onClick ? onClick : () => console.log(orderItems)}
     >
       <Text fontWeight="bold">
         {priceFormatter(calculateTotal(orderItems))}
