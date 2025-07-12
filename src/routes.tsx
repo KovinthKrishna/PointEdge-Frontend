@@ -17,7 +17,6 @@ import TopPerformersPage from "./components/Admin/EmployeesPage/TopPerformersPag
 import ShiftReport1Page from "./components/Admin/EmployeesPage/ShiftReport1Page";
 import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
 import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
-import { Navigate } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
