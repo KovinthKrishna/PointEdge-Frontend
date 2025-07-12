@@ -21,12 +21,7 @@ import { Navigate } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Navigate to="/admin/employees" replace />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/sales",
+    index: true,
     element: <SalesDashboard />,
     errorElement: <ErrorPage />,
   },
