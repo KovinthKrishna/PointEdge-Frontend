@@ -4,6 +4,7 @@ import ModelBoxPopup from "../Common/ModelBoxPopup";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import OrderSummary from "./OrderSummary";
 import axios from "axios"; // Import axios for API calls
+import useCartStore, { OrderItem } from "../../store/useCartStore";
 
 interface PaymentProps {
   isOpen: boolean;
@@ -18,23 +19,34 @@ interface OrderDetailsType {
 }
 
 const Payment: React.FC<PaymentProps> = ({ isOpen, onClose }) => {
+  const calculateTotal = (orderItems: OrderItem[]) => {
+    return orderItems.reduce(
+      (sum, orderItem) => sum + orderItem.pricePerUnit * orderItem.quantity,
+      0
+    );
+  };
+
+  const orderItems = useCartStore((s) => s.orderItems);
+  const totalAmount = calculateTotal(orderItems);
+
   const [paymentMethod, setPaymentMethod] = useState<string>("cash");
   const [splitEnabled, setSplitEnabled] = useState<boolean>(false);
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [cardAmount, setCardAmount] = useState<number>(0);
   const [orderDetails, setOrderDetails] = useState<OrderDetailsType>({
-    amount: 1208.23,
+    amount: totalAmount,
     discount: 0,
-    total: 1208.23,
+    total: totalAmount,
     currency: "LKR",
   });
+
   const [loading, setLoading] = useState<boolean>(false);
 
   // Function to fetch order details from backend
   const fetchOrderDetails = async () => {
     try {
       setLoading(true);
-      // Replace with your API endpoint
+      // API endpoint
       const response = await axios.get("/api/order/current");
       if (response.data) {
         setOrderDetails({
@@ -53,73 +65,67 @@ const Payment: React.FC<PaymentProps> = ({ isOpen, onClose }) => {
       }
     } catch (error) {
       console.error("Error fetching order details:", error);
-      // You might want to show a toast notification here
     } finally {
       setLoading(false);
     }
   };
 
   // Apply discount code
-  const applyDiscountCode = async (code: string) => {
+  const applyDiscountCode = async (codeOrPhone: string) => {
     try {
       setLoading(true);
-      // Replace with your API endpoint
-      const response = await axios.post("/api/order/discount", { code });
-      if (response.data) {
+
+      // Convert orderItems into the required structure { "1": 2, "2": 1 }
+      const items: { [productId: string]: number } = {};
+      orderItems.forEach((item) => {
+        items[item.id.toString()] = item.quantity;
+      });
+
+      const requestData = {
+        phone: codeOrPhone,
+        items: items,
+      };
+
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/discount/calculate-total-discount",
+        requestData
+      );
+
+      if (response.data && response.data.success) {
+        const discount = response.data.finalTotalDiscount;
+        const total = response.data.finalDiscountedPrice;
+
+        // Update order details with the discount
         setOrderDetails({
-          ...orderDetails,
-          discount: response.data.discount,
-          total: response.data.total,
+          amount: totalAmount,
+          discount: discount,
+          total: total,
+          currency: "LKR",
         });
+
+        // Optional: Show loyalty info
+        console.log(`Loyalty Tier: ${response.data.loyaltyTier}`);
+        console.log(
+          `Customer Name: ${response.data.title} ${response.data.name}`
+        );
+      } else {
+        console.error("Discount API returned failure.");
       }
     } catch (error) {
       console.error("Error applying discount:", error);
-      // You might want to show a toast notification here
     } finally {
       setLoading(false);
     }
   };
 
-  // For demo purposes, initialize with total amount
   useEffect(() => {
-    // This would normally be replaced with fetchOrderDetails()
-    if (paymentMethod === "cash") {
-      setCashAmount(orderDetails.total);
-      setCardAmount(0);
-    } else {
-      setCardAmount(orderDetails.total);
-      setCashAmount(0);
-    }
-  }, [paymentMethod, orderDetails.total]);
-
-  // Handle payment method change
-  useEffect(() => {
-    if (!splitEnabled) {
-      if (paymentMethod === "cash") {
-        setCashAmount(orderDetails.total);
-        setCardAmount(0);
-      } else {
-        setCardAmount(orderDetails.total);
-        setCashAmount(0);
-      }
-    }
-  }, [paymentMethod, splitEnabled, orderDetails.total]);
-
-  // Handle split payment
-  useEffect(() => {
-    if (splitEnabled) {
-      // Keep both payment methods active
-    } else {
-      // Reset the non-selected payment method
-      if (paymentMethod === "cash") {
-        setCashAmount(orderDetails.total);
-        setCardAmount(0);
-      } else {
-        setCardAmount(orderDetails.total);
-        setCashAmount(0);
-      }
-    }
-  }, [splitEnabled, paymentMethod, orderDetails.total]);
+    const amount = calculateTotal(orderItems);
+    setOrderDetails((prev) => ({
+      ...prev,
+      amount: amount,
+      total: amount - prev.discount, // discount will be 0 initially
+    }));
+  }, [orderItems]);
 
   return (
     <ModelBoxPopup isOpen={isOpen} onClose={onClose}>
