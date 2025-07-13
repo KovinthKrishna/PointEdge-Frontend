@@ -64,8 +64,8 @@ const EmployeeAttendancePage: React.FC = () => {
     setEndTime,
     searchQuery,
     setSearchQuery,
-    toastMessage,
-    setToastMessage,
+    errorMessage,
+    setErrorMessage,
     handleSearch,
     getInitials
   } = useAttendanceData();
@@ -91,6 +91,13 @@ const EmployeeAttendancePage: React.FC = () => {
           loading={loading}
         />
 
+        {/* Error message display */}
+        {errorMessage && (
+          <div className="error-message">
+            {errorMessage}
+          </div>
+        )}
+
         {/* Table with Error Boundary */}
         <ErrorBoundary>
           <AttendanceTable
@@ -99,16 +106,6 @@ const EmployeeAttendancePage: React.FC = () => {
             getInitials={getInitials}
           />
         </ErrorBoundary>
-
-        {/* Toast notification */}
-        {toastMessage && (
-          <Toast
-            title={toastMessage.title}
-            message={toastMessage.message}
-            type={toastMessage.type}
-            onClose={() => setToastMessage(null)}
-          />
-        )}
       </div>
     </div>
   );
