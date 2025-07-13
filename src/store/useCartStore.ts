@@ -2,6 +2,7 @@ import { create } from "zustand";
 import Product from "../models/Product";
 
 export interface OrderItem {
+  id: any;
   product: Product;
   quantity: number;
   pricePerUnit: number;
@@ -38,7 +39,8 @@ const useCartStore = create<CartStore>((set) => ({
       return {
         orderItems: [
           ...store.orderItems,
-          {
+          { 
+            id: product.id,
             product,
             quantity: 1,
             pricePerUnit: product.price,

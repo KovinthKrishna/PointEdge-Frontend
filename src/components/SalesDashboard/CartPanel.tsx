@@ -6,7 +6,7 @@ import useCartStore from "../../store/useCartStore";
 import useProductFormStore from "../../store/useProductFormStore";
 import theme from "../../theme";
 import CartList from "./CartList";
-import PayButton from "./PayButton";
+import PayAndRenderPayment from "../Payment/PayAndRenderPayment";
 
 const CartPanel = () => {
   const orderItems = useCartStore((s) => s.orderItems);
@@ -59,7 +59,7 @@ const CartPanel = () => {
           />
         </HStack>
         <CartList />
-        <PayButton />
+        <PayAndRenderPayment />
       </VStack>
     </Box>
   );
