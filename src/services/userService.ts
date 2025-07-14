@@ -1,39 +1,15 @@
-import axios from 'axios';
+export async function fetchCurrentUser() {
+  const token = localStorage.getItem("token");
 
-// Define user interface
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar?: string;
+  const response = await fetch("http://localhost:8080/api/employees/register/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch user");
+  }
+
+  return await response.json(); // { firstName, lastName, ... }
 }
-
-// Fetch current logged-in user
-export const fetchCurrentUser = async (): Promise<User> => {
-  try {
-    const response = await axios.get('http://localhost:8080/api/users/current');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching current user:', error);
-    // Return a default user for development purposes
-    return {
-      id: '1',
-      name: 'Development User',
-      email: 'dev@example.com',
-      role: 'admin',
-      avatar: ''
-    };
-  }
-};
-
-// Additional user-related service functions
-export const updateUserProfile = async (userData: Partial<User>): Promise<User> => {
-  try {
-    const response = await axios.put('http://localhost:8080/api/users/profile', userData);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating user profile:', error);
-    throw new Error('Failed to update user profile');
-  }
-};

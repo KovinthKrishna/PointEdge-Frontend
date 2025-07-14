@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AnalysisPage from "./pages/Admin/AnalysisPage";
@@ -14,70 +14,116 @@ import SalesDashboard from "./pages/SalesDashboard";
 import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
 import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
 
+import ProtectedRoute from "./components/Login/ProtectedRoute";
+import Unauthorized from "./pages/Unauthorized";
+import ResetPW from "./pages/ResetPW";
+
 const router = createBrowserRouter([
   {
-    index: true,
-    element: <SalesDashboard />,
-    errorElement: <ErrorPage />,
+    path: "/",
+    element: <Navigate to="/login" replace />,
   },
-  {
-    path: "admin",
-    element: <AdminLayout />,
-    errorElement: <ErrorPage />,
-    children: [
-      { index: true, element: <AdminDashboard /> },
-      { path: "analysis", element: <AnalysisPage /> },
-      { path: "inventory", element: <InventoryPage /> },
-      {
-        path: "discounts",
-        children: [
-          { index: true, element: <DiscountsPage /> },
-          {
-            path: "customers",
-            element: <DiscountsPage />,
-            handle: {
-              showCustomerModal: true,
-            },
-          },
-        ],
-      },
-      {
-        path: "employees",
-        element: <EmployeesPage />,
-      },
-    ],
-  },
-  {
-    path: "return-refund",
-    element: <ReturnRefundPage />,
-    errorElement: <ErrorPage />,
-  },
+
+  // Public routes: accessible without authentication
+
   {
     path: "login",
+    index: true,
     element: <Login />,
     errorElement: <ErrorPage />,
   },
   {
-    path: "forgotpw",
+    path: "forgot-password",
     element: <ForgotPW />,
     errorElement: <ErrorPage />,
   },
   {
-    path: "clock-in",
-    element: <ClockInPage />,
+    path: "resetpw",
+    element: <ResetPW />,
     errorElement: <ErrorPage />,
   },
   {
-    path: "clock-out",
-    element: <ClockOutPage />,
+    path: "unauthorized",
+    element: <Unauthorized />,
     errorElement: <ErrorPage />,
   },
 
-  //temperory path adding to check the component
+  // Protected route: for all logged-in users
+
   {
-    path: "test",
-    element: <TestingPage />,
-    errorElement: <ErrorPage />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "dashboard",
+        element: <SalesDashboard />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "test",
+        element: <TestingPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "return-refund",
+        element: <ReturnRefundPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "clock-in",
+        element: <ClockInPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "clock-out",
+        element: <ClockOutPage />,
+        errorElement: <ErrorPage />,
+      },
+    ],
+  },
+
+  // Admin-only protected route
+
+  {
+    element: <ProtectedRoute requiredRole="ADMIN" />,
+    children: [
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        errorElement: <ErrorPage />,
+        children: [
+          { index: true, element: <AdminDashboard /> },
+          { path: "analysis", element: <AnalysisPage /> },
+          { path: "inventory", element: <InventoryPage /> },
+          {
+            path: "discounts",
+            children: [
+              { index: true, element: <DiscountsPage /> },
+              {
+                path: "customers",
+                element: <DiscountsPage />,
+                handle: { showCustomerModal: true },
+              },
+            ],
+          },
+          {
+            path: "employees",
+            element: <EmployeesPage />,
+            children: [
+              { index: true, element: <EmployeeDashboardPage /> },
+              { path: "attendance", element: <EmployeeAttendancePage /> },
+              { path: "top-performers", element: <TopPerformersPage /> },
+              { path: "shift-reports", element: <ShiftReport1Page /> },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+
+  // Catch-all route for undefined paths
+  {
+    path: "*",
+    element: <Navigate to="/login" replace />,
   },
 ]);
 
