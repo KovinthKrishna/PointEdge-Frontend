@@ -108,12 +108,6 @@ const router = createBrowserRouter([
           {
             path: "employees",
             element: <EmployeesPage />,
-            children: [
-              { index: true, element: <EmployeeDashboardPage /> },
-              { path: "attendance", element: <EmployeeAttendancePage /> },
-              { path: "top-performers", element: <TopPerformersPage /> },
-              { path: "shift-reports", element: <ShiftReport1Page /> },
-            ],
           },
         ],
       },
