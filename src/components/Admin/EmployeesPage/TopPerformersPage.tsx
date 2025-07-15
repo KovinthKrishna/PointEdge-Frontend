@@ -8,7 +8,7 @@ const TopPerformersPage: React.FC = () => {
   const {
     employees,
     loading,
-    error,
+    errorMessage,
     searchQuery,
     sortField,
     sortDirection,
@@ -32,11 +32,10 @@ const TopPerformersPage: React.FC = () => {
           setTimeRange={setTimeRange}
         />
 
-        {/* Error Display */}
-        {error && (
-          <div className="alert alert-error">
-            <div className="alert-icon">⚠️</div>
-            <div>{error}</div>
+        {/* Error message display */}
+        {errorMessage && (
+          <div className="error-message">
+            {errorMessage}
           </div>
         )}
 

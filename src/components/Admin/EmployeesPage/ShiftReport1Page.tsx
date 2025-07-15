@@ -2,7 +2,7 @@ import React from "react";
 import ShiftReport2Page from "./ShiftReport2Page";
 import clockIcon from "../../../assets/clock-icon.png";
 import "./styles/ShiftReport1.css";
-import { useShiftReportData } from "../../../hooks/useShiftReportData";
+import { useShiftReportData } from "../../../hooks/useShiftReportdata";
 import ShiftReportStatCard from "./ShiftStatCard";
 import ShiftReportSearchBar from "./ShiftSearchbar";
 import ShiftReportEmployeeTable from "./ShiftEmployeeTable";
@@ -81,7 +81,7 @@ const ShiftReport1Page: React.FC = () => {
 
         {/* Employee Shift Table */}
         <ShiftReportEmployeeTable 
-          employees={employees}
+          employees={employees|| []}
           loading={loading}
           error={error}
           onViewClick={handleViewClick}

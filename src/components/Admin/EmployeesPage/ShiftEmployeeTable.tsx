@@ -14,19 +14,25 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
   error,
   onViewClick
 }) => {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const rowsPerPage = 50;
+  const totalPages = Math.ceil(employees.length / rowsPerPage);
+  const paginatedData = employees.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
   if (loading) {
     return <div className="loading-message">Loading employee data...</div>;
   }
-  
+
   if (error) {
     return <div className="error-message">{error}</div>;
   }
-  
+
   return (
     <div className="table-container">
       <table className="shift-table">
         <thead>
           <tr>
+            <th>#</th>
             <th>Employee ID</th>
             <th>Employee name</th>
             <th>Role</th>
@@ -35,13 +41,14 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {employees.length === 0 ? (
+          {paginatedData.length === 0 ? (
             <tr>
-              <td colSpan={5} className="empty-table-message">No employees found</td>
+              <td colSpan={6} className="empty-table-message">No employees found</td>
             </tr>
           ) : (
-            employees.map((employee, index) => (
+            paginatedData.map((employee, index) => (
               <tr key={`${employee.id}-${index}`}>
+                <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
                 <td>{employee.id}</td>
                 <td>
                   <span className="employee-name">{employee.name}</span>
@@ -61,6 +68,18 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
           )}
         </tbody>
       </table>
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-controls">
+          <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
