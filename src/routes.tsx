@@ -13,10 +13,12 @@ import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
 import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
 import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
-
+import ClockInOutPage from "./components/Admin/ClockInOutPAges/ClockInOutPage";
 import ProtectedRoute from "./components/Login/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 import ResetPW from "./pages/ResetPW";
+
+
 
 const router = createBrowserRouter([
   {
@@ -66,6 +68,16 @@ const router = createBrowserRouter([
       {
         path: "return-refund",
         element: <ReturnRefundPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "clock-in-out",
+        element: <ClockInOutPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "clockinout",
+        element: <ClockInOutPage />,
         errorElement: <ErrorPage />,
       },
       {

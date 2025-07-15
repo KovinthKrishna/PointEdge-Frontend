@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Text, Heading, Button, Avatar, Container, Image, VStack, Center, IconButton, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Text, Heading, Button, Avatar, Image, VStack, Center, IconButton } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/logo.png";
@@ -36,8 +36,13 @@ const ClockOutPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate && navigate("/login");
-    console.log("Navigate back");
+    navigate("/clockinout");
+    console.log("Navigate back to clockinout page");
+  };
+
+  const handleDone = () => {
+    navigate("/admin");
+    console.log("Navigate to admin page");
   };
 
   return (
@@ -120,7 +125,7 @@ const ClockOutPage: React.FC = () => {
               fontWeight="bold"
               boxShadow="sm"
             >
-              Clock Out  {/* Changed from "Clock In" to "Clock Out" */}
+              CLOCK OUT  {/* Changed from "Clock In" to "Clock Out" */}
             </Center>
 
             <Flex alignItems="center" justifyContent="center" gap={2}>
@@ -150,7 +155,7 @@ const ClockOutPage: React.FC = () => {
               py={2}
               borderRadius="md"
               fontWeight="medium"
-              onClick={handleBack}
+              onClick={handleDone}
             >
               Done
             </Button>
