@@ -39,9 +39,9 @@ const LoginForm: React.FC = () => {
     try {
       const { token, role } = await login(data.username, data.password);
       localStorage.setItem("token", token);
-      localStorage.setItem("role", role); // ✅ store role
+      localStorage.setItem("role", role);
 
-      // ✅ redirect based on role
+      // redirect based on role
       if (role === "ADMIN") {
         navigate("/admin");
       } else {
@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
     } catch (error: any) {
       setAlertTitle("Login Failed");
       setAlertDescription(error.message || "Something went wrong");
-      setIsAlertOpen(true); // 🚨 show alert popup
+      setIsAlertOpen(true); // show alert popup
     }
   };
 

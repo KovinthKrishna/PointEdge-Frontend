@@ -15,6 +15,7 @@ import ModelBoxPopup from "../Common/ModelBoxPopup";
 import CardPaymentModal from "./CardPaymentModal";
 import CashPaymentModal from "./CashPaymentModal";
 import SplitPaymentModal from "./SplitPaymentModal";
+import { OrderDetails } from "../../models/OrderDetails";
 
 // Custom Radio Button Component
 function CustomRadioButton(
@@ -67,6 +68,7 @@ interface PaymentMethodSelectorProps {
   setCashAmount: (amount: number) => void;
   cardAmount: number;
   setCardAmount: (amount: number) => void;
+  orderDetails: OrderDetails;
 }
 
 const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
@@ -79,6 +81,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   setCashAmount,
   cardAmount,
   setCardAmount,
+  orderDetails,
 }) => {
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "paymentMethod",
@@ -313,7 +316,15 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         isOpen={showCardModal}
         onClose={() => setShowCardModal(false)}
       >
-        <CardPaymentModal onClose={() => setShowCardModal(false)} />
+        {orderDetails ? (
+          <CardPaymentModal
+            onClose={() => setShowCardModal(false)}
+            amount={orderDetails.total}
+            currency={orderDetails.currency.toLowerCase()}
+          />
+        ) : (
+          <Text p={4}>Loading order details...</Text>
+        )}
       </ModelBoxPopup>
 
       {/* Split Payment Modal */}

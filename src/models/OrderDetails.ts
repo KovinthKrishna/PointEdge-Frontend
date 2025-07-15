@@ -1,4 +1,4 @@
-export default interface OrderDetails {
+export interface OrderDetails {
     id?: number; 
     customerId: number;
     customerName?: string;
@@ -9,6 +9,8 @@ export default interface OrderDetails {
     datetime: string; 
     amount: number;
     totalDiscount: number;
+    total: number;
+    currency: string;
     itemDiscount?: number | null;
     categoryDiscount?: number | null;
     loyaltyDiscount?: number | null;
