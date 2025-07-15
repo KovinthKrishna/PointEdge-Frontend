@@ -247,12 +247,18 @@ export const fetchLoyaltyThresholds = async (): Promise<LoyaltyThresholds> => {
   }
 };
 
-// Update loyalty thresholds
-export const updateLoyaltyThresholds = async (thresholds: LoyaltyThresholds): Promise<LoyaltyThresholds> => {
+// Update loyalty thresholds with admin password
+export const updateLoyaltyThresholds = async (
+  thresholds: LoyaltyThresholds,
+  adminPassword: string
+): Promise<{ success: boolean, message?: string, data?: LoyaltyThresholds }> => {
   try {
     const response = await axios.put(
       `http://localhost:8080/api/v1/discount/loyalty-thresholds`,
-      thresholds,
+      {
+        ...thresholds,
+        adminPassword
+      },
       {
         headers: {
           'Content-Type': 'application/json',
@@ -260,14 +266,32 @@ export const updateLoyaltyThresholds = async (thresholds: LoyaltyThresholds): Pr
         }
       }
     );
-    return response.data;
+    
+    // Check if the response indicates success
+    if (response.data && response.data.success === false) {
+      return {
+        success: false,
+        message: response.data.message || 'Failed to update loyalty thresholds'
+      };
+    }
+    
+    return {
+      success: true,
+      message: 'Loyalty thresholds updated successfully',
+      data: response.data
+    };
   } catch (error) {
-    console.error('Error updating loyalty thresholds:', error);
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response?.data?.message || 'Failed to update loyalty thresholds';
-      throw new Error(errorMessage);
+      return {
+        success: false,
+        message: errorMessage
+      };
     }
-    throw error;
+    return {
+      success: false,
+      message: 'An unexpected error occurred'
+    };
   }
 };
 
