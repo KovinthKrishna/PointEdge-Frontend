@@ -667,7 +667,7 @@ const DiscountAdd: React.FC<DiscountAddProps> = ({ onBack }) => {
           <div className="discount-toggle-container">
             <div 
               onClick={() => setEnableDiscount(!enableDiscount)}
-              className="toggle-switch"
+              className={`toggle-switch ${enableDiscount ? 'active' : ''}`}
             >
               <div className="toggle-switch-handle" style={{ left: enableDiscount ? '20px' : '2px' }} />
             </div>
