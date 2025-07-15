@@ -2,16 +2,12 @@ import { useState } from "react";
 import DiscountTabBar from "./DiscountTabBar";
 import DiscountOptionsDashboard from "./DiscountOptionsDashborad";
 import DiscountTableDashboard from "./DiscountTableDashborad";
-import DiscountSequenceDashboard from "./DiscountSequenceDashborad";
 import DiscountOptionsItem from "./DiscountOptionsItem";
 import DiscountTableItem from "./DiscountTableItem";
-import DiscountSequenceItem from "./DiscountSequenceItem";
 import DiscountOptionsCategory from "./DiscountOptionsCategory";
 import DiscountTableCategory from "./DiscountTableCategory";
-import DiscountSequenceCategory from "./DiscountSequenceCategory";
 import DiscountOptionsLoyalty from "./DiscountOptionsLoyalty";
 import DiscountTableLoyalty from "./DiscountTableLoyalty";
-import DiscountSequenceLoyalty from "./DiscountSequenceLoyalty";
 import DiscountReport from "./DiscountReport";
 import DiscountAdd from "./DiscountAdd";
 import DiscountLoyaltySettings from "./DiscountLoyaltySettings";
@@ -46,17 +42,14 @@ const DiscountDashboard = () => {
       case "dashboard":
         return (
           <>
-            {!editingDiscountId && (
-              <DiscountOptionsDashboard
-                onReportClick={() => setShowReport(true)}
-                onAddClick={() => setShowAddForm(true)} 
-                discountCount={0}
-              />
-            )}
+            <DiscountOptionsDashboard
+              onReportClick={() => setShowReport(true)}
+              onAddClick={() => setShowAddForm(true)} 
+              discountCount={0}
+            />
             <DiscountTableDashboard 
               onEditDiscount={(id) => setEditingDiscountId(id)}
             />
-            {!editingDiscountId && <DiscountSequenceDashboard />}
           </>
         );
       case "item":
@@ -68,7 +61,6 @@ const DiscountDashboard = () => {
             <DiscountTableItem 
               onEditDiscount={(id) => setEditingDiscountId(id)}
             />
-            <DiscountSequenceItem />
           </>
         );
       case "category":
@@ -80,7 +72,6 @@ const DiscountDashboard = () => {
             <DiscountTableCategory 
               onEditDiscount={(id) => setEditingDiscountId(id)}
             />
-            <DiscountSequenceCategory />
           </>
         );
       case "loyalty":
@@ -92,12 +83,9 @@ const DiscountDashboard = () => {
               onAddClick={() => setShowAddForm(true)}
             />
             {!showSettings && (
-              <>
-                <DiscountTableLoyalty
-                  onEditDiscount={(id) => setEditingDiscountId(id)}
-                />
-                <DiscountSequenceLoyalty />
-              </>
+              <DiscountTableLoyalty
+                onEditDiscount={(id) => setEditingDiscountId(id)}
+              />
             )}
           </>
         );
