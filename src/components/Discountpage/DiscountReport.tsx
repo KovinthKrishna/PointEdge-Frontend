@@ -9,7 +9,9 @@ import {
   Select,
   Card,
   CardHeader,
-  CardBody
+  CardBody,
+  Button,
+  Input
 } from "@chakra-ui/react";
 import { 
   fetchOrderCounts, 
@@ -34,6 +36,7 @@ interface OrderCounts {
   last7Days: number;
   last30Days: number;
   lastYear: number;
+  custom?: number;
 }
 
 interface LineChartData {
@@ -285,7 +288,7 @@ interface StatCardProps {
   chart: React.ReactNode;
   legend?: { color: string; label: string; percentage?: string; count?: number }[];
   period: string;
-  onPeriodChange: (period: string) => void;
+  onPeriodChange: (period: string, startDate?: string, endDate?: string) => void;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ 
@@ -297,22 +300,100 @@ const StatCard: React.FC<StatCardProps> = ({
   period,
   onPeriodChange
 }) => {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+
+  const handleCustomDateSubmit = () => {
+    if (startDate && endDate) {
+      const formattedStart = new Date(startDate).toISOString();
+      const formattedEnd = new Date(endDate).toISOString();
+      onPeriodChange('custom', formattedStart, formattedEnd);
+      setShowDatePicker(false);
+    }
+  };
+
   return (
     <Card boxShadow="sm" borderRadius="md" height="100%">
       <CardHeader pb={0}>
         <Flex justify="space-between" align="center">
           <Text fontSize="md" color="gray.600">{title}</Text>
-          <Select 
-            size="xs" 
-            width="120px" 
-            value={period}
-            onChange={(e) => onPeriodChange(e.target.value)}
-          >
-            <option value="24h">Last 24 Hours</option>
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last Month</option>
-            <option value="year">Last Year</option>
-          </Select>
+          <Box position="relative">
+            <Select 
+              size="xs" 
+              width="120px" 
+              value={period}
+              onChange={(e) => {
+                if (e.target.value === 'custom') {
+                  setShowDatePicker(true);
+                } else {
+                  onPeriodChange(e.target.value);
+                }
+              }}
+            >
+              <option value="24h">Last 24 Hours</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last Month</option>
+              <option value="year">Last Year</option>
+              <option value="custom">Custom Range</option>
+            </Select>
+            
+            
+
+            {showDatePicker && (
+              <Box 
+                position="absolute" 
+                top="100%" 
+                right="0" 
+                mt={2} 
+                p={4} 
+                bg="white" 
+                boxShadow="lg" 
+                borderRadius="md" 
+                zIndex={1000}
+                width="300px"
+                border="1px solid"
+                borderColor="gray.200"
+              >
+                <Box mb={3}>
+                  <Text fontSize="sm" mb={1}>Start Date</Text>
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
+                </Box>
+                <Box mb={3}>
+                  <Text fontSize="sm" mb={1}>End Date</Text>
+                  <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    min={startDate}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
+                </Box>
+                <Flex justify="flex-end" gap={2}>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setShowDatePicker(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={handleCustomDateSubmit}
+                    isDisabled={!startDate || !endDate}
+                  >
+                    Apply
+                  </Button>
+                </Flex>
+              </Box>
+            )}
+          </Box>
         </Flex>
       </CardHeader>
       <CardBody pt={2}>
@@ -475,45 +556,142 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   const [popularItemPeriod, setPopularItemPeriod] = useState("7d");
   const [popularCategoryPeriod, setPopularCategoryPeriod] = useState("7d");
   
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [
-          counts, 
-          discountsByType, 
-          tierCounts, 
-          loyaltyData, 
-          itemAnalytics, 
-          categoryAnalytics,
-          discountTotalsData,
-          orderTotalsData
-        ] = await Promise.all([
-          fetchOrderCounts(),
-          fetchDiscountCountsByType(),
-          fetchCustomerTierCounts(),
-          fetchLoyaltyDiscountByTier(),
-          fetchItemDiscountAnalytics(),
-          fetchCategoryDiscountAnalytics(),
-          fetchDiscountTotals(),
-          fetchOrderTotals()
-        ]);
-        setOrderCounts(counts);
-        setDiscountCounts(discountsByType);
-        setCustomerTierCounts(tierCounts);
-        setLoyaltyDiscountData(loyaltyData);
-        setItemDiscountAnalytics(itemAnalytics);
-        setCategoryDiscountAnalytics(categoryAnalytics);
-        setDiscountTotals(discountTotalsData);
-        setOrderTotals(orderTotalsData);
-      } catch (error) {
-        console.error('Failed to load data:', error);
+  const loadData = async () => {
+    try {
+      const [
+        counts, 
+        discountsByType, 
+        tierCounts, 
+        loyaltyData, 
+        itemAnalytics, 
+        categoryAnalytics,
+        discountTotalsData,
+        orderTotalsData
+      ] = await Promise.all([
+        fetchOrderCounts(),
+        fetchDiscountCountsByType(),
+        fetchCustomerTierCounts(),
+        fetchLoyaltyDiscountByTier(),
+        fetchItemDiscountAnalytics(),
+        fetchCategoryDiscountAnalytics(),
+        fetchDiscountTotals(),
+        fetchOrderTotals()
+      ]);
+      setOrderCounts(counts);
+      setDiscountCounts(discountsByType);
+      setCustomerTierCounts(tierCounts);
+      setLoyaltyDiscountData(loyaltyData);
+      setItemDiscountAnalytics(itemAnalytics);
+      setCategoryDiscountAnalytics(categoryAnalytics);
+      setDiscountTotals(discountTotalsData);
+      setOrderTotals(orderTotalsData);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+    }
+  };
+
+  const loadCustomData = async (periodType: string, startDate: string, endDate: string) => {
+    try {
+      switch(periodType) {
+        case 'totalDiscount':
+          const [counts, discountsByType, discountTotalsData, orderTotalsData] = await Promise.all([
+            fetchOrderCounts('custom', startDate, endDate),
+            fetchDiscountCountsByType('custom', startDate, endDate),
+            fetchDiscountTotals('custom', startDate, endDate),
+            fetchOrderTotals('custom', startDate, endDate)
+          ]);
+          setOrderCounts(prev => ({ ...prev, custom: counts.custom }));
+          setDiscountCounts(prev => ({
+            ...prev,
+            ITEM: { ...prev.ITEM, custom: discountsByType.ITEM.custom },
+            CATEGORY: { ...prev.CATEGORY, custom: discountsByType.CATEGORY.custom },
+            LOYALTY: { ...prev.LOYALTY, custom: discountsByType.LOYALTY.custom }
+          }));
+          setDiscountTotals(prev => ({ ...prev, custom: discountTotalsData.custom }));
+          setOrderTotals(prev => ({ ...prev, custom: orderTotalsData.custom }));
+          break;
+        
+        case 'customers':
+          const [tierCounts, loyaltyData] = await Promise.all([
+            fetchCustomerTierCounts('custom', startDate, endDate),
+            fetchLoyaltyDiscountByTier('custom', startDate, endDate)
+          ]);
+          setCustomerTierCounts(prev => ({
+            ...prev,
+            GOLD: { ...prev.GOLD, custom: tierCounts.GOLD.custom },
+            SILVER: { ...prev.SILVER, custom: tierCounts.SILVER.custom },
+            BRONZE: { ...prev.BRONZE, custom: tierCounts.BRONZE.custom },
+            NOTLOYALTY: { ...prev.NOTLOYALTY, custom: tierCounts.NOTLOYALTY.custom }
+          }));
+          setLoyaltyDiscountData(prev => ({
+            ...prev,
+            GOLD: { ...prev.GOLD, custom: loyaltyData.GOLD.custom },
+            SILVER: { ...prev.SILVER, custom: loyaltyData.SILVER.custom },
+            BRONZE: { ...prev.BRONZE, custom: loyaltyData.BRONZE.custom },
+            NOTLOYALTY: { ...prev.NOTLOYALTY, custom: loyaltyData.NOTLOYALTY.custom },
+            totaldiscount: { ...prev.totaldiscount, custom: loyaltyData.totaldiscount.custom }
+          }));
+          break;
+        
+        // Add cases for other period types as needed
       }
-    };
-    
+    } catch (error) {
+      console.error(`Failed to load custom data for ${periodType}:`, error);
+    }
+  };
+
+  useEffect(() => {
     loadData();
   }, []);
 
+  const handlePeriodChange = (periodType: string, period: string, startDate?: string, endDate?: string) => {
+    switch(periodType) {
+      case 'popularDiscount':
+        setPopularDiscountPeriod(period);
+        if (period === 'custom' && startDate && endDate) {
+          loadCustomData('popularDiscount', startDate, endDate);
+        }
+        break;
+      case 'totalDiscount':
+        setTotalDiscountPeriod(period);
+        if (period === 'custom' && startDate && endDate) {
+          loadCustomData('totalDiscount', startDate, endDate);
+        }
+        break;
+      case 'customers':
+        setCustomersPeriod(period);
+        if (period === 'custom' && startDate && endDate) {
+          loadCustomData('customers', startDate, endDate);
+        }
+        break;
+      case 'loyaltyDiscount':
+        setLoyaltyDiscountPeriod(period);
+        if (period === 'custom' && startDate && endDate) {
+          loadCustomData('loyaltyDiscount', startDate, endDate);
+        }
+        break;
+      case 'popularItem':
+        setPopularItemPeriod(period);
+        if (period === 'custom' && startDate && endDate) {
+          loadCustomData('popularItem', startDate, endDate);
+        }
+        break;
+      case 'popularCategory':
+        setPopularCategoryPeriod(period);
+        if (period === 'custom' && startDate && endDate) {
+          loadCustomData('popularCategory', startDate, endDate);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   const getOrderCountForPeriod = (period: string): number => {
+    if (period === 'custom' && orderCounts.custom !== undefined) {
+      return orderCounts.custom;
+    }
+    
     switch(period) {
       case "24h": return orderCounts.last24Hours;
       case "7d": return orderCounts.last7Days;
@@ -526,6 +704,10 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   const getDiscountCountForPeriod = (type: string, period: string): number => {
     if (!discountCounts[type as keyof DiscountCountsByType]) return 0;
     
+    if (period === 'custom' && discountCounts[type as keyof DiscountCountsByType].custom !== undefined) {
+      return discountCounts[type as keyof DiscountCountsByType].custom || 0;
+    }
+    
     switch(period) {
       case "24h": return discountCounts[type as keyof DiscountCountsByType].last24Hours;
       case "7d": return discountCounts[type as keyof DiscountCountsByType].last7Days;
@@ -536,6 +718,10 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   };
 
   const getDiscountTotalsForPeriod = (period: string) => {
+    if (period === 'custom' && discountTotals.custom !== undefined) {
+      return discountTotals.custom;
+    }
+    
     switch(period) {
       case "24h": return discountTotals.last24Hours;
       case "7d": return discountTotals.last7Days;
@@ -546,6 +732,10 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   };
 
   const getOrderTotalsForPeriod = (period: string) => {
+    if (period === 'custom' && orderTotals.custom !== undefined) {
+      return orderTotals.custom;
+    }
+    
     switch(period) {
       case "24h": return orderTotals.last24Hours;
       case "7d": return orderTotals.last7Days;
@@ -557,6 +747,10 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
 
   const getLoyaltyCountForPeriod = (tier: string, period: string): number => {
     if (!loyaltyDiscountData[tier as keyof LoyaltyDiscountData]) return 0;
+    
+    if (period === 'custom' && loyaltyDiscountData[tier as keyof LoyaltyDiscountData].custom !== undefined) {
+      return loyaltyDiscountData[tier as keyof LoyaltyDiscountData].custom || 0;
+    }
     
     switch(period) {
       case "24h": 
@@ -598,36 +792,43 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   const getCustomerCountsForPeriod = (period: string) => {
     let gold, silver, bronze, notLoyalty;
     
-    switch(period) {
-      case "24h":
-        gold = customerTierCounts.GOLD.last24Hours;
-        silver = customerTierCounts.SILVER.last24Hours;
-        bronze = customerTierCounts.BRONZE.last24Hours;
-        notLoyalty = customerTierCounts.NOTLOYALTY.last24Hours;
-        break;
-      case "7d":
-        gold = customerTierCounts.GOLD.last7Days;
-        silver = customerTierCounts.SILVER.last7Days;
-        bronze = customerTierCounts.BRONZE.last7Days;
-        notLoyalty = customerTierCounts.NOTLOYALTY.last7Days;
-        break;
-      case "30d":
-        gold = customerTierCounts.GOLD.last30Days;
-        silver = customerTierCounts.SILVER.last30Days;
-        bronze = customerTierCounts.BRONZE.last30Days;
-        notLoyalty = customerTierCounts.NOTLOYALTY.last30Days;
-        break;
-      case "year":
-        gold = customerTierCounts.GOLD.lastYear;
-        silver = customerTierCounts.SILVER.lastYear;
-        bronze = customerTierCounts.BRONZE.lastYear;
-        notLoyalty = customerTierCounts.NOTLOYALTY.lastYear;
-        break;
-      default:
-        gold = customerTierCounts.GOLD.last30Days;
-        silver = customerTierCounts.SILVER.last30Days;
-        bronze = customerTierCounts.BRONZE.last30Days;
-        notLoyalty = customerTierCounts.NOTLOYALTY.last30Days;
+    if (period === 'custom') {
+      gold = customerTierCounts.GOLD.custom || 0;
+      silver = customerTierCounts.SILVER.custom || 0;
+      bronze = customerTierCounts.BRONZE.custom || 0;
+      notLoyalty = customerTierCounts.NOTLOYALTY.custom || 0;
+    } else {
+      switch(period) {
+        case "24h":
+          gold = customerTierCounts.GOLD.last24Hours;
+          silver = customerTierCounts.SILVER.last24Hours;
+          bronze = customerTierCounts.BRONZE.last24Hours;
+          notLoyalty = customerTierCounts.NOTLOYALTY.last24Hours;
+          break;
+        case "7d":
+          gold = customerTierCounts.GOLD.last7Days;
+          silver = customerTierCounts.SILVER.last7Days;
+          bronze = customerTierCounts.BRONZE.last7Days;
+          notLoyalty = customerTierCounts.NOTLOYALTY.last7Days;
+          break;
+        case "30d":
+          gold = customerTierCounts.GOLD.last30Days;
+          silver = customerTierCounts.SILVER.last30Days;
+          bronze = customerTierCounts.BRONZE.last30Days;
+          notLoyalty = customerTierCounts.NOTLOYALTY.last30Days;
+          break;
+        case "year":
+          gold = customerTierCounts.GOLD.lastYear;
+          silver = customerTierCounts.SILVER.lastYear;
+          bronze = customerTierCounts.BRONZE.lastYear;
+          notLoyalty = customerTierCounts.NOTLOYALTY.lastYear;
+          break;
+        default:
+          gold = customerTierCounts.GOLD.last30Days;
+          silver = customerTierCounts.SILVER.last30Days;
+          bronze = customerTierCounts.BRONZE.last30Days;
+          notLoyalty = customerTierCounts.NOTLOYALTY.last30Days;
+      }
     }
     
     return { gold, silver, bronze, notLoyalty };
@@ -783,24 +984,37 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   };
 
   const getItemSegments = (period: string) => {
-    const periodKey = period === "24h" ? "last24Hours" : 
-                     period === "7d" ? "last7Days" : 
-                     period === "30d" ? "last30Days" : "lastYear";
-    
-    const items = itemDiscountAnalytics[periodKey as keyof ItemDiscountAnalytics].topItems;
-    
-    const totalCount = items.reduce((sum: any, item: { count: any; }) => sum + item.count, 0);
-    
-    return items.slice(0, 5).map((item: { count: number; itemName: any; }, index: number) => {
-      const segmentColors = [colors.primary, colors.secondary, colors.tertiary, "#6C757D", "#20c997"];
-      return {
-        value: item.count,
-        color: segmentColors[index % segmentColors.length],
-        label: item.itemName,
-        percentage: totalCount > 0 ? `${Math.round((item.count / totalCount) * 100)}%` : '0%',
-        count: item.count
-      };
-    });
+    let periodKey: 'last24Hours' | 'last7Days' | 'last30Days' | 'lastYear';
+    if (period === 'custom') {
+      return itemDiscountAnalytics.custom?.topItems.slice(0, 5).map((item, index) => {
+        const segmentColors = [colors.primary, colors.secondary, colors.tertiary, "#6C757D", "#20c997"];
+        return {
+          value: item.count,
+          color: segmentColors[index % segmentColors.length],
+          label: item.itemName,
+          percentage: itemDiscountAnalytics.custom?.totalDiscount ? `${Math.round((item.discount / itemDiscountAnalytics.custom.totalDiscount) * 100)}%` : '0%',
+          count: item.count
+        };
+      }) || [];
+    } else {
+      periodKey = period === "24h" ? "last24Hours" : 
+                 period === "7d" ? "last7Days" : 
+                 period === "30d" ? "last30Days" : "lastYear";
+      
+      const items = itemDiscountAnalytics[periodKey as keyof ItemDiscountAnalytics]?.topItems || [];
+      
+      return items.slice(0, 5).map((item, index) => {
+        const segmentColors = [colors.primary, colors.secondary, colors.tertiary, "#6C757D", "#20c997"];
+        return {
+          value: item.count,
+          color: segmentColors[index % segmentColors.length],
+          label: item.itemName,
+          percentage: itemDiscountAnalytics[periodKey as keyof ItemDiscountAnalytics]?.totalDiscount ? 
+            `${Math.round((item.discount / itemDiscountAnalytics[periodKey as keyof ItemDiscountAnalytics]!.totalDiscount) * 100)}%` : '0%',
+          count: item.count
+        };
+      });
+    }
   };
 
   const getItemTotalDiscount = (period: string): string => {
@@ -809,25 +1023,40 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   };
 
   const getCategorySegments = (period: string) => {
-    const periodKey = period === "24h" ? "last24Hours" : 
-                     period === "7d" ? "last7Days" : 
-                     period === "30d" ? "last30Days" : "lastYear";
-    
-    const categories = categoryDiscountAnalytics[periodKey as keyof CategoryDiscountAnalytics].topCategories;
-    
-    const totalCount = categories.reduce((sum, category) => sum + category.count, 0);
-    
-    return categories.slice(0, 5).map((category, index) => {
-      const segmentColors = [colors.primary, colors.secondary, colors.tertiary, "#6C757D", "#20c997"];
-      return {
-        value: category.count,
-        color: segmentColors[index % segmentColors.length],
-        label: category.categoryName,
-        percentage: totalCount > 0 ? `${Math.round((category.count / totalCount) * 100)}%` : '0%',
-        count: category.count,
-        discount: category.discount
-      };
-    });
+    let periodKey: 'last24Hours' | 'last7Days' | 'last30Days' | 'lastYear';
+    if (period === 'custom') {
+      return categoryDiscountAnalytics.custom?.topCategories.slice(0, 5).map((category, index) => {
+        const segmentColors = [colors.primary, colors.secondary, colors.tertiary, "#6C757D", "#20c997"];
+        return {
+          value: category.count,
+          color: segmentColors[index % segmentColors.length],
+          label: category.categoryName,
+          percentage: categoryDiscountAnalytics.custom?.totalDiscount ? 
+            `${Math.round((category.discount / categoryDiscountAnalytics.custom.totalDiscount) * 100)}%` : '0%',
+          count: category.count,
+          discount: category.discount
+        };
+      }) || [];
+    } else {
+      periodKey = period === "24h" ? "last24Hours" : 
+                 period === "7d" ? "last7Days" : 
+                 period === "30d" ? "last30Days" : "lastYear";
+      
+      const categories = categoryDiscountAnalytics[periodKey as keyof CategoryDiscountAnalytics]?.topCategories || [];
+      
+      return categories.slice(0, 5).map((category, index) => {
+        const segmentColors = [colors.primary, colors.secondary, colors.tertiary, "#6C757D", "#20c997"];
+        return {
+          value: category.count,
+          color: segmentColors[index % segmentColors.length],
+          label: category.categoryName,
+          percentage: categoryDiscountAnalytics[periodKey as keyof CategoryDiscountAnalytics]?.totalDiscount ? 
+            `${Math.round((category.discount / categoryDiscountAnalytics[periodKey as keyof CategoryDiscountAnalytics]!.totalDiscount) * 100)}%` : '0%',
+          count: category.count,
+          discount: category.discount
+        };
+      });
+    }
   };
 
   const getCategoryTotalDiscount = (period: string): string => {
@@ -851,6 +1080,11 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
     }
   };
 
+  const getTotalDiscountAmount = (period: string): string => {
+    const totals = getDiscountTotalsForPeriod(period);
+    return formatCurrency(totals.totalDiscount);
+  };
+
   const customerData = getCustomerSegments(customersPeriod);
   const loyaltySegments = getLoyaltySegments(loyaltyDiscountPeriod);
   const totalLoyaltyAmount = getTotalLoyaltyAmount(loyaltyDiscountPeriod);
@@ -859,44 +1093,21 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
   const itemPercentage = getDiscountPercentage("ITEM", popularItemPeriod);
   const categoryPercentage = getDiscountPercentage("CATEGORY", popularCategoryPeriod);
 
-  const getTotalDiscountAmount = (period: string): string => {
-    const totals = getDiscountTotalsForPeriod(period);
-    return formatCurrency(totals.totalDiscount);
-  };
-
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '20px'
-      }}>
-        <h1 style={{ margin: 0 }}>Discount Report | Analyzes</h1>
-        <button 
+    <Box p={5}>
+      <Flex justify="space-between" align="center" mb={5}>
+        <Text fontSize="2xl" fontWeight="bold">Discount Report | Analyzes</Text>
+        <Button 
           onClick={onBack}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '6px 12px',
-            background: '#f5f5f5',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}
+          leftIcon={<FaArrowLeft />}
+          variant="outline"
+          size="sm"
         >
-          <FaArrowLeft style={{ marginRight: '6px', fontSize: '12px' }} />
           Back to Discounts
-        </button>
-      </div>
+        </Button>
+      </Flex>
       
-      <div style={{ 
-        background: '#fff', 
-        border: '1px solid #eee', 
-        borderRadius: '4px', 
-        padding: '20px' 
-      }}>
+      <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="md" p={5}>
         <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={6}>
           <GridItem>
             <StatCard
@@ -904,7 +1115,9 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
               value={`Rs ${getTotalDiscountAmount(totalDiscountPeriod)}`}
               subvalue={`${getTotalDiscountsForPeriod(totalDiscountPeriod)} Discounts Claimed`}
               period={totalDiscountPeriod}
-              onPeriodChange={setTotalDiscountPeriod}
+              onPeriodChange={(period, startDate, endDate) => 
+                handlePeriodChange('totalDiscount', period, startDate, endDate)
+              }
               chart={
                 <LineChart 
                   data={createLineChartData(totalDiscountPeriod)} 
@@ -925,7 +1138,9 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
               value={`Rs ${getOrderTotalsForPeriod(popularDiscountPeriod).totalAmount.toFixed(2)}`}
               subvalue={`${getOrderCountForPeriod(popularDiscountPeriod)} Orders Placed (${formatPoints(getOrderTotalsForPeriod(popularDiscountPeriod).totalPointsEarned)} Points Issued)`}
               period={popularDiscountPeriod}
-              onPeriodChange={setPopularDiscountPeriod}
+              onPeriodChange={(period, startDate, endDate) => 
+                handlePeriodChange('popularDiscount', period, startDate, endDate)
+              }
               chart={<BarChart data={createBarChartData(popularDiscountPeriod)} colors={[colors.primary, colors.secondary, colors.tertiary]} />}
               legend={[
                 { color: colors.primary, label: 'Loyalty' },
@@ -941,7 +1156,9 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
               value={customerTierCounts.totalcustomers.toString()}
               subvalue={`${customerData.activeCustomers} Active Customers`}
               period={customersPeriod}
-              onPeriodChange={setCustomersPeriod}
+              onPeriodChange={(period, startDate, endDate) => 
+                handlePeriodChange('customers', period, startDate, endDate)
+              }
               chart={
                 <DonutChart 
                   segments={customerData.segments} 
@@ -964,7 +1181,9 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
               value={`Rs ${formatCurrency(totalLoyaltyAmount)}`}
               subvalue={`${getDiscountCountForPeriod("LOYALTY", loyaltyDiscountPeriod)} Discounts Claimed`}
               period={loyaltyDiscountPeriod}
-              onPeriodChange={setLoyaltyDiscountPeriod}
+              onPeriodChange={(period, startDate, endDate) => 
+                handlePeriodChange('loyaltyDiscount', period, startDate, endDate)
+              }
               chart={
                 <DonutChart 
                   segments={loyaltySegments} 
@@ -985,7 +1204,9 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
               value={`Rs ${getItemTotalDiscount(popularItemPeriod)}`}
               subvalue={`${getDiscountCountForPeriod("ITEM", popularItemPeriod)} Discounts Claimed`}
               period={popularItemPeriod}
-              onPeriodChange={setPopularItemPeriod}
+              onPeriodChange={(period, startDate, endDate) => 
+                handlePeriodChange('popularItem', period, startDate, endDate)
+              }
               chart={
                 <DonutChart 
                   segments={getItemSegments(popularItemPeriod)} 
@@ -1008,7 +1229,9 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
               value={`Rs ${getCategoryTotalDiscount(popularCategoryPeriod)}`}
               subvalue={`${getDiscountCountForPeriod("CATEGORY", popularCategoryPeriod)} Discounts Claimed`}
               period={popularCategoryPeriod}
-              onPeriodChange={setPopularCategoryPeriod}
+              onPeriodChange={(period, startDate, endDate) => 
+                handlePeriodChange('popularCategory', period, startDate, endDate)
+              }
               chart={
                 <DonutChart 
                   segments={getCategorySegments(popularCategoryPeriod)} 
@@ -1025,8 +1248,8 @@ const DiscountReport: React.FC<DiscountReportProps> = ({ onBack }) => {
             />
           </GridItem>
         </Grid>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
