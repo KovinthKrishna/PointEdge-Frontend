@@ -36,25 +36,26 @@ const ClockInOutPage: React.FC = () => {
   };
 
   return (
-    <Box minH="100vh" bg="gray.100" display="flex" alignItems="center" justifyContent="center" p={4}>
+    <Box minH="100vh" bgGradient="linear(to-br, #f8fafc, #e3e8ee)" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
       <Flex
-        h={{ base: "auto", md: "600px" }}
-        maxW="4xl"
+        h={{ base: "auto", md: "540px" }}
+        maxW="3xl"
         w="full"
         bg="white"
-        rounded="lg"
+        rounded={{ base: "xl", md: "2xl" }}
         overflow="hidden"
-        boxShadow="lg"
+        boxShadow="2xl"
         direction={{ base: "column", md: "row" }}
         position="relative"
+        border="1px solid #e3e8ee"
       >
         {/* Close Button at upper right corner */}
         <IconButton
           aria-label="Close tab"
-          icon={<CloseIcon boxSize={4} color="#003049" />}
+          icon={<CloseIcon boxSize={5} color="#003049" />}
           position="absolute"
-          top="18px"
-          right="18px"
+          top="20px"
+          right="20px"
           color="#003049"
           bg="white"
           borderRadius="full"
@@ -63,51 +64,55 @@ const ClockInOutPage: React.FC = () => {
           size="md"
           boxShadow="md"
           zIndex={10}
-          _hover={{ bg: "gray.100" }}
+          _hover={{ bg: "gray.200" }}
           onClick={handleClose}
         />
         {/* Left Panel - Image */}
-        <Box flex="1" bg="#003049" display="flex" alignItems="center" justifyContent="center">
-          <Image src={shiftFrontPage} alt="Shift Front Page" maxH="80%" maxW="90%" objectFit="contain" />
+        <Box flex="1" bg="#003049" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 4 }}>
+          <Image src={shiftFrontPage} alt="Shift Front Page" maxH="90%" maxW="100%" objectFit="contain" borderRadius="lg" boxShadow="lg" />
         </Box>
 
         {/* Right Panel - Date/Time and Buttons */}
-        <Flex flex="1" bg="white" p={8} flexDirection="column" alignItems="center" justifyContent="center" position="relative">
-          <VStack spacing={6} w="full">
-            <Box textAlign="center" mb={4}>
-              <Box fontSize="lg" color="gray.600">{formattedDate}</Box>
-              <Box fontSize="3xl" fontWeight="bold" color="gray.800">{formattedTime}</Box>
+        <Flex flex="1" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" justifyContent="center" position="relative">
+          <VStack spacing={8} w="full">
+            <Box textAlign="center" mb={2}>
+              <Box fontSize={{ base: "md", md: "xl" }} color="gray.600" fontWeight="medium">{formattedDate}</Box>
+              <Box fontSize={{ base: "2xl", md: "4xl" }} fontWeight="bold" color="#003049" letterSpacing="wide" mt={2}>{formattedTime}</Box>
             </Box>
             <Button
               bg="#2f855a"
               color="white"
               _hover={{ bg: "#276749" }}
-              size="lg"
-              w="60%"
+              size="md"
+              w="full"
+              maxW="180px"
               fontWeight="bold"
               borderRadius="full"
-              fontSize="xl"
+              fontSize={{ base: "md", md: "lg" }}
+              boxShadow="md"
               onClick={() => navigate("/clock-in")}
             >
-              CLOCK-IN
+              Clock In
             </Button>
             <Button
               bg="#c53030"
               color="white"
               _hover={{ bg: "#9b2c2c" }}
-              size="lg"
-              w="60%"
+              size="md"
+              w="full"
+              maxW="180px"
               fontWeight="bold"
               borderRadius="full"
-              fontSize="xl"
+              fontSize={{ base: "md", md: "lg" }}
+              boxShadow="md"
               onClick={() => navigate("/clock-out")}
             >
-              CLOCK-OUT
+              Clock Out
             </Button>
           </VStack>
           {/* POS Logo at bottom right */}
-          <Box position="absolute" bottom="4" right="4">
-            <Image src={logo} alt="POS Logo" h="14" w="auto" />
+          <Box position="absolute" bottom="6" right="6">
+            <Image src={logo} alt="POS Logo" h="12" w="auto" opacity={0.7} />
           </Box>
         </Flex>
       </Flex>

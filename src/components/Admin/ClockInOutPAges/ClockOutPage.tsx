@@ -46,24 +46,26 @@ const ClockOutPage: React.FC = () => {
   };
 
   return (
-    <Box minH="100vh" bg="gray.100" display="flex" alignItems="center" justifyContent="center" p={4}>
-      <Flex 
-        h="600px" 
-        maxW="4xl" 
-        w="full" 
-        bg="white" 
-        rounded="lg" 
-        overflow="hidden" 
-        boxShadow="lg"
-        border="3px solid #003049"
+    <Box minH="100vh" bgGradient="linear(to-br, #f8fafc, #e3e8ee)" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
+      <Flex
+        h={{ base: "auto", md: "540px" }}
+        maxW="3xl"
+        w="full"
+        bg="white"
+        rounded={{ base: "xl", md: "2xl" }}
+        overflow="hidden"
+        boxShadow="2xl"
+        direction={{ base: "column", md: "row" }}
+        position="relative"
+        // Removed border for cleaner look
       >
         {/* Left Panel - User Info (Unchanged) */}
-        <Box 
-          flex="1" 
-          bg="#003049" 
-          color="white" 
-          p={6} 
-          display="flex" 
+        <Box
+          flex="1"
+          bg="#003049"
+          color="white"
+          p={{ base: 2, md: 4 }}
+          display="flex"
           flexDirection="column"
           position="relative"
         >
@@ -83,20 +85,19 @@ const ClockOutPage: React.FC = () => {
             onClick={handleBack}
           />
 
-          <Flex flex="1" flexDirection="column" alignItems="center" justifyContent="center" gap={8}>
+          <Flex flex="1" flexDirection="column" alignItems="center" justifyContent="center" gap={6}>
             <Heading size="lg" textAlign="center">{user.name}</Heading>
-
-            <Avatar 
-              size="2xl" 
-              name={user.name} 
-              src={user.image} 
-              border="4px" 
+            <Avatar
+              size="2xl"
+              name={user.name}
+              src={user.image}
+              border="4px"
               borderColor="whiteAlpha.200"
+              boxShadow="lg"
             />
-
-            <VStack textAlign="center" spacing={3}>
-              <Text fontSize="xl">ID - {user.id}</Text>
-              <Text fontSize="xl">Role - {user.role}</Text>
+            <VStack textAlign="center" spacing={2}>
+              <Text fontSize="lg">ID - {user.id}</Text>
+              <Text fontSize="lg">Role - {user.role}</Text>
             </VStack>
           </Flex>
 
@@ -111,55 +112,56 @@ const ClockOutPage: React.FC = () => {
         </Box>
 
         {/* Right Panel - Clock Out (Modified) */}
-        <Flex flex="1" bg="white" p={8} flexDirection="column">
-          <Heading size="lg" mb={12} color="gray.800">Shift</Heading>
-
-          <Flex flex="1" flexDirection="column" alignItems="center" justifyContent="center" gap={8}>
-            {/* Clock Out text with red background (changed from green) */}
+        <Flex flex="1" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" justifyContent="center" position="relative">
+          <Heading size="lg" mb={8} color="gray.800">Shift</Heading>
+          <VStack spacing={6} w="full">
             <Center
-              bg="#E53E3E"  // Changed to red color
+              bg="#E53E3E"
               color="white"
               py={2}
               px={6}
               borderRadius="full"
               fontWeight="bold"
+              fontSize={{ base: "md", md: "lg" }}
               boxShadow="sm"
+              letterSpacing="wide"
             >
-              CLOCK OUT  {/* Changed from "Clock In" to "Clock Out" */}
+              Clock Out
             </Center>
-
             <Flex alignItems="center" justifyContent="center" gap={2}>
-              <Text fontWeight="semibold" color="gray.700" fontSize="xl">Location :</Text>
-              <Text color="gray.600" fontSize="xl">{location}</Text>
+              <Text fontWeight="semibold" color="gray.700" fontSize="lg">Location :</Text>
+              <Text color="gray.600" fontSize="lg">{location}</Text>
             </Flex>
-
-            <Box 
-              bg="gray.200" 
-              p={6} 
-              w="80" 
-              textAlign="center" 
+            <Box
+              bg="gray.200"
+              p={6}
+              w="full"
+              maxW="220px"
+              textAlign="center"
               boxShadow="sm"
               borderRadius="md"
             >
               <Text fontSize="md" color="gray.600" mb={2}>{formattedDate}</Text>
-              <Text fontSize="4xl" fontWeight="bold" color="gray.800">{formattedTime}</Text>
+              <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold" color="gray.800">{formattedTime}</Text>
             </Box>
-          </Flex>
-
-          <Flex justifyContent="flex-end" mt={8}>
+          </VStack>
+          <Box position="absolute" bottom="24px" right="24px">
             <Button
               bg="#003049"
               _hover={{ bg: "rgba(0, 48, 73, 0.9)" }}
               color="white"
-              px={8}
-              py={2}
+              px={5}
+              py={1.5}
               borderRadius="md"
               fontWeight="medium"
+              fontSize={{ base: "sm", md: "md" }}
+              boxShadow="md"
               onClick={handleDone}
+              minW="70px"
             >
               Done
             </Button>
-          </Flex>
+          </Box>
         </Flex>
       </Flex>
     </Box>
