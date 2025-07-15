@@ -16,7 +16,7 @@ interface PopupAlertProps {
   onClose: () => void;
   status: "success" | "error";
   title: string;
-  description: string;
+  description: string | React.ReactNode;
 }
 
 const PopupAlert: React.FC<PopupAlertProps> = ({
@@ -60,7 +60,11 @@ const PopupAlert: React.FC<PopupAlertProps> = ({
         </ModalHeader>
 
         <ModalBody mt={-5}>
-          <Text>{description}</Text>
+          {typeof description === "string" ? (
+            <Text>{description}</Text>
+          ) : (
+            description
+          )}
         </ModalBody>
 
         <ModalFooter justifyContent="center">
