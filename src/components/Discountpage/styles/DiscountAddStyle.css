@@ -49,6 +49,21 @@
   gap: 8px;
 }
 
+.discount-add-container .discount-type-btn {
+  cursor: pointer !important;  
+  background: white !important;  
+}
+
+.discount-add-container .discount-type-btn:hover {
+  cursor: pointer !important;
+  background: #f9f9f9 !important;  
+}
+
+.discount-add-container .discount-type-btn.active {
+  cursor: pointer !important;
+  background: #008ED8 !important;  
+}
+
 .discount-type-btn {
   padding: 6px 10px;
   background: #f5f5f5;
@@ -81,6 +96,10 @@
   cursor: pointer;
   margin-right: 8px;
   transition: background 0.2s ease;
+}
+
+.toggle-switch.active {
+  background: #4CAF50; 
 }
 
 .toggle-switch-handle {

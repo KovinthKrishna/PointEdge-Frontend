@@ -322,7 +322,15 @@ export const updateDiscount = async (id: number, discountData: Discount): Promis
 // Delete a single discount by ID
 export const deleteDiscount = async (discountId: number): Promise<{ success: boolean, message?: string }> => {
   try {
-    
+    const response = await axios.delete(
+      `http://localhost:8080/api/v1/discount/delete-discount-by-id/${discountId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
     console.log(`Discount with ID ${discountId} deleted successfully`);
     return { success: true, message: 'Discount deleted successfully' };
   } catch (error) {
