@@ -1,70 +1,280 @@
 import React, { useState } from "react";
-import { VStack, Text, Button, Input } from "@chakra-ui/react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import {
+  Button,
+  VStack,
+  Text,
+  Box,
+  Flex,
+  Switch,
+  FormControl,
+  FormLabel,
+} from "@chakra-ui/react";
+import PopupAlert from "../Common/PopupAlert";
+import ReceiptPopup from "../ReceiptPopup";
+
+const stripePromise = loadStripe(
+  "pk_test_51Rl11VFgHQWIbBdJRhmeHnS4XpIue3NuAyK5rG1iOThpJLM4Pw6zCNJXoGdMwN1lsnrUo4MDOBIApHxR5928bnW000RubcnR0X"
+);
 
 interface CardPaymentModalProps {
   onClose: () => void;
-  onSubmit?: () => void;
+  onPaymentSuccess?: () => void;
+  amount: number;
+  currency: string;
 }
 
-const CardPaymentModal: React.FC<CardPaymentModalProps> = ({
-  onClose,
-  onSubmit,
+const CheckoutForm: React.FC<CardPaymentModalProps> = ({
+  amount,
+  currency,
 }) => {
-  const [cardDetails, setCardDetails] = useState({
-    number: "",
-    expiry: "",
-    cvv: "",
-  });
+  const stripe = useStripe();
+  const elements = useElements();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [nfcEnabled, setNfcEnabled] = useState(false);
+
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertDescription, setAlertDescription] = useState("");
+
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+
+  const handleAlertClose = () => {
+    setIsAlertOpen(false);
+    setIsReceiptOpen(true);
+  };
+
+  // Sample Data after payment success
+  const sampleItems = [
+    { name: "Item A", price: 50 },
+    { name: "Item B", price: 30 },
+  ];
+  const total = 80;
+  const discount = 10;
+  const finalTotal = total - discount;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSubmit) onSubmit();
-    onClose();
+
+    setLoading(true);
+
+    try {
+      const amountInCents = Math.round(amount * 100);
+      const res = await fetch("http://localhost:8080/api/payment/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: amountInCents,
+          currency: currency,
+          customerEmail: "test@example.com",
+        }),
+      });
+
+      const paymentData = await res.json();
+
+      if (!paymentData.success || !paymentData.clientSecret) {
+        throw new Error(paymentData.message || "Something went wrong");
+      }
+
+      if (nfcEnabled) {
+        // Simulate NFC Payment Success
+        setAlertTitle("Payment Successful via NFC");
+        setAlertDescription("NFC payment processed successfully.");
+        setIsAlertOpen(true);
+        return;
+      }
+
+      if (!stripe || !elements) throw new Error("Stripe is not initialized");
+
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) throw new Error("Card element not found");
+
+      const { error: confirmError, paymentIntent } =
+        await stripe.confirmCardPayment(paymentData.clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { email: "test@example.com" },
+          },
+        });
+
+      if (confirmError) {
+        throw new Error(confirmError.message || "Payment confirmation failed");
+      }
+
+      if (paymentIntent?.status === "succeeded") {
+        setAlertTitle("Payment Successful");
+        setAlertDescription("Your payment was successful.");
+        setIsAlertOpen(true);
+      } else {
+        throw new Error(paymentIntent?.status || "Unknown payment status");
+      }
+    } catch (err: any) {
+      setAlertTitle("Payment Failed");
+      setAlertDescription(err.message || "Unexpected error occurred");
+      setIsAlertOpen(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: "100%", height: "100%" }}>
-      <VStack
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
+    <Flex justify="center" align="center" bg="gray.100">
+      <Box
         width="100%"
+        maxWidth="800px"
+        bg="white"
+        mt={10}
+        borderRadius="lg"
+        p={6}
       >
-        <Text fontSize="2xl" fontWeight="bold" color="#0085ca">
-          Card Verification
+        <Text
+          fontSize="35px"
+          fontWeight="bold"
+          color="#003a56ff"
+          mb={4}
+          textAlign="center"
+        >
+          Card Payment
         </Text>
-        <Input
-          placeholder="Card Number"
-          value={cardDetails.number}
-          onChange={(e) =>
-            setCardDetails({ ...cardDetails, number: e.target.value })
+
+        <Box bg="#fff" p={4} borderRadius="md" mb={6} textAlign="center">
+          <Text color="#087eb9ff" fontSize="sm" fontWeight="bold" mb={1}>
+            Total Amount
+          </Text>
+          <Text fontSize="2xl" fontWeight="bold" color="#003a56ff">
+            {amount.toFixed(2)} {currency.toUpperCase()}
+          </Text>
+        </Box>
+
+        {/* Toggle */}
+        <FormControl display="flex" alignItems="center" mb={4}>
+          <Switch
+            id="nfcToggle"
+            isChecked={nfcEnabled}
+            onChange={() => setNfcEnabled(!nfcEnabled)}
+            mr={3}
+            sx={{
+              ".chakra-switch__track": {
+                bg: nfcEnabled ? "#003a56ff" : "#E2E8F0",
+              },
+              ".chakra-switch__thumb": {
+                bg: "#ffffff",
+              },
+            }}
+          />
+          <FormLabel
+            htmlFor="nfcToggle"
+            mb="0"
+            fontWeight="medium"
+            color="#003a56ff"
+          >
+            Scan Card via NFC
+          </FormLabel>
+        </FormControl>
+
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4} align="stretch">
+            {!nfcEnabled ? (
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  color="#003a56ff"
+                  mb={2}
+                >
+                  Card Details
+                </Text>
+                <Box
+                  border="2px solid"
+                  borderColor="blue.500"
+                  borderRadius="md"
+                  p={4}
+                  minHeight="50px"
+                  width="100%"
+                  _focusWithin={{
+                    borderColor: "blue.600",
+                    boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.1)",
+                  }}
+                >
+                  <CardElement
+                    options={{
+                      style: {
+                        base: {
+                          fontSize: "16px",
+                          color: "#2D3748",
+                          "::placeholder": { color: "#A0AEC0" },
+                        },
+                        invalid: { color: "#E53E3E" },
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            ) : (
+              <Box
+                border="2px dashed"
+                borderColor="green.500"
+                borderRadius="md"
+                p={6}
+                textAlign="center"
+                color="green.600"
+                fontWeight="bold"
+              >
+                Please scan your card using NFC Reader
+              </Box>
+            )}
+
+            <Button
+              type="submit"
+              bg="#003a56ff"
+              color="white"
+              size="lg"
+              width="100%"
+              mt={4}
+              _hover={{ bg: "#026589ff" }}
+              isLoading={loading}
+              loadingText="Processing..."
+            >
+              Pay Now
+            </Button>
+          </VStack>
+        </form>
+
+        <PopupAlert
+          isOpen={isAlertOpen}
+          onClose={handleAlertClose}
+          title={alertTitle}
+          description={alertDescription}
+          status={
+            alertTitle.toLowerCase().includes("success") ? "success" : "error"
           }
-          maxLength={16}
-          required
         />
-        <Input
-          placeholder="Expiry Date (MM/YY)"
-          value={cardDetails.expiry}
-          onChange={(e) =>
-            setCardDetails({ ...cardDetails, expiry: e.target.value })
-          }
-          maxLength={5}
-          required
+
+        <ReceiptPopup
+          isOpen={isReceiptOpen}
+          onClose={() => setIsReceiptOpen(false)}
+          items={sampleItems}
+          total={total}
+          discount={discount}
+          finalTotal={finalTotal}
         />
-        <Input
-          placeholder="CVV"
-          value={cardDetails.cvv}
-          onChange={(e) =>
-            setCardDetails({ ...cardDetails, cvv: e.target.value })
-          }
-          maxLength={4}
-          required
-        />
-        <Button mt={8} colorScheme="blue" type="submit">
-          Verify Card
-        </Button>
-      </VStack>
-    </form>
+      </Box>
+    </Flex>
+  );
+};
+
+const CardPaymentModal: React.FC<CardPaymentModalProps> = (props) => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm {...props} />
+    </Elements>
   );
 };
 
