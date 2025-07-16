@@ -41,11 +41,11 @@ const LoginForm: React.FC = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
 
-      // redirect based on role
+      // redirect: admin to /admin, others to /clock-in (before dashboard)
       if (role === "ADMIN") {
         navigate("/admin");
       } else {
-        navigate("/dashboard");
+        navigate("/clock-in");
       }
     } catch (error: any) {
       setAlertTitle("Login Failed");
