@@ -9,6 +9,7 @@ import {
   Box,
   Image,
 } from "@chakra-ui/react";
+import DisplayCustomer from "./DisplayCustomer";
 
 interface OrderSummaryProps {
   orderDetails: {
@@ -32,11 +33,13 @@ interface OrderSummaryProps {
     orderId: string;
   };
   onApplyDiscount: (code: string) => void;
+  onDisplayCustomerDetails: (code: string) => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   orderDetails,
   onApplyDiscount,
+  onDisplayCustomerDetails,
 }) => {
   const [discountCode, setDiscountCode] = React.useState("");
 
@@ -47,6 +50,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       maximumFractionDigits: 2,
     });
   };
+
+  const [isCustomerPopupOpen, setIsCustomerPopupOpen] = React.useState(false);
+  const [appliedCode, setAppliedCode] = React.useState("");
 
   return (
     <VStack align="start" spacing={5} width="100%" height="100%">
@@ -88,7 +94,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           bg="#002a45"
           color="white"
           _hover={{ bg: "#003b62" }}
-          onClick={() => onApplyDiscount(discountCode)}
+          onClick={() => {
+            onApplyDiscount(discountCode);
+            setAppliedCode(discountCode);
+            setIsCustomerPopupOpen(true);
+          }}
         >
           Apply
         </Button>
@@ -153,6 +163,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           />
         </Box>
       </Flex>
+      <DisplayCustomer
+        codeOrPhone={appliedCode}
+        isOpen={isCustomerPopupOpen}
+        onClose={() => setIsCustomerPopupOpen(false)}
+      />
     </VStack>
   );
 };
