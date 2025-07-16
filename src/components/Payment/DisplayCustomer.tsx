@@ -1,89 +1,55 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import Customer from "../../models/Customer";
 import PopupAlert from "../Common/PopupAlert";
 import { Text } from "@chakra-ui/react";
 
 interface DisplayCustomerProps {
-  codeOrPhone: string;
+  customer: Customer | null;
   isOpen: boolean;
   onClose: () => void;
+  totalDiscount: number;
+  loading: boolean;
+  status: "success" | "error"; // Controlled from parent
 }
 
 const DisplayCustomer: React.FC<DisplayCustomerProps> = ({
-  codeOrPhone,
+  customer,
+  totalDiscount,
   isOpen,
   onClose,
+  loading,
+  status,
 }) => {
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [totalDiscount, setTotalDiscount] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
+  let title = "";
+  let description: React.ReactNode = "";
 
-  useEffect(() => {
-    const fetchCustomerDetails = async () => {
-      if (!codeOrPhone) return;
-
-      try {
-        setLoading(true);
-
-        // ✅ Fetch Customer Details by Phone or Code
-        const customerRes = await axios.get(
-          `http://localhost:8080/api/v1/customers/search?phone=${codeOrPhone}`
-        );
-
-        if (customerRes.data?.success && customerRes.data.customer) {
-          setCustomer(customerRes.data.customer);
-
-          // ✅ Fetch Discount Details for Customer
-          const discountRes = await axios.post(
-            "http://localhost:8080/api/v1/discount/calculate-total-discount",
-            {
-              phone: codeOrPhone,
-              items: {}, // Pass required items here if needed
-            }
-          );
-
-          if (
-            discountRes.data?.success &&
-            discountRes.data.finalTotalDiscount !== undefined
-          ) {
-            setTotalDiscount(discountRes.data.finalTotalDiscount);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching customer or discount:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isOpen) fetchCustomerDetails();
-  }, [codeOrPhone, isOpen]);
+  if (loading) {
+    title = "Loading Customer...";
+    description = "Please wait while we fetch customer details.";
+  } else if (status === "success" && customer) {
+    title = customer.name;
+    description = (
+      <>
+        <Text mb={2}>
+          <strong>Discount Applied:</strong> Rs. {totalDiscount.toFixed(2)}
+        </Text>
+        <Text>
+          <strong>Loyalty Points:</strong> {customer.points}
+        </Text>
+      </>
+    );
+  } else if (status === "error") {
+    title = "Customer Not Found";
+    description = "No customer details found for the provided input.";
+  }
 
   return (
     <PopupAlert
       isOpen={isOpen}
       onClose={onClose}
-      status="success"
-      title={
-        customer ? `${customer.title} ${customer.name}` : "Customer Details"
-      }
-      description={
-        customer ? (
-          <>
-            <Text mb={2}>
-              <strong>Discount Applied:</strong> Rs. {totalDiscount.toFixed(2)}
-            </Text>
-            <Text>
-              <strong>Loyalty Points:</strong> {customer.points}
-            </Text>
-          </>
-        ) : loading ? (
-          "Loading customer details..."
-        ) : (
-          "No customer details found."
-        )
-      }
+      status={status} // Controlled status
+      title={title}
+      description={description}
     />
   );
 };

@@ -1,39 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import { VStack, Text, Image } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
-import OrderCompletion from "./OrderCompletion";
+import PopupAlert from "../Common/PopupAlert";
+import { usePaymentFlow } from "../../hooks/usePaymentFlow";
+import ReceiptPopup from "../Receipt/ReceiptPopup";
 
 interface CashPaymentModalProps {
-  onClose: () => void;
   amount?: number;
-  onOk?: () => void;
+  onSuccess?: () => void;
 }
 
 const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
-  onClose,
   amount = 0,
+  onSuccess,
 }) => {
-  const [showOrderCompletion, setShowOrderCompletion] = useState(false);
-  const orderNumber = 12345;
-  const dailyOrderCount = 10;
+  const {
+    isAlertOpen,
+    alertTitle,
+    alertDescription,
+    isReceiptOpen,
+    showSuccess,
+    handleAlertClose,
+    setIsReceiptOpen,
+  } = usePaymentFlow();
 
-  const handleOk = () => setShowOrderCompletion(true);
-  const handleGoHustle = () => {
-    setShowOrderCompletion(false);
-    onClose();
+  const handleOkClick = () => {
+    showSuccess("Payment Successful", "Cash payment received successfully.");
+    onSuccess && onSuccess();
   };
 
-  if (showOrderCompletion) {
-    return (
-      <OrderCompletion
-        isOpen={true}
-        onClose={handleGoHustle}
-        orderData={{ orderNumber, completedOrders: dailyOrderCount }}
-        onDashboardClick={handleGoHustle}
-        onNextOrderClick={handleGoHustle}
-      />
-    );
-  }
+  const sampleItems = [
+    { name: "Item A", price: 50 },
+    { name: "Item B", price: 30 },
+  ];
+  const total = 80;
+  const discount = 10;
+  const finalTotal = total - discount;
 
   return (
     <VStack
@@ -76,8 +78,25 @@ const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
         <Text fontSize="2xl" fontWeight="bold" color="#003049" mb={2}>
           Cash Payment Received.
         </Text>
-        <ButtonComponent text="OK" onClick={handleOk} />
+        <ButtonComponent text="OK" onClick={handleOkClick} />
       </VStack>
+
+      <PopupAlert
+        isOpen={isAlertOpen}
+        onClose={handleAlertClose}
+        title={alertTitle}
+        description={alertDescription}
+        status="success"
+      />
+
+      <ReceiptPopup
+        isOpen={isReceiptOpen}
+        onClose={() => setIsReceiptOpen(false)}
+        items={sampleItems}
+        total={total}
+        discount={discount}
+        finalTotal={finalTotal}
+      />
     </VStack>
   );
 };

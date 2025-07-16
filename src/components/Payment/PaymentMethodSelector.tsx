@@ -203,6 +203,9 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
 
   const navigate = useNavigate();
   const handleAddCustomer = () => {
+    setShowCashModal(false);
+    setShowCardModal(false);
+    setShowSplitModal(false);
     navigate("/admin/discounts/customers");
   };
 
@@ -214,7 +217,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         </Text>
       </Flex>
 
-      <Divider borderColor="#e0e0e0" />
+      <Divider borderColor="#007db2ff" />
 
       <Flex width="100%" justifyContent="space-between" alignItems="center">
         <Text fontSize="18px" fontWeight="500" color="#0085ca">
@@ -311,10 +314,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         isOpen={showCashModal}
         onClose={() => setShowCashModal(false)}
       >
-        <CashPaymentModal
-          onClose={() => setShowCashModal(false)}
-          amount={totalAmount}
-        />
+        <CashPaymentModal amount={totalAmount} />
       </ModelBoxPopup>
 
       {/* Card Payment Modal */}
@@ -327,6 +327,9 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             onClose={() => setShowCardModal(false)}
             amount={orderDetails.total}
             currency={orderDetails.currency.toLowerCase()}
+            showSuccess={(title, desc) => console.log("Success:", title, desc)}
+            showError={(title, desc) => console.log("Error:", title, desc)}
+            setIsReceiptOpen={() => console.log("Receipt opened")}
           />
         ) : (
           <Text p={4}>Loading order details...</Text>
@@ -337,6 +340,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       <SplitPaymentModal
         isOpen={showSplitModal}
         onClose={() => setShowSplitModal(false)}
+        amount={totalAmount}
+        currency={orderDetails.currency.toLowerCase()}
       />
 
       <Flex justifyContent="center" width="100%">

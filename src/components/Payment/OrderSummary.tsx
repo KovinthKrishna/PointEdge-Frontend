@@ -9,7 +9,6 @@ import {
   Box,
   Image,
 } from "@chakra-ui/react";
-import DisplayCustomer from "./DisplayCustomer";
 
 interface OrderSummaryProps {
   orderDetails: {
@@ -34,25 +33,23 @@ interface OrderSummaryProps {
   };
   onApplyDiscount: (code: string) => void;
   onDisplayCustomerDetails: (code: string) => void;
+  discountCode: string;
+  setDiscountCode: (code: string) => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   orderDetails,
   onApplyDiscount,
   onDisplayCustomerDetails,
+  discountCode,
+  setDiscountCode,
 }) => {
-  const [discountCode, setDiscountCode] = React.useState("");
-
-  // Format currency with thousand separators
   const formatCurrency = (amount: number) => {
     return amount.toLocaleString("en-LK", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
   };
-
-  const [isCustomerPopupOpen, setIsCustomerPopupOpen] = React.useState(false);
-  const [appliedCode, setAppliedCode] = React.useState("");
 
   return (
     <VStack align="start" spacing={5} width="100%" height="100%">
@@ -78,7 +75,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
       <Flex width="100%" mt={2}>
         <Input
-          placeholder="Phone number or discount code"
+          placeholder="Phone number"
+          color={"#627a88ff"}
           value={discountCode}
           onChange={(e) => setDiscountCode(e.target.value)}
           borderRadius="md"
@@ -96,8 +94,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           _hover={{ bg: "#003b62" }}
           onClick={() => {
             onApplyDiscount(discountCode);
-            setAppliedCode(discountCode);
-            setIsCustomerPopupOpen(true);
+            onDisplayCustomerDetails(discountCode);
           }}
         >
           Apply
@@ -124,7 +121,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         </Text>
       </Flex>
 
-      {/* Payment Method Icons */}
       <Flex justifyContent="space-between" width="100%" mt="auto" mb={4}>
         <Box
           bg="white"
@@ -137,7 +133,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           alignItems="center"
         >
           <Image
-            src="src\assets\Card.jpg"
+            src="src/assets/Card.jpg"
             alt="Card Payment"
             fallbackSrc="https://via.placeholder.com/80x50?text=Card"
             width="80%"
@@ -155,7 +151,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           alignItems="center"
         >
           <Image
-            src="src\assets\Cash.jpg"
+            src="src/assets/Cash.jpg"
             alt="POS Payment"
             fallbackSrc="https://via.placeholder.com/80x50?text=POS"
             width="60%"
@@ -163,11 +159,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           />
         </Box>
       </Flex>
-      <DisplayCustomer
-        codeOrPhone={appliedCode}
-        isOpen={isCustomerPopupOpen}
-        onClose={() => setIsCustomerPopupOpen(false)}
-      />
     </VStack>
   );
 };
