@@ -60,7 +60,11 @@ const EmployeeDashboardPage: React.FC = () => {
 
   // Show error state
   if (error && !dashboardData) {
-    return <div className="error-container">{error}</div>;
+    return (
+      <div className="error-message">
+        Failed to load employee dashboard data. Please try again later.
+      </div>
+    );
   }
 
   // Use default data if API call fails

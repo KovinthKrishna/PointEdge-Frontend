@@ -12,6 +12,11 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   loading,
   getInitials
 }) => {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const rowsPerPage = 50;
+  const totalPages = Math.ceil(employeeAttendances.length / rowsPerPage);
+  const paginatedData = employeeAttendances.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
   return (
     <div className="box bg-white rounded-md overflow-hidden shadow-sm">
       {loading ? (
@@ -19,59 +24,75 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           <div className="spinner"></div>
         </div>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Employee Name</th>
-              <th>Role</th>
-              <th>Clock In</th>
-              <th>Clock Out</th>
-              <th>Total Hours</th>
-              <th>OT Hours</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employeeAttendances.length === 0 ? (
+        <>
+          <table className="table">
+            <thead>
               <tr>
-                <td colSpan={8} className="empty-table-message">
-                   No employees found
-                </td>
+                <th>#</th>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Role</th>
+                <th>Clock In</th>
+                <th>Clock Out</th>
+                <th>Total Hours</th>
+                <th>OT Hours</th>
+                <th>Status</th>
               </tr>
-            ) : (   
-              employeeAttendances.map((attendance) => (
-                <tr key={attendance.id}>
-                  <td>{attendance.id}</td>
-                  <td>
-                    <div className="flex align-center">
-                      <div className="avatar">
-                        {attendance.avatar ? (
-                          <img src={attendance.avatar} alt={attendance.name} />
-                        ) : (
-                          <span className="avatar-fallback">{getInitials(attendance.name)}</span>
-                        )}
+            </thead>
+            <tbody>
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="empty-table-message">
+                     No employees found
+                  </td>
+                </tr>
+              ) : (
+                paginatedData.map((attendance, idx) => (
+                  <tr key={attendance.id}>
+                    <td>{(currentPage - 1) * rowsPerPage + idx + 1}</td>
+                    <td>{attendance.id}</td>
+                    <td>
+                      <div className="flex align-center">
+                        <div className="avatar">
+                          {attendance.avatar ? (
+                            <img src={attendance.avatar} alt={attendance.name} />
+                          ) : (
+                            <span className="avatar-fallback">{getInitials(attendance.name)}</span>
+                          )}
+                        </div>
+                        <span>{attendance.name}</span>
                       </div>
-                      <span>{attendance.name}</span>
-                    </div>
-                  </td>
-                  <td>{attendance.role}</td>
-                  <td>{attendance.clockIn}</td>
-                  <td>{attendance.clockOut}</td>
-                  <td>{attendance.totalHours}</td>
-                  <td>{attendance.otHours}</td>
-                  <td>
-                    <div 
-                      className={`badge ${attendance.status === "Active" ? "badge-active" : "badge-inactive"}`}
-                    >
-                      {attendance.status}
-                    </div>
-                  </td>
-                </tr>                  
-              ))
-            )}
-          </tbody>
-        </table>
+                    </td>
+                    <td>{attendance.role}</td>
+                    <td>{attendance.clockIn}</td>
+                    <td>{attendance.clockOut}</td>
+                    <td>{attendance.totalHours}</td>
+                    <td>{attendance.otHours}</td>
+                    <td>
+                      <div 
+                        className={`badge ${attendance.status === "Active" ? "badge-active" : "badge-inactive"}`}
+                      >
+                        {attendance.status}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination-controls">
+              <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
+                Previous
+              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

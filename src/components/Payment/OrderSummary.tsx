@@ -12,10 +12,24 @@ import {
 
 interface OrderSummaryProps {
   orderDetails: {
+    id?: number;
+    customerId: number;
+    customerName?: string;
+    customerPhone?: string;
+    itemId: number;
+    discountId?: number | null;
+    itemName?: string;
+    datetime: string;
     amount: number;
-    discount: number;
+    totalDiscount: number;
     total: number;
     currency: string;
+    itemDiscount?: number | null;
+    categoryDiscount?: number | null;
+    loyaltyDiscount?: number | null;
+    loyaltyTier?: string | null;
+    pointsEarned?: number | null;
+    orderId: string;
   };
   onApplyDiscount: (code: string) => void;
 }
@@ -87,7 +101,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           Discount
         </Text>
         <Text fontSize="16px" fontWeight="medium">
-          {orderDetails.currency} {formatCurrency(orderDetails.discount)}
+          {orderDetails.currency} {formatCurrency(orderDetails.totalDiscount)}
         </Text>
       </Flex>
 

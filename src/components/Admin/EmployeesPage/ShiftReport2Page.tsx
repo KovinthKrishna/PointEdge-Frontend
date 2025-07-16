@@ -1,6 +1,6 @@
 import "./styles/ShiftReport2.css";
 import { Employee } from "../../../models/Employees";
-import { useShiftDetailData } from "../../../hooks/useShiftDetailData";
+import { useShiftDetailData } from "../../../hooks/useShiftDetaildata";
 import ShiftReportBackButton from "./Reportbackbutton";
 import ShiftReportEmployeeInfo from "./ReportEmployeeInfo";
 import ShiftReportDetailCard from "./Reportdetailcard";

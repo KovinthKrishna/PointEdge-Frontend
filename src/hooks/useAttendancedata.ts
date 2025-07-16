@@ -9,7 +9,7 @@ export const useAttendanceData = () => {
   const [startTime, setStartTime] = useState<string>('07:30:00');
   const [endTime, setEndTime] = useState<string>('16:00:00');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [toastMessage, setToastMessage] = useState<{ title: string; message: string; type: string } | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Load data on component mount
   useEffect(() => {
@@ -44,11 +44,7 @@ export const useAttendanceData = () => {
       setEmployeeAttendances(formattedData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      setToastMessage({
-        title: 'Error fetching data',
-        message: 'Could not load attendance data. Please try again later.',
-        type: 'error'
-      });
+      setErrorMessage('Could not load attendance data. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -88,11 +84,7 @@ export const useAttendanceData = () => {
     } catch (error) {
       console.error('Error searching:', error);
       
-      setToastMessage({
-        title: 'Search failed',
-        message: 'Could not search attendance records. Please try again.',
-        type: 'error'
-      });
+      setErrorMessage('Could not search attendance records. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -119,8 +111,8 @@ export const useAttendanceData = () => {
     setEndTime,
     searchQuery,
     setSearchQuery,
-    toastMessage,
-    setToastMessage,
+    errorMessage,
+    setErrorMessage,
     handleSearch,
     getInitials
   };

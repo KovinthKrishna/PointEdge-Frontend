@@ -12,25 +12,24 @@ export const useTopPerformers = () => {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [employees, setEmployees] = useState<EmployeePerformance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
 
   // Common fetch function
   const fetchData = useCallback(async (url: string): Promise<void> => {
     setLoading(true);
-    setError(null);
-    
+    setErrorMessage(null);
     try {
       const response = await fetch(url);
-      
       if (!response.ok) {
-        throw new Error("Failed to fetch employee performance data");
+        setErrorMessage('Failed to load employee performance data. Please try again later.');
+        return;
       }
-      
       const data = await response.json() as EmployeePerformance[];
       setEmployees(data);
+      setErrorMessage(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while fetching data");
+      setErrorMessage('Failed to load employee performance data. Please try again later.');
       console.error("Error fetching employee performance:", err);
     } finally {
       setLoading(false);
@@ -94,16 +93,17 @@ export const useTopPerformers = () => {
     // State
     employees,
     loading,
-    error,
+    errorMessage,
     searchQuery,
     sortField,
     sortDirection,
     timeRange,
-    
+
     // Setters
     setSearchQuery,
     setTimeRange,
-    
+    setErrorMessage,
+
     // Actions
     handleSearch,
     handleSort,

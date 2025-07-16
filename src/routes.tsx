@@ -11,10 +11,6 @@ import ForgotPW from "./pages/ForgotPW";
 import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
-import EmployeeDashboardPage from "./components/Admin/EmployeesPage/EmployeeDashboardPage";
-import EmployeeAttendancePage from "./components/Admin/EmployeesPage/EmployeeAttendancePage";
-import TopPerformersPage from "./components/Admin/EmployeesPage/TopPerformersPage";
-import ShiftReport1Page from "./components/Admin/EmployeesPage/ShiftReport1Page";
 import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
 import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
 
@@ -112,12 +108,6 @@ const router = createBrowserRouter([
           {
             path: "employees",
             element: <EmployeesPage />,
-            children: [
-              { index: true, element: <EmployeeDashboardPage /> },
-              { path: "attendance", element: <EmployeeAttendancePage /> },
-              { path: "top-performers", element: <TopPerformersPage /> },
-              { path: "shift-reports", element: <ShiftReport1Page /> },
-            ],
           },
         ],
       },
