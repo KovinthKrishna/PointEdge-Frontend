@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { FaArrowLeft, FaUsers, FaPlus, FaSearch, FaCrown, FaMedal, FaAward, FaTrophy } from 'react-icons/fa';
+import { FaArrowLeft, FaUsers, FaPlus, FaSearch, FaCrown, FaMedal, FaAward, FaTrophy, FaTimes } from 'react-icons/fa';
 import CustomerDetails from './CustomerDetails';
 import CustomerAdd from './CustomerAdd';
 import { fetchAllCustomers, fetchCustomerCountsByTier, searchCustomers } from '../../services/customerService';
@@ -9,6 +9,8 @@ import '../../components/Discountpage/styles/CustomerFind.css';
 
 interface CustomersPopupProps {
   onClose: () => void;
+  onBackToPayment?: () => void;
+  openedFrom?: 'payment' | 'discount'; 
 }
 
 interface CustomerListItem {
@@ -22,7 +24,11 @@ interface CustomerListItem {
   tier?: 'GOLD' | 'SILVER' | 'BRONZE' | 'NOTLOYALTY';
 }
 
-const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
+const CustomerOrders: React.FC<CustomersPopupProps> = ({ 
+  onClose, 
+  onBackToPayment,
+  openedFrom = 'discount' 
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [customerData, setCustomerData] = useState<Partial<Customer>>({
     title: 'MR',
@@ -45,6 +51,25 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const sortedCustomers = [...customers].sort((a, b) => b.points - a.points);
+
+  // FIXED: Back arrow only works when coming from discount page (admin page)
+  const handleBackArrowClick = () => {
+    if (openedFrom === 'discount') {
+      onClose(); // Only close if coming from discount page
+    }
+  };
+
+  // FIXED: Close button now only closes this popup, not the payment popup
+  const handleCloseButtonClick = () => {
+    onClose(); // Just close this popup
+  };
+
+  // FIXED: Backdrop click - only works from discount page
+  const handleBackdropClick = () => {
+    if (openedFrom === 'discount') {
+      onClose(); // Only close if coming from discount page
+    }
+  };
 
   const fetchCustomers = async () => {
     try {
@@ -218,7 +243,7 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         zIndex: 1,
-      }} onClick={onClose} />
+      }} onClick={handleBackdropClick} />
       
       <div style={{
         backgroundColor: 'white',
@@ -242,10 +267,12 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
           flexDirection: 'column',
           position: 'relative',
         }}>
+          {/* FIXED: Back Arrow Button - Disabled when coming from payment (admin protection) */}
           <button 
-            onClick={onClose}
+            onClick={handleBackArrowClick}
+            disabled={openedFrom === 'payment'}
             style={{
-              background: 'white',
+              background: openedFrom === 'payment' ? '#ccc' : 'white',
               border: 'none',
               borderRadius: '50%',
               width: '40px',
@@ -253,13 +280,15 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
+              cursor: openedFrom === 'payment' ? 'not-allowed' : 'pointer',
               position: 'absolute',
               top: '16px',
               left: '16px',
+              opacity: openedFrom === 'payment' ? 0.5 : 1,
             }}
+            title={openedFrom === 'payment' ? 'Admin page access restricted' : 'Back to Discount Page'}
           >
-            <FaArrowLeft color="#003049" size={20} />
+            <FaArrowLeft color={openedFrom === 'payment' ? '#999' : '#003049'} size={20} />
           </button>
           
           <div style={{ textAlign: 'center', marginTop: '50px', marginBottom: '20px' }}>
@@ -358,7 +387,30 @@ const CustomerOrders: React.FC<CustomersPopupProps> = ({ onClose }) => {
           padding: '30px',
           display: 'flex',
           flexDirection: 'column',
+          position: 'relative',
         }}>
+          {/* FIXED: Close Button - Now just closes this popup */}
+          <button 
+            onClick={handleCloseButtonClick}
+            style={{
+              background: '#003049',
+              border: 'none',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              position: 'absolute',
+              top: '16px',
+              right: '16px',
+            }}
+            title="Close"
+          >
+            <FaTimes color="white" size={20} />
+          </button>
+
           <div style={{ marginBottom: '20px' }}>
             <h1 style={{ marginBottom: '5px', fontSize: '22px' }}>Customers</h1>
             <p style={{ color: '#999', margin: '0', fontSize: '13px' }}>*Become a loyalty customer to access exclusive benefits*</p>
