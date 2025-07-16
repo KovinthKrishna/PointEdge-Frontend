@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Text, Heading, Button, Avatar, Image, VStack, Center, IconButton } from "@chakra-ui/react";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import bgImage from "../../../assets/1 1.png";
+import { Box, Flex, Text, Heading, Button, Avatar, Image, VStack, IconButton } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import shiftFrontPage from "../../../assets/ShiftFrontPage.png";
 import logo from "../../../assets/logo.png";
 
 const ClockOutPage: React.FC = () => {
+  // Close icon handler (top right)
+  const handleClose = () => {
+    localStorage.clear();
+    navigate("/login", { replace: true });
+    console.log("Closed tab, navigated to login page");
+  };
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [location, setLocation] = useState("Store 01");
+  // Removed unused location state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,18 +43,20 @@ const ClockOutPage: React.FC = () => {
     image: "https://bit.ly/dan-abramov",
   };
 
-  const handleBack = () => {
-    navigate("/clockinout");
-    console.log("Navigate back to clockinout page");
-  };
+  // Removed unused handleBack function
 
   const handleDone = () => {
-    navigate("/admin");
-    console.log("Navigate to admin page");
+    // Clear tokens/session and go to login
+    localStorage.clear();
+    navigate("/login", { replace: true });
+    console.log("Navigate to login page after clock out");
   };
 
   return (
-    <Box minH="100vh" bgGradient="linear(to-br, #f8fafc, #e3e8ee)" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
+    <Box minH="100vh" width="100vw" position="relative" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
+      {/* Background image and overlay */}
+      <Image src={bgImage} alt="Background" objectFit="cover" position="absolute" top={0} left={0} w="100vw" h="100vh" zIndex={0} opacity={0.5} />
+      <Box position="absolute" top={0} left={0} w="100vw" h="100vh" bg="#003049" opacity={0.5} zIndex={0} />
       <Flex
         h={{ base: "auto", md: "540px" }}
         maxW="3xl"
@@ -57,110 +67,75 @@ const ClockOutPage: React.FC = () => {
         boxShadow="2xl"
         direction={{ base: "column", md: "row" }}
         position="relative"
-        // Removed border for cleaner look
+        border="1px solid #e3e8ee"
       >
-        {/* Left Panel - User Info (Unchanged) */}
-        <Box
-          flex="1"
-          bg="#003049"
-          color="white"
-          p={{ base: 2, md: 4 }}
-          display="flex"
-          flexDirection="column"
-          position="relative"
-        >
-          <IconButton
-            aria-label="Go back"
-            icon={<ArrowBackIcon boxSize={5} />}
-            position="absolute"
-            top="4"
-            left="4"
-            color="white"
-            variant="outline"
-            borderRadius="full"
-            border="2px solid white"
-            isRound={true}
-            size="md"
-            _hover={{ bg: "whiteAlpha.200" }}
-            onClick={handleBack}
-          />
-
-          <Flex flex="1" flexDirection="column" alignItems="center" justifyContent="center" gap={6}>
-            <Heading size="lg" textAlign="center">{user.name}</Heading>
-            <Avatar
-              size="2xl"
-              name={user.name}
-              src={user.image}
-              border="4px"
-              borderColor="whiteAlpha.200"
-              boxShadow="lg"
-            />
-            <VStack textAlign="center" spacing={2}>
-              <Text fontSize="lg">ID - {user.id}</Text>
-              <Text fontSize="lg">Role - {user.role}</Text>
-            </VStack>
-          </Flex>
-
-          <Box position="absolute" bottom="4" left="4">
-            <Image 
-              src={logo}
-              alt="Company Logo"
-              h="12"
-              w="auto"
-            />
-          </Box>
+        {/* Close Button at upper right corner */}
+        <IconButton
+          aria-label="Close tab"
+          icon={<CloseIcon boxSize={5} color="#003049" />}
+          position="absolute"
+          top="20px"
+          right="20px"
+          color="#003049"
+          bg="white"
+          borderRadius="full"
+          border="2px solid #003049"
+          isRound={true}
+          size="md"
+          boxShadow="md"
+          zIndex={10}
+          _hover={{ bg: "gray.200" }}
+          onClick={handleClose}
+        />
+        {/* Left Panel - Image (like ClockInPage) */}
+        <Box flex="1" bg="#003049" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 4 }}>
+          <Image src={shiftFrontPage} alt="Shift Front Page" maxH="90%" maxW="100%" objectFit="contain" borderRadius="lg" boxShadow="lg" />
         </Box>
 
         {/* Right Panel - Clock Out (Modified) */}
-        <Flex flex="1" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" justifyContent="center" position="relative">
-          <Heading size="lg" mb={8} color="gray.800">Shift</Heading>
-          <VStack spacing={6} w="full">
-            <Center
-              bg="#E53E3E"
-              color="white"
-              py={2}
-              px={6}
-              borderRadius="full"
-              fontWeight="bold"
-              fontSize={{ base: "md", md: "lg" }}
-              boxShadow="sm"
-              letterSpacing="wide"
-            >
-              Clock Out
-            </Center>
-            <Flex alignItems="center" justifyContent="center" gap={2}>
-              <Text fontWeight="semibold" color="gray.700" fontSize="lg">Location :</Text>
-              <Text color="gray.600" fontSize="lg">{location}</Text>
-            </Flex>
-            <Box
-              bg="gray.200"
-              p={6}
-              w="full"
-              maxW="220px"
-              textAlign="center"
-              boxShadow="sm"
-              borderRadius="md"
-            >
-              <Text fontSize="md" color="gray.600" mb={2}>{formattedDate}</Text>
-              <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold" color="gray.800">{formattedTime}</Text>
-            </Box>
-          </VStack>
-          <Box position="absolute" bottom="24px" right="24px">
-            <Button
-              bg="#003049"
-              _hover={{ bg: "rgba(0, 48, 73, 0.9)" }}
-              color="white"
-              px={5}
-              py={1.5}
-              borderRadius="md"
-              fontWeight="medium"
-              fontSize={{ base: "sm", md: "md" }}
+        <Flex flex="1" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" position="relative" justifyContent="space-between">
+          {/* Date and Time at the top */}
+          <Box textAlign="center" w="full" mb={2} mt={2}>
+            <Text fontSize={{ base: "sm", md: "lg" }} color="gray.500" fontWeight="medium">{formattedDate}</Text>
+            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold" color="gray.500" letterSpacing="wide" mt={1}>{formattedTime}</Text>
+          </Box>
+          {/* Employee Info centered vertically between top and bottom */}
+          <Flex flexDirection="column" alignItems="center" justifyContent="center" flex={0}>
+            <Heading size="lg" textAlign="center" color="gray.800" mb={6}>{user.name}</Heading>
+            <Avatar
+              size="xl"
+              name={user.name}
+              src={user.image}
+              border="3px"
+              borderColor="gray.200"
               boxShadow="md"
-              onClick={handleDone}
-              minW="70px"
-            >
-              Done
-            </Button>
+              mb={2}
+            />
+            <VStack textAlign="center" spacing={1}>
+              <Text fontSize="lg" color="gray.600">ID - {user.id}</Text>
+              <Text fontSize="lg" color="gray.600">Role - {user.role}</Text>
+            </VStack>
+          </Flex>
+          {/* Clock Out button at the bottom */}
+          <Button
+            bg="#E53E3E"
+            color="white"
+            _hover={{ bg: "#C53030" }}
+            size="sm"
+            w="full"
+            maxW="140px"
+            fontWeight="bold"
+            borderRadius="full"
+            fontSize={{ base: "sm", md: "md" }}
+            boxShadow="md"
+            onClick={handleDone}
+            mb={2}
+          >
+            Clock Out
+          </Button>
+          {/* POS Logo at bottom right of the right panel */}
+          <Box position="absolute" bottom="6" right="6">
+            <Image src={logo} alt="POS Logo" h="10" w="auto" opacity={0.7} />
           </Box>
         </Flex>
       </Flex>
