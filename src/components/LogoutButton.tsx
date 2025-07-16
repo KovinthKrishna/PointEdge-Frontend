@@ -6,7 +6,8 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Navigate to ClockOut page instead of logging out immediately
+     // Clear tokens or session info (adjust as per your auth logic)
+    localStorage.clear();
     navigate("/login", { replace: true });
   };
 
