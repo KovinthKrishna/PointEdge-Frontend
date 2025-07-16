@@ -16,6 +16,7 @@ import CardPaymentModal from "./CardPaymentModal";
 import CashPaymentModal from "./CashPaymentModal";
 import SplitPaymentModal from "./SplitPaymentModal";
 import { OrderDetails } from "../../models/OrderDetails";
+import { useNavigate } from "react-router-dom";
 
 // Custom Radio Button Component
 function CustomRadioButton(
@@ -200,6 +201,11 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
     }
   };
 
+  const navigate = useNavigate();
+  const handleAddCustomer = () => {
+    navigate("/admin/discounts/customers");
+  };
+
   return (
     <VStack align="start" spacing={5} width="100%">
       <Flex justifyContent="space-between" width="100%" alignItems="center">
@@ -334,7 +340,12 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       />
 
       <Flex justifyContent="center" width="100%">
-        <Text color="#0085ca" fontSize="16px" cursor="pointer">
+        <Text
+          color="#0085ca"
+          fontSize="16px"
+          cursor="pointer"
+          onClick={handleAddCustomer}
+        >
           + Add Customer
         </Text>
       </Flex>
