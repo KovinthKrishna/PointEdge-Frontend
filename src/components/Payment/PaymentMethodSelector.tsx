@@ -17,6 +17,7 @@ import CashPaymentModal from "./CashPaymentModal";
 import SplitPaymentModal from "./SplitPaymentModal";
 import { OrderDetails } from "../../models/OrderDetails";
 import { useNavigate } from "react-router-dom";
+import { usePaymentFlow } from "../../hooks/usePaymentFlow";
 
 // Custom Radio Button Component
 function CustomRadioButton(
@@ -98,6 +99,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   const [showCashModal, setShowCashModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [showSplitModal, setShowSplitModal] = useState(false);
+
+  const { setIsReceiptOpen } = usePaymentFlow();
 
   useEffect(() => {
     if (!splitEnabled) {
@@ -342,6 +345,9 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         onClose={() => setShowSplitModal(false)}
         amount={totalAmount}
         currency={orderDetails.currency.toLowerCase()}
+        cardAmount={cardAmount}
+        cashAmount={cashAmount}
+        onComplete={() => setIsReceiptOpen(true)} // Assuming you have this from usePaymentFlow()
       />
 
       <Flex justifyContent="center" width="100%">
