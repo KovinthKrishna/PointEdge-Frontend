@@ -6,6 +6,8 @@ interface ModelBoxPopupProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode; // accept children!
+  maxW?: string;
+  maxH?: string;
 }
 
 const ModelBoxPopup: React.FC<ModelBoxPopupProps> = ({
@@ -23,6 +25,8 @@ const ModelBoxPopup: React.FC<ModelBoxPopupProps> = ({
       <ModalContent
         maxW="80%"
         h="80%"
+        display="flex"
+        flexDirection="column"
         borderRadius="8px"
         borderWidth="4px"
         borderColor="#003049"

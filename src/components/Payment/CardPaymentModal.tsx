@@ -17,7 +17,7 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import PopupAlert from "../Common/PopupAlert";
-import ReceiptPopup from "../ReceiptPopup";
+import ReceiptPopup from "../Receipt/ReceiptPopup";
 
 const stripePromise = loadStripe(
   "pk_test_51Rl11VFgHQWIbBdJRhmeHnS4XpIue3NuAyK5rG1iOThpJLM4Pw6zCNJXoGdMwN1lsnrUo4MDOBIApHxR5928bnW000RubcnR0X"
