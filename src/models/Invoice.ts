@@ -1,4 +1,5 @@
 export interface InvoiceItem {
+  returnPhoto: any;
   id: string;
   name: string;
   quantity: number;
