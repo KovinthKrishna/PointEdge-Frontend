@@ -7,7 +7,7 @@ const LogoutButton = () => {
 
   const handleLogout = () => {
     // Navigate to ClockOut page instead of logging out immediately
-    navigate("/clockout", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (

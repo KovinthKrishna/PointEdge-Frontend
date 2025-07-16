@@ -43,7 +43,7 @@ const LoginForm: React.FC = () => {
 
       // redirect based on role
       if (role === "ADMIN") {
-        navigate("/clock-in");
+        navigate("/admin");
       } else {
         navigate("/dashboard");
       }
