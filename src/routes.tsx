@@ -84,30 +84,39 @@ const router = createBrowserRouter([
   // Admin-only protected route
 
   {
-    element: <ProtectedRoute requiredRole="ADMIN" />,
+    path: "admin",
+    element: (
+      // This wrapper protects all /admin routes: must be authenticated
+      <ProtectedRoute />
+    ),
+    errorElement: <ErrorPage />,
     children: [
       {
-        path: "admin",
-        element: <AdminLayout />,
-        errorElement: <ErrorPage />,
+        element: <AdminLayout />, // layout for all admin pages
         children: [
-          { index: true, element: <AdminDashboard /> },
-          { path: "analysis", element: <AnalysisPage /> },
-          { path: "inventory", element: <InventoryPage /> },
+          // Admin only routes
           {
-            path: "discounts",
+            element: <ProtectedRoute requiredRole="ADMIN" />,
             children: [
-              { index: true, element: <DiscountsPage /> },
+              { index: true, element: <AdminDashboard /> },
+              { path: "analysis", element: <AnalysisPage /> },
+              { path: "inventory", element: <InventoryPage /> },
+              { path: "discounts", index: true, element: <DiscountsPage /> },
+              { path: "employees", element: <EmployeesPage /> },
+            ],
+          },
+
+          // discounts/customers accessible by admin and salesperson only
+          {
+            path: "discounts/customers",
+            element: <ProtectedRoute allowForUserOnly={true} />,
+            children: [
               {
-                path: "customers",
+                index: true,
                 element: <DiscountsPage />,
                 handle: { showCustomerModal: true },
               },
             ],
-          },
-          {
-            path: "employees",
-            element: <EmployeesPage />,
           },
         ],
       },
