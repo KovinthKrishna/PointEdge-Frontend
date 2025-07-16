@@ -17,7 +17,8 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import PopupAlert from "../Common/PopupAlert";
-import ReceiptPopup from "../ReceiptPopup";
+import { usePaymentFlow } from "../../hooks/usePaymentFlow";
+import ReceiptPopup from "../Receipt/ReceiptPopup";
 
 const stripePromise = loadStripe(
   "pk_test_51Rl11VFgHQWIbBdJRhmeHnS4XpIue3NuAyK5rG1iOThpJLM4Pw6zCNJXoGdMwN1lsnrUo4MDOBIApHxR5928bnW000RubcnR0X"
@@ -28,6 +29,11 @@ interface CardPaymentModalProps {
   onPaymentSuccess?: () => void;
   amount: number;
   currency: string;
+
+  // Add these:
+  showSuccess: (title: string, desc: string) => void;
+  showError: (title: string, desc: string) => void;
+  setIsReceiptOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CheckoutForm: React.FC<CardPaymentModalProps> = ({
@@ -37,21 +43,28 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
   const stripe = useStripe();
   const elements = useElements();
 
+  const {
+    isAlertOpen,
+    alertTitle,
+    alertDescription,
+    isReceiptOpen,
+    showSuccess,
+    showError,
+    handleAlertClose,
+    setIsReceiptOpen,
+  } = usePaymentFlow();
+
   const [loading, setLoading] = useState(false);
   const [nfcEnabled, setNfcEnabled] = useState(false);
+  const [paymentSucceeded, setPaymentSucceeded] = useState(false);
 
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("");
-  const [alertDescription, setAlertDescription] = useState("");
-
-  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
-
-  const handleAlertClose = () => {
-    setIsAlertOpen(false);
-    setIsReceiptOpen(true);
+  const onAlertClose = () => {
+    handleAlertClose();
+    if (paymentSucceeded) {
+      setIsReceiptOpen(true);
+    }
   };
 
-  // Sample Data after payment success
   const sampleItems = [
     { name: "Item A", price: 50 },
     { name: "Item B", price: 30 },
@@ -62,8 +75,8 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
+    setPaymentSucceeded(false);
 
     try {
       const amountInCents = Math.round(amount * 100);
@@ -84,10 +97,13 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
       }
 
       if (nfcEnabled) {
-        // Simulate NFC Payment Success
-        setAlertTitle("Payment Successful via NFC");
-        setAlertDescription("NFC payment processed successfully.");
-        setIsAlertOpen(true);
+        await saveOrderDetailsToBackend();
+        showSuccess(
+          "Payment Successful via NFC",
+          "NFC payment processed successfully."
+        );
+        setPaymentSucceeded(true);
+        setLoading(false);
         return;
       }
 
@@ -109,19 +125,44 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
       }
 
       if (paymentIntent?.status === "succeeded") {
-        setAlertTitle("Payment Successful");
-        setAlertDescription("Your payment was successful.");
-        setIsAlertOpen(true);
+        await saveOrderDetailsToBackend();
+        showSuccess("Payment Successful", "Your payment was successful.");
+        setPaymentSucceeded(true);
       } else {
         throw new Error(paymentIntent?.status || "Unknown payment status");
       }
-    } catch (err: any) {
-      setAlertTitle("Payment Failed");
-      setAlertDescription(err.message || "Unexpected error occurred");
-      setIsAlertOpen(true);
+    } catch (error: any) {
+      showError("Payment Failed", error.message || "Unexpected error occurred");
+      setPaymentSucceeded(false);
     } finally {
       setLoading(false);
     }
+  };
+
+  const saveOrderDetailsToBackend = async () => {
+    const payload = {
+      phone: "0753654857",
+      items: {
+        "1": 2,
+        "2": 1,
+        "3": 3,
+      },
+    };
+
+    const response = await fetch(
+      "http://localhost:8080/api/v1/discount/save-order-details",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to save order details for discount.");
+    }
+
+    return await response.json();
   };
 
   return (
@@ -249,7 +290,7 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
 
         <PopupAlert
           isOpen={isAlertOpen}
-          onClose={handleAlertClose}
+          onClose={onAlertClose}
           title={alertTitle}
           description={alertDescription}
           status={
