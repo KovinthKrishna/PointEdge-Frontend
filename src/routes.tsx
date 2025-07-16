@@ -48,11 +48,6 @@ const router = createBrowserRouter([
     element: <Unauthorized />,
     errorElement: <ErrorPage />,
   },
-  {
-    path: "clockout",
-    element: <ClockOutPage />,
-    errorElement: <ErrorPage />,
-  },
 
   // Protected route: for all logged-in users
 

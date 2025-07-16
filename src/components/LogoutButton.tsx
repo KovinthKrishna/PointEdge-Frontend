@@ -6,9 +6,15 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-     // Clear tokens or session info (adjust as per your auth logic)
-    localStorage.clear();
-    navigate("/login", { replace: true });
+    // Get role from localStorage
+    const role = localStorage.getItem("role");
+    if (role === "ADMIN") {
+      localStorage.clear();
+      navigate("/login", { replace: true });
+    } else {
+      // For users, go to clock-out page first
+      navigate("/clock-out", { replace: true });
+    }
   };
 
   return (

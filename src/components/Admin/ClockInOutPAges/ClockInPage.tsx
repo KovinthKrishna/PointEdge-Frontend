@@ -32,8 +32,8 @@ const ClockInPage: React.FC = () => {
   });
 
   const handleClose = () => {
-    navigate && navigate("/admin");
-    console.log("Closed tab, navigated to admin page");
+    navigate && navigate("/login");
+    console.log("Closed tab, navigated to login page");
   };
 
   // Example user info (replace with real data as needed)
@@ -127,8 +127,8 @@ const ClockInPage: React.FC = () => {
               // Record clock in date and time in localStorage
               localStorage.setItem("clockInDate", formattedDate);
               localStorage.setItem("clockInTime", formattedTime);
-              // Navigate to admin page
-              navigate("/admin");
+              // Navigate to dashboard page
+              navigate("/dashboard");
             }}
             mb={2}
           >
