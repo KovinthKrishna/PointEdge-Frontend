@@ -1,41 +1,19 @@
 import React from "react";
 import { VStack, Text, Image } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
-import PopupAlert from "../Common/PopupAlert";
-import { usePaymentFlow } from "../../hooks/usePaymentFlow";
-import ReceiptPopup from "../Receipt/ReceiptPopup";
 
-interface CashPaymentModalProps {
+interface SplitCashProps {
   amount?: number;
   onPaymentSuccess?: () => void;
 }
 
-const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
+const SplitCash: React.FC<SplitCashProps> = ({
   amount = 0,
   onPaymentSuccess,
 }) => {
-  const {
-    isAlertOpen,
-    alertTitle,
-    alertDescription,
-    isReceiptOpen,
-    showSuccess,
-    handleAlertClose,
-    setIsReceiptOpen,
-  } = usePaymentFlow();
-
-  const handleOkClick = () => {
-    showSuccess("Payment Successful", "Cash payment received successfully.");
+  const handleOkayClick = () => {
     if (onPaymentSuccess) onPaymentSuccess();
   };
-
-  const sampleItems = [
-    { name: "Item A", price: 50 },
-    { name: "Item B", price: 30 },
-  ];
-  const total = 80;
-  const discount = 10;
-  const finalTotal = total - discount;
 
   return (
     <VStack
@@ -64,7 +42,7 @@ const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
       />
       <VStack
         justifyContent="center"
-        alignItems="left"
+        alignItems="flex-start"
         height="100%"
         width="100%"
         marginLeft={"100px"}
@@ -78,27 +56,10 @@ const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
         <Text fontSize="2xl" fontWeight="bold" color="#003049" mb={2}>
           Cash Payment Received.
         </Text>
-        <ButtonComponent text="OK" onClick={handleOkClick} />
+        <ButtonComponent text="OK" onClick={handleOkayClick} />
       </VStack>
-
-      <PopupAlert
-        isOpen={isAlertOpen}
-        onClose={handleAlertClose}
-        title={alertTitle}
-        description={alertDescription}
-        status="success"
-      />
-
-      <ReceiptPopup
-        isOpen={isReceiptOpen}
-        onClose={() => setIsReceiptOpen(false)}
-        items={sampleItems}
-        total={total}
-        discount={discount}
-        finalTotal={finalTotal}
-      />
     </VStack>
   );
 };
 
-export default CashPaymentModal;
+export default SplitCash;
