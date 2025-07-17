@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
-import axios from "axios";
+import axiosInstance from "../../axiosConfig";
 
 import ItemSelection from "../../components/ReturnAndRefund/ItemSelection";
 import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoSelction";
@@ -16,7 +16,6 @@ import Product from "../../models/Product";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
 import { submitRefundRequestWithImages } from "../../services/imageService";
 
-// ✅ Local enum definition (not imported from models)
 enum RefundStep {
   ITEM_SELECTION,
   WAITING_FOR_ADMIN_APPROVAL,
@@ -64,7 +63,7 @@ const ReturnRefundPage: React.FC = () => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
         );
         const info = response.data;
@@ -123,35 +122,20 @@ const ReturnRefundPage: React.FC = () => {
     }
   };
 
-  // ✅ Polling admin approval
-  useEffect(() => {
-    if (currentStep !== RefundStep.WAITING_FOR_ADMIN_APPROVAL) return;
+  // Handle approval from admin
+  const handleApproval = () => {
+    console.log("Admin approved, moving to refund method selection");
+    setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);
+  };
 
-    const interval = setInterval(async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8080/api/admin/refund-requests/status/${invoiceNumber}`
-        );
-        const status = res.data.status;
-        if (status === "APPROVED") {
-          setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);
-        } else if (status === "REJECTED") {
-          toastUI({
-            title: "Refund request rejected",
-            description: "Admin rejected the request.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-          setCurrentStep(RefundStep.ITEM_SELECTION);
-        }
-      } catch (err) {
-        console.error("Polling failed", err);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [currentStep, invoiceNumber, toastUI]);
+  // Handle rejection from admin
+  const handleRejection = () => {
+    console.log("Admin rejected, going back to item selection");
+    // Reset selections and go back to item selection
+    setSelectedItems([]);
+    setTotalRefundAmount(0);
+    setCurrentStep(RefundStep.ITEM_SELECTION);
+  };
 
   const handleRefundMethodSelection = async (method: string) => {
     setRefundMethod(method);
@@ -197,7 +181,13 @@ const ReturnRefundPage: React.FC = () => {
           />
         );
       case RefundStep.WAITING_FOR_ADMIN_APPROVAL:
-        return <WaitingForAdminApproval invoiceNumber={invoiceNumber!} />;
+        return (
+          <WaitingForAdminApproval
+            invoiceNumber={invoiceNumber!}
+            onApproved={handleApproval}
+            onRejected={handleRejection}
+          />
+        );
       case RefundStep.REFUND_METHOD_SELECTION:
         return showCardForm ? (
           <CardRefundContainer
@@ -238,7 +228,7 @@ const ReturnRefundPage: React.FC = () => {
             method={refundMethod}
             invoiceNumber={invoiceNumber!}
             onClose={() => {
-              window.location.href = "/";
+              window.location.href = "/dashboard";
             }}
             onPrint={() => window.print()}
             onBack={() => setCurrentStep(RefundStep.REFUND_METHOD_SELECTION)}

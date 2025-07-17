@@ -2,7 +2,6 @@ import React from "react";
 import ItemSelection from "./ItemSelection";
 import RefundMethodSelection from "./RefundMethoSelction";
 import RefundResult from "./RefundResults";
-import ExchangeProductSelector from "./ExchangeProductSelector";
 import { RefundStep } from "../../models/RefundStep";
 import { InvoiceItem, Invoice } from "../../models/Invoice";
 import Product from "../../models/Product";
@@ -45,17 +44,6 @@ const RefundStepRenderer: React.FC<RefundStepRendererProps> = ({
   showCardForm,
   setShowCardForm,
 }) => {
-  // 1. Exchange product selector override
-  if (isExchangeMode) {
-    return (
-      <ExchangeProductSelector
-        onSelectReplacement={onSelectReplacementProduct}
-        onBack={onBack}
-        refundAmount={totalRefundAmount}
-      />
-    );
-  }
-
   // 2. Card refund form override
   if (showCardForm) {
     return (

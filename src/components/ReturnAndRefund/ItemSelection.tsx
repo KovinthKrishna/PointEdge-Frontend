@@ -14,22 +14,23 @@ import {
 } from "@chakra-ui/react";
 import { Invoice, InvoiceItem } from "../../models/Invoice";
 import ItemTable from "./ItemTable";
+import { useNavigate } from "react-router-dom";
 
 interface ItemSelectionProps {
   invoiceData: Invoice;
   selectedItems: InvoiceItem[];
   onSubmit: (items: InvoiceItem[]) => void;
-  onCancel: () => void;
+  onCancel: () => void; // Not used anymore but left for compatibility
 }
 
 const ItemSelection: React.FC<ItemSelectionProps> = ({
   invoiceData,
   selectedItems,
   onSubmit,
-  onCancel,
 }) => {
   const [items, setItems] = React.useState<InvoiceItem[]>(selectedItems);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.600");
@@ -77,6 +78,10 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
       duration: 3000,
       isClosable: true,
     });
+  };
+
+  const handleCancel = () => {
+    navigate("/dashboard");
   };
 
   const selectedItemsCount = items.filter(
@@ -160,7 +165,7 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
             <Button
               variant="outline"
               colorScheme="red"
-              onClick={onCancel}
+              onClick={handleCancel}
               _hover={{
                 bg: "red",
                 color: "white",

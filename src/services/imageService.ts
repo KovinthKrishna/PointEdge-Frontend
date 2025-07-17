@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import { InvoiceItem } from "../models/Invoice";
 
 export const submitRefundRequestWithImages = async (
@@ -31,7 +31,7 @@ export const submitRefundRequestWithImages = async (
     }
   });
 
-  const response = await axios.post(
+  const response = await axiosInstance.post(
     "http://localhost:8080/api/admin/refund-requests/initiate",
     formData,
     {
