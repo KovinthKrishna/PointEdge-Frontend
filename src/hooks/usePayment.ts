@@ -69,6 +69,8 @@ export const usePayment = () => {
     }
   };
 
+  
+
   const applyDiscountCode = async (codeOrPhone: string) => {
     try {
       setLoading(true);
