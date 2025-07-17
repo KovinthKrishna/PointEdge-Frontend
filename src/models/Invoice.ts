@@ -1,4 +1,5 @@
 export interface InvoiceItem {
+  photoPreviewUrl: any;
   returnPhoto: any;
   id: string;
   name: string;

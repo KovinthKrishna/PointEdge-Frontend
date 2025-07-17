@@ -15,8 +15,6 @@ export const submitRefundRequestWithImages = async (
       itemId: item.id,
       quantity: item.returnQuantity,
       reason: item.reason,
-      unitPrice: item.price,
-      photoPath: "", // Backend will set this after saving image
     })),
   };
 
@@ -29,7 +27,7 @@ export const submitRefundRequestWithImages = async (
 
   items.forEach((item, index) => {
     if (item.returnPhoto) {
-      formData.append("images", item.returnPhoto, `photo_${index}.jpg`);
+      formData.append("images", item.returnPhoto, `image_${index}.jpg`);
     }
   });
 

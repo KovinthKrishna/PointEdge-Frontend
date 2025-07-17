@@ -16,6 +16,7 @@ import Product from "../../models/Product";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
 import { submitRefundRequestWithImages } from "../../services/imageService";
 
+// ✅ Local enum definition (not imported from models)
 enum RefundStep {
   ITEM_SELECTION,
   WAITING_FOR_ADMIN_APPROVAL,
@@ -38,22 +39,25 @@ const ReturnRefundPage: React.FC = () => {
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [itemSelections, setItemSelections] = useState<InvoiceItem[]>([]);
   const [showCardForm, setShowCardForm] = useState(false);
+  const [replacementProduct, setReplacementProduct] = useState<Product | null>(
+    null
+  );
 
-  const toast = useToast();
+  const toastUI = useToast();
 
-  const { processRefund, isProcessing } = useRefundProcessor({
+  const { processRefund } = useRefundProcessor({
     invoiceNumber: invoiceNumber!,
     selectedItems,
     totalAmount: totalRefundAmount,
     onSuccess: () => {
       setRefundSuccess(true);
+      toastUI({ title: "Success", status: "success", isClosable: true });
       setCurrentStep(RefundStep.REFUND_RESULT);
-      toast({ title: "Success", status: "success", isClosable: true });
     },
     onFailure: () => {
       setRefundSuccess(false);
+      toastUI({ title: "Failed", status: "error", isClosable: true });
       setCurrentStep(RefundStep.REFUND_RESULT);
-      toast({ title: "Failed", status: "error", isClosable: true });
     },
   });
 
@@ -63,32 +67,33 @@ const ReturnRefundPage: React.FC = () => {
         const response = await axios.get(
           `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
         );
-        const data = response.data;
+        const info = response.data;
 
-        const items = data.items.map((item: any) => ({
+        const items = info.items.map((item: any) => ({
           id: item.itemId,
           name: item.productName ?? "Unnamed Item",
           quantity: item.quantity,
           price: item.price,
           returnQuantity: 0,
           refundAmount: 0,
-          returnPhoto: undefined,
-          reason: "",
           total: item.quantity * item.price,
         }));
 
         setInvoiceData({
-          invoiceNumber: data.invoiceNumber,
-          date: data.date,
-          totalAmount: data.totalAmount,
+          invoiceNumber: info.invoiceNumber,
+          date: info.date,
+          totalAmount: info.totalAmount,
           items,
         });
+
         setItemSelections(items);
-      } catch (err) {
-        console.error("Invoice fetch failed", err);
-        toast({
-          title: "Failed to load invoice",
+      } catch (error) {
+        console.error("Failed to fetch invoice", error);
+        toastUI({
+          title: "Error",
+          description: "Failed to fetch invoice details.",
           status: "error",
+          duration: 3000,
           isClosable: true,
         });
       }
@@ -97,9 +102,10 @@ const ReturnRefundPage: React.FC = () => {
     if (invoiceNumber) {
       fetchInvoice();
     }
-  }, [invoiceNumber, toast]);
+  }, [invoiceNumber, toastUI]);
 
   const handleItemSelection = async (items: InvoiceItem[]) => {
+    setItemSelections(items);
     setSelectedItems(items);
     const total = items.reduce((sum, item) => sum + item.refundAmount, 0);
     setTotalRefundAmount(total);
@@ -108,33 +114,33 @@ const ReturnRefundPage: React.FC = () => {
       await submitRefundRequestWithImages(invoiceNumber!, "Pending", items);
       setCurrentStep(RefundStep.WAITING_FOR_ADMIN_APPROVAL);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: "Refund request failed",
+      toastUI({
+        title: "Failed to submit refund request",
         status: "error",
+        duration: 3000,
         isClosable: true,
       });
     }
   };
 
-  // Poll for approval
+  // ✅ Polling admin approval
   useEffect(() => {
     if (currentStep !== RefundStep.WAITING_FOR_ADMIN_APPROVAL) return;
 
-    const poll = setInterval(async () => {
+    const interval = setInterval(async () => {
       try {
         const res = await axios.get(
           `http://localhost:8080/api/admin/refund-requests/status/${invoiceNumber}`
         );
-        const status = res.data;
-
+        const status = res.data.status;
         if (status === "APPROVED") {
           setCurrentStep(RefundStep.REFUND_METHOD_SELECTION);
         } else if (status === "REJECTED") {
-          toast({
-            title: "Rejected",
-            description: "Admin rejected your request.",
+          toastUI({
+            title: "Refund request rejected",
+            description: "Admin rejected the request.",
             status: "error",
+            duration: 5000,
             isClosable: true,
           });
           setCurrentStep(RefundStep.ITEM_SELECTION);
@@ -144,16 +150,17 @@ const ReturnRefundPage: React.FC = () => {
       }
     }, 5000);
 
-    return () => clearInterval(poll);
-  }, [currentStep, invoiceNumber, toast]);
+    return () => clearInterval(interval);
+  }, [currentStep, invoiceNumber, toastUI]);
 
   const handleRefundMethodSelection = async (method: string) => {
     setRefundMethod(method);
 
     if (method === "Card") {
-      setShowCardForm(true);
+      setCurrentStep(RefundStep.CARD_REFUND_DETAILS);
     } else {
       await processRefund(method);
+      setCurrentStep(RefundStep.REFUND_RESULT);
     }
   };
 
@@ -163,12 +170,27 @@ const ReturnRefundPage: React.FC = () => {
     setCurrentStep(RefundStep.ITEM_SELECTION);
   };
 
+  if (!invoiceData) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
+  const stepLabels = [
+    "Select Items",
+    "Waiting for Approval",
+    "Choose Refund Method",
+    "Refund Result",
+  ];
+
   const renderStep = () => {
     switch (currentStep) {
       case RefundStep.ITEM_SELECTION:
         return (
           <ItemSelection
-            invoiceData={invoiceData!}
+            invoiceData={invoiceData}
             onSubmit={handleItemSelection}
             onCancel={handleCancel}
             selectedItems={itemSelections}
@@ -197,7 +219,14 @@ const ReturnRefundPage: React.FC = () => {
         ) : (
           <RefundMethodSelection
             totalAmount={totalRefundAmount}
-            onSubmit={handleRefundMethodSelection}
+            onSubmit={(method) => {
+              if (method === "Card") {
+                setRefundMethod("Card");
+                setShowCardForm(true);
+              } else {
+                handleRefundMethodSelection(method);
+              }
+            }}
             onCancel={handleCancel}
           />
         );
@@ -208,30 +237,17 @@ const ReturnRefundPage: React.FC = () => {
             amount={refundMethod === "Exchange" ? 0 : totalRefundAmount}
             method={refundMethod}
             invoiceNumber={invoiceNumber!}
-            onClose={() => (window.location.href = "/")}
-            onBack={() => setCurrentStep(RefundStep.REFUND_METHOD_SELECTION)}
+            onClose={() => {
+              window.location.href = "/";
+            }}
             onPrint={() => window.print()}
+            onBack={() => setCurrentStep(RefundStep.REFUND_METHOD_SELECTION)}
           />
         );
       default:
         return null;
     }
   };
-
-  const stepLabels = [
-    "Select Items",
-    "Waiting for Approval",
-    "Choose Refund Method",
-    "Refund Result",
-  ];
-
-  if (!invoiceData) {
-    return (
-      <Center h="100vh">
-        <Spinner size="xl" />
-      </Center>
-    );
-  }
 
   return (
     <Box p={6}>
