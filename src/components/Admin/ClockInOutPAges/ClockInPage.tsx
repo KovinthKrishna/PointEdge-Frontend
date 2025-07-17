@@ -6,10 +6,23 @@ import { CloseIcon } from "@chakra-ui/icons";
 import shiftFrontPage from "../../../assets/ShiftFrontPage.png";
 import logo from "../../../assets/logo.png";
 
-
 const ClockInPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = React.useState(new Date());
+
+  // Get user info from localStorage (or your auth context)
+  const user = React.useMemo(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      return JSON.parse(storedUser);
+    }
+    return {
+      name: "",
+      id: "",
+      role: "",
+      image: "",
+    };
+  }, []);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -25,30 +38,51 @@ const ClockInPage: React.FC = () => {
     day: "numeric",
   });
 
-  const formattedTime = currentTime.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const formattedTime = currentTime.toLocaleTimeString("en-GB", { hour12: false }); // "HH:mm:ss"
 
   const handleClose = () => {
     navigate && navigate("/login");
     console.log("Closed tab, navigated to login page");
   };
 
-  // Example user info (replace with real data as needed)
-  const user = {
-    name: "Eleanor Pena",
-    id: "2377373",
-    role: "Cashier",
-    image: "https://bit.ly/dan-abramov",
+  // Send clock-in data to backend
+  const handleClockIn = async () => {
+    try {
+      const token = localStorage.getItem("token"); // Get JWT token from storage
+      if (!token) {
+        alert("You are not logged in.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:8080/api/attendances/clock-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          employeeId: Number(user.id),
+          clockIn: formattedTime,
+          date: new Date().toISOString().split("T")[0],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        alert("Failed to clock in: " + errorMessage);
+        return;
+      }
+
+      alert("Clock-in successful at " + formattedTime);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Failed to send clock-in data", err);
+      alert("Error occurred while clocking in.");
+    }
   };
 
   return (
     <Box minH="100vh" width="100vw" position="relative" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
-      {/* Background image and overlay */}
-      <Image src={bgImage} alt="Background" objectFit="cover" position="absolute" top={0} left={0} w="100vw" h="100vh" zIndex={0} opacity={0.5} />
-      <Box position="absolute" top={0} left={0} w="100vw" h="100vh" bg="#003049" opacity={0.5} zIndex={0} />
       {/* Background image and overlay */}
       <Image src={bgImage} alt="Background" objectFit="cover" position="absolute" top={0} left={0} w="100vw" h="100vh" zIndex={0} opacity={0.5} />
       <Box position="absolute" top={0} left={0} w="100vw" h="100vh" bg="#003049" opacity={0.5} zIndex={0} />
@@ -91,24 +125,26 @@ const ClockInPage: React.FC = () => {
         <Flex flex="1" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" position="relative" justifyContent="space-between">
           {/* Date and Time at the top */}
           <Box textAlign="center" w="full" mb={2} mt={2}>
-            <Text fontSize={{ base: "sm", md: "lg" }} color="gray.500" fontWeight="medium">{formattedDate}</Text>
-            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold" color="gray.500" letterSpacing="wide" mt={1}>{formattedTime}</Text>
+            <Text fontSize={{ base: "sm", md: "lg" }} color="gray.500" fontWeight="medium">
+              {formattedDate}
+            </Text>
+            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold" color="gray.500" letterSpacing="wide" mt={1}>
+              {formattedTime}
+            </Text>
           </Box>
           {/* Employee Info centered vertically between top and bottom */}
           <Flex flexDirection="column" alignItems="center" justifyContent="center" flex={0}>
-            <Heading size="lg" textAlign="center" color="gray.800" mb={6}>{user.name}</Heading>
-            <Avatar
-              size="xl"
-              name={user.name}
-              src={user.image}
-              border="3px"
-              borderColor="gray.200"
-              boxShadow="md"
-              mb={2}
-            />
+            <Heading size="lg" textAlign="center" color="gray.800" mb={6}>
+              {user.name}
+            </Heading>
+            <Avatar size="xl" name={user.name} src={user.image} border="3px" borderColor="gray.200" boxShadow="md" mb={2} />
             <VStack textAlign="center" spacing={1}>
-              <Text fontSize="lg" color="gray.600">ID - {user.id}</Text>
-              <Text fontSize="lg" color="gray.600">Role - {user.role}</Text>
+              <Text fontSize="lg" color="gray.600">
+                ID - {user.id}
+              </Text>
+              <Text fontSize="lg" color="gray.600">
+                Role - {user.role}
+              </Text>
             </VStack>
           </Flex>
           {/* Clock In button at the bottom */}
@@ -123,13 +159,7 @@ const ClockInPage: React.FC = () => {
             borderRadius="full"
             fontSize={{ base: "sm", md: "md" }}
             boxShadow="md"
-            onClick={() => {
-              // Record clock in date and time in localStorage
-              localStorage.setItem("clockInDate", formattedDate);
-              localStorage.setItem("clockInTime", formattedTime);
-              // Navigate to dashboard page
-              navigate("/dashboard");
-            }}
+            onClick={handleClockIn}
             mb={2}
           >
             Clock In
