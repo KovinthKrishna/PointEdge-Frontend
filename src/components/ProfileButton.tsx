@@ -9,14 +9,28 @@ import {
   PopoverTrigger,
   Portal,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 import profilePicture from "../assets/profile-picture.jpg";
 import theme from "../theme";
 import ProfileMenu from "./ProfileMenu";
+import { fetchCurrentUser } from "../services/userService";
 
 const ProfileButton = () => {
   const [menu, setMenu] = useState(false);
+  const [user, setUser] = useState<{ avatar?: string } | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const data = await fetchCurrentUser();
+        setUser(data);
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+    getUser();
+  }, []);
 
   return (
     <HStack
@@ -27,7 +41,12 @@ const ProfileButton = () => {
       spacing={0}
     >
       <Box height={12} width={12} borderRadius="full" overflow="hidden">
-        <Image src={profilePicture} />
+        <Image
+          src={user?.avatar || profilePicture}
+          height="100%"
+          width="100%"
+          objectFit="cover"
+        />
       </Box>
       <Popover
         onOpen={() => setMenu(true)}
