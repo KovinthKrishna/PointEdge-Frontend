@@ -13,6 +13,7 @@ import {
   Select,
   Stack,
   Flex,
+  Box,
 } from "@chakra-ui/react";
 import { InputGroup, InputRightElement, IconButton } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -32,9 +33,9 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     email: "",
     tempPassword: "",
     confirmPassword: "",
-    role: "", // added
-    status: "", // added
-    avatar: "", // optional
+    role: "",
+    status: "",
+    avatar: "",
   });
 
   // Popup state
@@ -132,174 +133,450 @@ const RegistrationForm: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         description={popupDescription}
       />
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size="6xl">
+        <ModalOverlay bg="rgba(0, 0, 0, 0.6)" backdropFilter="blur(4px)" />
         <ModalContent
-          maxW="80%"
-          h={"80%"}
-          borderRadius="8px"
-          borderWidth={"4px"}
-          borderColor={"#003049"}
+          maxW="90%"
+          maxH="90vh"
+          borderRadius="16px"
+          borderWidth="2px"
+          borderColor="#003049"
+          bg="#FFFFFF"
+          boxShadow="0 25px 50px -12px rgba(0, 48, 73, 0.25)"
+          overflow="hidden"
         >
-          <LeftArrowButton onClick={handleGoBack} />
-          <ModalHeader mt={10} mb={7} textAlign="center">
-            Register a new Employee
-          </ModalHeader>
-          <ModalBody>
-            <Stack direction="row" spacing={8} align="flex-start" h="100%">
-              <Flex direction="column" flex="1">
-                <FormControl isRequired>
-                  <FormLabel>First Name</FormLabel>
-                  <Input
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    placeholder="First Name"
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Email"
-                    type="email"
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>DOB</FormLabel>
-                  <Input
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleInputChange}
-                    type="date"
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Temporary Password</FormLabel>
-                  <InputGroup>
-                    <Input
-                      name="tempPassword"
-                      value={formData.tempPassword}
-                      onChange={handleInputChange}
-                      placeholder="Temporary Password"
-                      type={showPassword ? "text" : "password"}
-                    />
-                    <InputRightElement>
-                      <IconButton
-                        variant="ghost"
-                        aria-label={
-                          showPassword ? "Hide password" : "Show password"
-                        }
-                        icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                        onClick={() => setShowPassword(!showPassword)}
-                        size="sm"
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Role</FormLabel>
-                  <Select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    placeholder="Select Role"
-                  >
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="USER">USER</option>
-                    <option value="MANAGER">MANAGER</option>
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Avatar URL</FormLabel>
-                  <Input
-                    name="avatar"
-                    value={formData.avatar}
-                    onChange={handleInputChange}
-                    placeholder="Avatar URL"
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleInputChange}
-                    placeholder="Select Status"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Suspended">Suspended</option>
-                  </Select>
-                </FormControl>
-              </Flex>
+          <Box position="relative">
+            <LeftArrowButton onClick={handleGoBack} />
+            <ModalHeader
+              mt={6}
+              mb={4}
+              textAlign="center"
+              fontSize="2xl"
+              fontWeight="700"
+              color="#003049"
+              bg="linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)"
+              py={6}
+              borderBottom="1px solid #E2E8F0"
+            >
+              Register a New Employee
+            </ModalHeader>
+          </Box>
 
-              <Flex direction="column" flex="1">
-                <FormControl isRequired>
-                  <FormLabel>Last Name</FormLabel>
-                  <Input
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    placeholder="Last Name"
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Phone Number</FormLabel>
-                  <Input
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleInputChange}
-                    placeholder="Phone Number"
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <InputGroup>
+          <ModalBody
+            p={0}
+            overflow="hidden"
+            display="flex"
+            flexDirection="column"
+            height="calc(90vh - 200px)"
+          >
+            <Box
+              flex="1"
+              overflowY="auto"
+              px={8}
+              py={6}
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "#F1F5F9",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#CBD5E1",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb:hover": {
+                  background: "#94A3B8",
+                },
+              }}
+            >
+              <Stack direction="row" spacing={10} align="flex-start" h="100%">
+                <Flex direction="column" flex="1" gap={6}>
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      First Name
+                    </FormLabel>
                     <Input
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
+                      name="firstName"
+                      value={formData.firstName}
                       onChange={handleInputChange}
-                      placeholder="Confirm Password"
-                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Enter first name"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
                     />
-                    <InputRightElement>
-                      <IconButton
-                        variant="ghost"
-                        aria-label={
-                          showConfirmPassword
-                            ? "Hide password"
-                            : "Show password"
-                        }
-                        icon={
-                          showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />
-                        }
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        size="sm"
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Email Address
+                    </FormLabel>
+                    <Input
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="Enter email address"
+                      type="email"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Date of Birth
+                    </FormLabel>
+                    <Input
+                      name="dob"
+                      value={formData.dob}
+                      onChange={handleInputChange}
+                      type="date"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Temporary Password
+                    </FormLabel>
+                    <InputGroup>
+                      <Input
+                        name="tempPassword"
+                        value={formData.tempPassword}
+                        onChange={handleInputChange}
+                        placeholder="Enter temporary password"
+                        type={showPassword ? "text" : "password"}
+                        borderColor="#D1D5DB"
+                        borderRadius="8px"
+                        bg="#FFFFFF"
+                        _hover={{ borderColor: "#003049" }}
+                        _focus={{
+                          borderColor: "#003049",
+                          boxShadow: "0 0 0 1px #003049",
+                          bg: "#FFFFFF",
+                        }}
+                        transition="all 0.2s ease-in-out"
+                        height="44px"
+                        pr="48px"
                       />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-              </Flex>
-            </Stack>
+                      <InputRightElement height="44px">
+                        <IconButton
+                          variant="ghost"
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                          icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                          onClick={() => setShowPassword(!showPassword)}
+                          size="sm"
+                          color="#6B7280"
+                          _hover={{ color: "#003049", bg: "#F3F4F6" }}
+                          transition="all 0.2s ease-in-out"
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Role
+                    </FormLabel>
+                    <Select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleInputChange}
+                      placeholder="Select employee role"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    >
+                      <option value="ADMIN">Administrator</option>
+                      <option value="USER">User</option>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Avatar URL (Optional)
+                    </FormLabel>
+                    <Input
+                      name="avatar"
+                      value={formData.avatar}
+                      onChange={handleInputChange}
+                      placeholder="Enter avatar image URL"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    />
+                  </FormControl>
+                </Flex>
+
+                <Flex direction="column" flex="1" gap={6}>
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Last Name
+                    </FormLabel>
+                    <Input
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      placeholder="Enter last name"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Phone Number
+                    </FormLabel>
+                    <Input
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      placeholder="Enter phone number"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Confirm Password
+                    </FormLabel>
+                    <InputGroup>
+                      <Input
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        placeholder="Confirm password"
+                        type={showConfirmPassword ? "text" : "password"}
+                        borderColor="#D1D5DB"
+                        borderRadius="8px"
+                        bg="#FFFFFF"
+                        _hover={{ borderColor: "#003049" }}
+                        _focus={{
+                          borderColor: "#003049",
+                          boxShadow: "0 0 0 1px #003049",
+                          bg: "#FFFFFF",
+                        }}
+                        transition="all 0.2s ease-in-out"
+                        height="44px"
+                        pr="48px"
+                      />
+                      <InputRightElement height="44px">
+                        <IconButton
+                          variant="ghost"
+                          aria-label={
+                            showConfirmPassword
+                              ? "Hide password"
+                              : "Show password"
+                          }
+                          icon={
+                            showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />
+                          }
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          size="sm"
+                          color="#6B7280"
+                          _hover={{ color: "#003049", bg: "#F3F4F6" }}
+                          transition="all 0.2s ease-in-out"
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel
+                      color="#374151"
+                      fontWeight="600"
+                      fontSize="sm"
+                      mb={2}
+                    >
+                      Status
+                    </FormLabel>
+                    <Select
+                      name="status"
+                      value={formData.status}
+                      onChange={handleInputChange}
+                      placeholder="Select employee status"
+                      borderColor="#D1D5DB"
+                      borderRadius="8px"
+                      bg="#FFFFFF"
+                      _hover={{ borderColor: "#003049" }}
+                      _focus={{
+                        borderColor: "#003049",
+                        boxShadow: "0 0 0 1px #003049",
+                        bg: "#FFFFFF",
+                      }}
+                      transition="all 0.2s ease-in-out"
+                      height="44px"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Suspended">Suspended</option>
+                    </Select>
+                  </FormControl>
+                </Flex>
+              </Stack>
+            </Box>
           </ModalBody>
 
-          <ModalFooter justifyContent="center">
-            <Button onClick={onClose} variant="ghost" isDisabled={isLoading}>
+          <ModalFooter
+            justifyContent="center"
+            gap={4}
+            bg="linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)"
+            borderTop="1px solid #E2E8F0"
+            py={6}
+          >
+            <Button
+              onClick={onClose}
+              variant="outline"
+              isDisabled={isLoading}
+              borderColor="#D1D5DB"
+              color="#6B7280"
+              _hover={{
+                borderColor: "#9CA3AF",
+                color: "#374151",
+                bg: "#F9FAFB",
+              }}
+              _active={{ bg: "#F3F4F6" }}
+              transition="all 0.2s ease-in-out"
+              height="44px"
+              px={8}
+              fontWeight="600"
+            >
               Cancel
             </Button>
             <Button
-              color={"white"}
-              bg={"#003049"}
+              color="#FFFFFF"
+              bg="#003049"
               onClick={handleSubmit}
               isLoading={isLoading}
-              loadingText="Registering"
+              loadingText="Registering..."
+              _hover={{
+                bg: "#002A3F",
+                transform: "translateY(-1px)",
+                boxShadow: "0 10px 25px -5px rgba(0, 48, 73, 0.3)",
+              }}
+              _active={{
+                bg: "#001F2E",
+                transform: "translateY(0px)",
+              }}
+              transition="all 0.2s ease-in-out"
+              height="44px"
+              px={8}
+              fontWeight="600"
+              boxShadow="0 4px 14px 0 rgba(0, 48, 73, 0.2)"
             >
-              Register
+              Register Employee
             </Button>
           </ModalFooter>
         </ModalContent>
