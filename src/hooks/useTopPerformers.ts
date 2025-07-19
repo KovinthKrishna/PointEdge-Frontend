@@ -54,8 +54,11 @@ export const useTopPerformers = () => {
         lastWeek.setDate(today.getDate() - 7);
         
         url += `&startDate=${lastWeek.toISOString().split('T')[0]}&endDate=${today.toISOString().split('T')[0]}`;
+      } else if (timeRange === "all") {
+        // For "all" time, explicitly request all performance data without date restrictions
+        url += `&includeAllData=true`;
       }
-      
+
       return url;
     };
 
@@ -65,11 +68,54 @@ export const useTopPerformers = () => {
   // Handle search
   const handleSearch = useCallback(async (): Promise<void> => {
     if (!searchQuery.trim()) {
+      // If search is empty, fetch data with current filters
+      const buildUrl = (): string => {
+        let url = `http://localhost:8080/api/performance/top-performers?sortBy=${sortField}&sortDirection=${sortDirection}`;
+        
+        if (timeRange === "lastMonth") {
+          const today = new Date();
+          const lastMonth = new Date();
+          lastMonth.setMonth(today.getMonth() - 1);
+          
+          url += `&startDate=${lastMonth.toISOString().split('T')[0]}&endDate=${today.toISOString().split('T')[0]}`;
+        } else if (timeRange === "lastWeek") {
+          const today = new Date();
+          const lastWeek = new Date();
+          lastWeek.setDate(today.getDate() - 7);
+          
+          url += `&startDate=${lastWeek.toISOString().split('T')[0]}&endDate=${today.toISOString().split('T')[0]}`;
+        } else if (timeRange === "all") {
+          url += `&includeAllData=true`;
+        }
+        
+        return url;
+      };
+      
+      await fetchData(buildUrl());
       return;
     }
     
-    await fetchData(`http://localhost:8080/api/performance/search?query=${encodeURIComponent(searchQuery)}`);
-  }, [searchQuery, fetchData]);
+    // Build search URL with time range filters
+    let searchUrl = `http://localhost:8080/api/performance/search?query=${encodeURIComponent(searchQuery)}`;
+    
+    if (timeRange === "lastMonth") {
+      const today = new Date();
+      const lastMonth = new Date();
+      lastMonth.setMonth(today.getMonth() - 1);
+      
+      searchUrl += `&startDate=${lastMonth.toISOString().split('T')[0]}&endDate=${today.toISOString().split('T')[0]}`;
+    } else if (timeRange === "lastWeek") {
+      const today = new Date();
+      const lastWeek = new Date();
+      lastWeek.setDate(today.getDate() - 7);
+      
+      searchUrl += `&startDate=${lastWeek.toISOString().split('T')[0]}&endDate=${today.toISOString().split('T')[0]}`;
+    } else if (timeRange === "all") {
+      searchUrl += `&includeAllData=true`;
+    }
+    
+    await fetchData(searchUrl);
+  }, [searchQuery, sortField, sortDirection, timeRange, fetchData]);
   
   // Handle sorting
   const handleSort = useCallback((field: SortField): void => {
