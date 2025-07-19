@@ -4,6 +4,7 @@ import { HiOutlineHome } from "react-icons/hi2";
 import { IoIosPeople } from "react-icons/io";
 import { IoGiftSharp } from "react-icons/io5";
 import { TbReportAnalytics } from "react-icons/tb";
+import { RiRefund2Line } from "react-icons/ri";
 
 interface NavItem {
   label: string;
@@ -41,6 +42,12 @@ const navItems: NavItem[] = [
     label: "Employees",
     url: "employees",
     icon: IoIosPeople,
+    isSearchable: false,
+  },
+  {
+    label: "Refund Request",
+    url: "refundRequest",
+    icon: RiRefund2Line,
     isSearchable: false,
   },
 ];
