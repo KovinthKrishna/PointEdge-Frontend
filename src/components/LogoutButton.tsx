@@ -6,14 +6,31 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Get role from localStorage
-    const role = localStorage.getItem("role");
-    if (role === "ADMIN") {
-      localStorage.clear();
-      navigate("/login", { replace: true });
+    // Prefer role from user object in localStorage
+    let role = null;
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const userObj = JSON.parse(storedUser);
+        role = userObj.role;
+      } catch (e) {
+        role = localStorage.getItem("role");
+      }
     } else {
-      // For users, go to clock-out page first
+      role = localStorage.getItem("role");
+    }
+
+    if (role && role.trim().toUpperCase() === "ADMIN") {
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      navigate("/login", { replace: true });
+    } else if (role && role.trim().toUpperCase() === "USER") {
       navigate("/clock-out", { replace: true });
+    } else {
+      // fallback case: role is missing or corrupted
+      alert("User role not found. Please log in again.");
+      navigate("/login", { replace: true });
     }
   };
 

@@ -6,8 +6,8 @@ export const useAttendanceData = () => {
   const [employeeAttendances, setEmployeeAttendances] = useState<EmployeeAttendance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10));
-  const [startTime, setStartTime] = useState<string>('07:30:00');
-  const [endTime, setEndTime] = useState<string>('16:00:00');
+  const [startTime, setStartTime] = useState<string>('08:00:00');
+  const [endTime, setEndTime] = useState<string>('17:00:00');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
