@@ -31,9 +31,13 @@ const ProfileMenu = () => {
       </Text>
       {localStorage.getItem("role") === "ADMIN" && (
         <Link to={path === "admin" ? "/dashboard" : "/admin"}>
-          <ProfileMenuLink
-            label={path === "admin" ? "Sales Portal" : "Manager Portal"}
-          />
+          <Text
+            as="button"
+            fontSize={20}
+            _hover={{ textDecoration: "underline" }}
+          >
+            {path === "admin" ? "Sales Portal" : "Manager Portal"}
+          </Text>
         </Link>
       )}
       <ProfileMenuLink label="Account Settings" />
