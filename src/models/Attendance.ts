@@ -9,6 +9,7 @@ export interface AttendanceDTO {
   status: string;
   avatar: string;
   date: string;
+  breakTime: string;
 }
 
 export interface EmployeeAttendance {

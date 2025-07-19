@@ -32,8 +32,8 @@ export const useShiftDetailData = (employee: Employee) => {
             shiftType = "Night Shift";
           }
           
-          // Estimate break time (not stored in backend, so using a default)
-          const breakTime = "00:30:00";
+          // Use breakTime from backend
+          const breakTime = attendance.breakTime || "00:00:00";
           
           return {
             shiftType,

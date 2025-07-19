@@ -9,6 +9,9 @@ import {
   Box,
   Image,
 } from "@chakra-ui/react";
+import useOrderSummaryStore from "../../store/useOrderSummaryStore";
+import { useEffect } from "react";
+import { useCustomerStore } from "../../store/useCustomerStore";
 
 interface OrderSummaryProps {
   orderDetails: {
@@ -50,6 +53,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       maximumFractionDigits: 2,
     });
   };
+
+  const setStoreDiscountCode = useCustomerStore(
+    (state) => state.setDiscountCode
+  );
+  const { setAmount, setTotalDiscount, setTotal } = useOrderSummaryStore();
+
+  useEffect(() => {
+    setAmount(orderDetails.amount);
+    setTotalDiscount(orderDetails.totalDiscount);
+    setTotal(orderDetails.total);
+  }, [orderDetails, setAmount, setTotalDiscount, setTotal]);
 
   return (
     <VStack align="start" spacing={5} width="100%" height="100%">
@@ -93,6 +107,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           color="white"
           _hover={{ bg: "#003b62" }}
           onClick={() => {
+            setStoreDiscountCode(discountCode);
             onApplyDiscount(discountCode);
             onDisplayCustomerDetails(discountCode);
           }}
