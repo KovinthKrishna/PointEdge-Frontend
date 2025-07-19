@@ -3,7 +3,7 @@ export interface EmployeePerformance {
   name: string;
   avatar: string;
   role: string;
-  orders: number;
-  sales: number;
+  totalOrders: number;
+  totalSales: number;
   workingHours: string;
 }
