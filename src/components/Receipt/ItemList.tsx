@@ -1,9 +1,39 @@
 import { Box, HStack, Icon, Text, VStack, Flex } from "@chakra-ui/react";
 import { FiShoppingBag } from "react-icons/fi";
 import useCartStore from "../../store/useCartStore";
+import axios from "axios";
+import { useCustomerStore } from "../../store/useCustomerStore";
+import { useEffect } from "react";
 
 const ItemList = () => {
   const orderItems = useCartStore((state) => state.orderItems);
+  const customerDiscountCode = useCustomerStore((state) => state.discountCode);
+
+  useEffect(() => {
+    const sendOrderDetails = async () => {
+      try {
+        if (orderItems.length === 0) return;
+
+        // Prepare items map
+        const itemsMap = orderItems.reduce((acc, item) => {
+          acc[item.product.id] = item.quantity;
+          return acc;
+        }, {} as Record<number, number>);
+
+        await axios.post(
+          "http://localhost:8080/api/v1/discount/save-order-details",
+          {
+            phone: customerDiscountCode,
+            items: itemsMap,
+          }
+        );
+      } catch (error) {
+        console.error("Failed to save order details", error);
+      }
+    };
+
+    sendOrderDetails();
+  }, [orderItems, customerDiscountCode]);
 
   return (
     <Box

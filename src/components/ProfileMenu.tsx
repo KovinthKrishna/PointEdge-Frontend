@@ -15,7 +15,7 @@ const ProfileMenu = () => {
       try {
         const user = await fetchCurrentUser();
         console.log("User fetched:", user);
-        setFullName(`${user.firstName} ${user.lastName}`);
+        setFullName(`${user.name}`);
       } catch (error) {
         console.error("Failed to load user:", error);
       }

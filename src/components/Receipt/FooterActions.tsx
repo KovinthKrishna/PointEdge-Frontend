@@ -2,8 +2,19 @@ import { Box, Button, Icon, VStack } from "@chakra-ui/react";
 import { FiPrinter, FiMail } from "react-icons/fi";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useCustomerStore } from "../../store/useCustomerStore";
 
-const FooterActions = ({ onClose }: { onClose: () => void }) => {
+const FooterActions = ({
+  onClose,
+  onNextStep,
+}: {
+  onClose: () => void;
+  onNextStep: () => void;
+}) => {
+  const clearCustomerInfo = useCustomerStore(
+    (state) => state.clearCustomerInfo
+  );
+
   const handlePrint = () => {
     const input = document.getElementById("printableArea");
     if (!input) return;
@@ -30,7 +41,7 @@ const FooterActions = ({ onClose }: { onClose: () => void }) => {
         <Button
           leftIcon={<Icon as={FiPrinter} boxSize={5} />}
           color="blue"
-          width="100%"
+          width="20%"
           size="lg"
           onClick={handlePrint}
           _hover={{
@@ -50,7 +61,7 @@ const FooterActions = ({ onClose }: { onClose: () => void }) => {
         <Button
           leftIcon={<Icon as={FiMail} boxSize={5} />}
           color="green"
-          width="100%"
+          width="20%"
           size="lg"
           onClick={onClose}
           _hover={{
@@ -65,6 +76,23 @@ const FooterActions = ({ onClose }: { onClose: () => void }) => {
           borderRadius="xl"
         >
           Send E-Receipt
+        </Button>
+
+        <Button
+          color="white"
+          bg={"#2563EB"}
+          width="20%"
+          size="lg"
+          onClick={() => {
+            onNextStep();
+            clearCustomerInfo(); // ✅ Clear customer info when moving next
+          }}
+          transition="all 0.3s"
+          fontWeight="bold"
+          letterSpacing="wide"
+          borderRadius="xl"
+        >
+          Next Step
         </Button>
       </VStack>
     </Box>
