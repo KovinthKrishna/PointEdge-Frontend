@@ -29,14 +29,6 @@ const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
     if (onPaymentSuccess) onPaymentSuccess();
   };
 
-  const sampleItems = [
-    { name: "Item A", price: 50 },
-    { name: "Item B", price: 30 },
-  ];
-  const total = 80;
-  const discount = 10;
-  const finalTotal = total - discount;
-
   return (
     <VStack
       justifyContent="center"
@@ -92,10 +84,6 @@ const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
       <ReceiptPopup
         isOpen={isReceiptOpen}
         onClose={() => setIsReceiptOpen(false)}
-        items={sampleItems}
-        total={total}
-        discount={discount}
-        finalTotal={finalTotal}
       />
     </VStack>
   );

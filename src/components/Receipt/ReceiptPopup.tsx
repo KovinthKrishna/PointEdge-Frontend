@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 import ModelBoxPopup from "../Common/ModelBoxPopup";
+import { useState } from "react";
 
 import ReceiptHeader from "./ReceiptHeader";
 import StoreInfo from "./StoreInfo";
@@ -10,40 +11,24 @@ import ItemList from "./ItemList";
 import TotalSummary from "./TotalSummary";
 import ThankYouNote from "./ThankYouNote";
 import FooterActions from "./FooterActions";
-
+import OrderCompletion from "../Payment/OrderCompletion";
 interface ReceiptPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  items: { name: string; price: number; quantity?: number }[];
-  total: number;
-  discount: number;
-  finalTotal: number;
 }
 
-const ReceiptPopup: React.FC<ReceiptPopupProps> = ({
-  isOpen,
-  onClose,
-  items,
-  total,
-  discount,
-  finalTotal,
-}) => {
+const ReceiptPopup: React.FC<ReceiptPopupProps> = ({ isOpen, onClose }) => {
   const sampleData = {
-    customerName: "Customer 1",
-    employeeName: "Employee 1",
-    loyaltyPoints: 1250,
     receiptNumber: `#${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
     storeName: "Point Edge Store",
     storeAddress: "Palk Street, Colombo 07, Sri Lanka",
     storePhone: "(+94) 123-456789",
-    currentTime: new Date().toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }),
+  };
+
+  const [isOrderCompletionOpen, setOrderCompletionOpen] = useState(false);
+
+  const handleNextStep = () => {
+    setOrderCompletionOpen(true);
   };
 
   return (
@@ -51,31 +36,26 @@ const ReceiptPopup: React.FC<ReceiptPopupProps> = ({
       <Box height="100%" display="flex" flexDirection="column">
         <ReceiptHeader receiptNumber={sampleData.receiptNumber} />
         <Box flex="1" overflowY="auto" px={0} py={0}>
-          <Box p={6} bg="#F9FAFB">
+          <Box id="printableArea" p={6} bg="#F9FAFB">
             <StoreInfo
               storeName={sampleData.storeName}
               storeAddress={sampleData.storeAddress}
               storePhone={sampleData.storePhone}
             />
-            <TransactionInfo
-              currentTime={sampleData.currentTime}
-              employeeName={sampleData.employeeName}
-            />
-            <CustomerInfo
-              customerName={sampleData.customerName}
-              loyaltyPoints={sampleData.loyaltyPoints}
-            />
-            <ItemList items={items} />
-            <TotalSummary
-              total={total}
-              discount={discount}
-              finalTotal={finalTotal}
-            />
+            <TransactionInfo currentTime={new Date().toLocaleString()} />
+            <CustomerInfo />
+            <ItemList />
+            <TotalSummary />
             <ThankYouNote />
           </Box>
-          <FooterActions onClose={onClose} />
+          <FooterActions onClose={onClose} onNextStep={handleNextStep} />
         </Box>
       </Box>
+      <OrderCompletion
+        isOpen={isOrderCompletionOpen}
+        onClose={() => setOrderCompletionOpen(false)}
+        orderData={{ orderNumber: "123", completedOrders: 5 }}
+      />
     </ModelBoxPopup>
   );
 };

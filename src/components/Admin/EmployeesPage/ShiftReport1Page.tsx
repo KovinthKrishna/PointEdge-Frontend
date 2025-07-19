@@ -57,7 +57,7 @@ const ShiftReport1Page: React.FC = () => {
           <ShiftReportStatCard
             icon={<img src={clockIcon} alt="Time Icon" className="stat-icon" />}
             title="Total Working Hours"
-            value={totalHours}
+            value={"8 h"}
           />
           <ShiftReportStatCard
             icon={

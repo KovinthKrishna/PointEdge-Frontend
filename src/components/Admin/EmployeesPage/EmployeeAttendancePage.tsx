@@ -70,6 +70,23 @@ const EmployeeAttendancePage: React.FC = () => {
     getInitials
   } = useAttendanceData();
 
+  // Fetch company start/end time from backend on mount
+  React.useEffect(() => {
+    const fetchCompanyHours = async () => {
+      try {
+        const response = await fetch("/api/company/hours");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.startTime) setStartTime(data.startTime);
+          if (data.endTime) setEndTime(data.endTime);
+        }
+      } catch (err) {
+        console.error("Failed to fetch company hours", err);
+      }
+    };
+    fetchCompanyHours();
+  }, [setStartTime, setEndTime]);
+
   return (
     <div className="attendance-container">
       <div className="attendance-content">
