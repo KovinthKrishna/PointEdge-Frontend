@@ -24,6 +24,12 @@ const PerformanceSearch: React.FC<PerformanceSearchProps> = ({
     }
   };
 
+  const clearSearch = (): void => {
+    setSearchQuery("");
+    // Trigger search with empty query to reload all data
+    setTimeout(() => handleSearch(), 0);
+  };
+
   return (
     <>
       {/* Filters and Search */}
@@ -78,6 +84,15 @@ const PerformanceSearch: React.FC<PerformanceSearchProps> = ({
             {loading && <div className="spinner spinner-small"></div>}
             Search
           </button>
+          {searchQuery && (
+            <button
+              className="button button-secondary"
+              onClick={clearSearch}
+              disabled={loading}
+            >
+              Clear
+            </button>
+          )}
         </div>
       </div>
     </>

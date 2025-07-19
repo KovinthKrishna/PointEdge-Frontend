@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import usePathSegment from "../hooks/usePathSegment";
 import { fetchCurrentUser } from "../services/userService";
+import AccountSettingsButton from "./AccountSettingsButton";
 import LogoutButton from "./LogoutButton";
-import ProfileMenuLink from "./ProfileMenuLink";
 
 const ProfileMenu = () => {
   const [fullName, setFullName] = useState("");
@@ -31,12 +31,16 @@ const ProfileMenu = () => {
       </Text>
       {localStorage.getItem("role") === "ADMIN" && (
         <Link to={path === "admin" ? "/dashboard" : "/admin"}>
-          <ProfileMenuLink
-            label={path === "admin" ? "Sales Portal" : "Manager Portal"}
-          />
+          <Text
+            as="button"
+            fontSize={20}
+            _hover={{ textDecoration: "underline" }}
+          >
+            {path === "admin" ? "Sales Portal" : "Manager Portal"}
+          </Text>
         </Link>
       )}
-      <ProfileMenuLink label="Account Settings" />
+      <AccountSettingsButton />
       <LogoutButton />
     </VStack>
   );
