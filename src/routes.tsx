@@ -8,7 +8,6 @@ import InventoryPage from "./pages/Admin/InventoryPage";
 import ErrorPage from "./pages/ErrorPage";
 import Login from "./pages/Login";
 import ForgotPW from "./pages/ForgotPW";
-import TestingPage from "./pages/TestingPage";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
 import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
@@ -16,8 +15,6 @@ import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
 import ProtectedRoute from "./components/Login/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 import ResetPW from "./pages/ResetPW";
-
-
 
 const router = createBrowserRouter([
   {
@@ -57,11 +54,6 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <SalesDashboard />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "test",
-        element: <TestingPage />,
         errorElement: <ErrorPage />,
       },
       {
