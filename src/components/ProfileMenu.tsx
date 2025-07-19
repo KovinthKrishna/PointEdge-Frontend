@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import usePathSegment from "../hooks/usePathSegment";
 import { fetchCurrentUser } from "../services/userService";
+import AccountSettingsButton from "./AccountSettingsButton";
 import LogoutButton from "./LogoutButton";
-import ProfileMenuLink from "./ProfileMenuLink";
 
 const ProfileMenu = () => {
   const [fullName, setFullName] = useState("");
@@ -40,7 +40,7 @@ const ProfileMenu = () => {
           </Text>
         </Link>
       )}
-      <ProfileMenuLink label="Account Settings" />
+      <AccountSettingsButton />
       <LogoutButton />
     </VStack>
   );

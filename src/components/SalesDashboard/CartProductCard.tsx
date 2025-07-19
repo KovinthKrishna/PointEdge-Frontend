@@ -91,7 +91,7 @@ const CartProductCard = ({ orderItem }: { orderItem: OrderItem }) => {
               aria-label="Remove from cart"
               boxSize={10}
               borderRadius="full"
-              icon={<ImBin size={24} color={theme.colors.gray} />}
+              icon={<ImBin size={24} color={theme.colors.red} />}
               onClick={() => removeProduct(orderItem.product)}
             />
           </HStack>

@@ -11,5 +11,5 @@ export async function fetchCurrentUser() {
     throw new Error("Failed to fetch user");
   }
 
-  return await response.json(); // { firstName, lastName, ... }
+  return await response.json();
 }

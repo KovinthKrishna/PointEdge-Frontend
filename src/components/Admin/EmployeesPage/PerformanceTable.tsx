@@ -42,7 +42,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
                 <th style={{ width: "15%" }}>Role</th>
                 <PerformanceSorting
                   title="Orders"
-                  field="orders"
+                  field="totalOrders"
                   currentSortField={sortField}
                   sortDirection={sortDirection}
                   onSort={handleSort}
@@ -50,7 +50,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
                 />
                 <PerformanceSorting
                   title="Sales"
-                  field="sales"
+                  field="totalSales"
                   currentSortField={sortField}
                   sortDirection={sortDirection}
                   onSort={handleSort}
@@ -98,8 +98,8 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
                       </div>
                     </td>
                     <td>{employee.role}</td>
-                    <td>{employee.orders} orders</td>
-                    <td>{formatCurrency(employee.sales)}</td>
+                    <td>{employee.totalOrders} orders</td>
+                    <td>{formatCurrency(employee.totalSales)}</td>
                     <td>{employee.workingHours}</td>
                   </tr>
                 ))
