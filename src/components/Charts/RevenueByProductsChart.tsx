@@ -18,21 +18,20 @@ const RevenueByProductChart = ({ data }: Props) => {
 
   return (
     <Box p={4} bg="white" shadow="md" borderRadius="lg">
-      <Heading size="md" mb={4}>
+      <Heading size="md" mb={4} color="black">
         Revenue by Product
       </Heading>
-
       {isValidData ? (
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <XAxis dataKey="productName" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="revenue" fill="#D69E2E" />
+            <Bar dataKey="revenue" fill="#008ED8" />
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <Text>No revenue data available.</Text>
+        <Text color="gray">No revenue data available.</Text>
       )}
     </Box>
   );

@@ -26,6 +26,7 @@ interface ReturnedItem {
   quantity: number;
   reason: string;
   photoPath?: string;
+  refundAmount: number;
 }
 
 interface RefundRequestViewDTO {
@@ -71,7 +72,6 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
         </ModalHeader>
 
         <ModalBody p={6} overflowY="auto">
-          {/* Request Summary */}
           <Box bg="skyBlue" p={4} borderRadius="md" mb={4}>
             <Grid templateColumns="repeat(2, 1fr)" gap={4}>
               <GridItem>
@@ -84,18 +84,18 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
               </GridItem>
               <GridItem>
                 <Text fontSize="sm" color="gray.600" mb={1}>
-                  Refund Method
+                  Request Status
                 </Text>
                 <Badge colorScheme="blue" variant="solid" bg="blue">
                   {request.refundMethod}
                 </Badge>
               </GridItem>
               <GridItem>
-                <Text fontSize="sm" color="gray.600" mb={1}>
-                  Total Refund Amount
+                <Text fontSize="sm" color="gray.600">
+                  Refund Amount
                 </Text>
-                <Text fontWeight="bold" fontSize="lg" color="green">
-                  Rs. {request.totalRefundAmount.toLocaleString()}
+                <Text fontWeight="bold" color="green">
+                  Rs. {request.totalRefundAmount?.toFixed(2)}
                 </Text>
               </GridItem>
               <GridItem>
@@ -112,7 +112,6 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
 
           <Divider my={4} borderColor="gray.300" />
 
-          {/* Items Section */}
           <Box>
             <Flex justify="space-between" align="center" mb={4}>
               <Heading size="md" color="darkBlue">
@@ -124,7 +123,7 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
             </Flex>
 
             <VStack spacing={4} align="stretch">
-              {request.items.map((item, index) => (
+              {request.items.map((item) => (
                 <Box
                   key={item.itemId}
                   borderWidth="1px"
@@ -137,24 +136,35 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
                   transition="shadow 0.2s"
                 >
                   <Flex direction={{ base: "column", md: "row" }} gap={4}>
-                    {/* Item Image */}
-                    {item.photoPath && (
-                      <Box flexShrink={0}>
-                        <Image
-                          src={`http://localhost:8080/api/image/${item.photoPath}`}
-                          alt={`Return item ${item.productName}`}
-                          maxW="120px"
-                          maxH="120px"
-                          borderRadius="md"
-                          objectFit="cover"
-                          border="1px solid"
-                          borderColor="gray.200"
-                          fallbackSrc="https://via.placeholder.com/120x120?text=No+Image"
-                        />
+                    {item.photoPath ? (
+                      <Image
+                        src={`http://localhost:8080/api/admin/refund-requests/image/${item.photoPath}`}
+                        alt={`Return item ${item.productName}`}
+                        maxW="120px"
+                        maxH="120px"
+                        borderRadius="md"
+                        objectFit="cover"
+                        border="1px solid"
+                        borderColor="gray.200"
+                      />
+                    ) : (
+                      <Box
+                        w="120px"
+                        h="120px"
+                        bg="gray.100"
+                        borderRadius="md"
+                        border="1px solid"
+                        borderColor="gray.200"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        fontSize="sm"
+                        color="gray.500"
+                      >
+                        No Image
                       </Box>
                     )}
 
-                    {/* Item Details */}
                     <VStack align="start" flex={1} spacing={2}>
                       <Text fontWeight="bold" fontSize="lg" color="darkBlue">
                         {item.productName}
@@ -168,6 +178,15 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
                           <Badge colorScheme="blue" variant="outline">
                             {item.quantity}
                           </Badge>
+                        </Box>
+
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">
+                            Refund Amount
+                          </Text>
+                          <Text fontWeight="semibold" color="green">
+                            Rs. {item.refundAmount.toFixed(2)}
+                          </Text>
                         </Box>
                       </HStack>
 
@@ -209,11 +228,7 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
               colorScheme="red"
               variant="outline"
               onClick={onReject}
-              _hover={{
-                bg: "red",
-                color: "white",
-                borderColor: "red",
-              }}
+              _hover={{ bg: "red", color: "white", borderColor: "red" }}
             >
               Reject
             </Button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Heading,
@@ -8,7 +8,6 @@ import {
   useToast,
   Badge,
   Grid,
-  GridItem,
   Flex,
   HStack,
   Container,
@@ -19,7 +18,6 @@ import {
   AlertDescription,
   Card,
   CardBody,
-  Divider,
   Icon,
 } from "@chakra-ui/react";
 import {
@@ -31,13 +29,16 @@ import {
 } from "react-icons/fi";
 import axiosInstance from "../../axiosConfig";
 import RefundRequestDetailsModal from "../../components/ReturnAndRefund/RefundRequestDetailsModal";
+import { WarningIcon } from "@chakra-ui/icons/Warning";
 
-interface ReturnedItem {
+export interface ReturnedItem {
   itemId: number;
-  productName: string;
+  invoiceItemId: number;
   quantity: number;
+  unitPrice: number;
   reason: string;
-  photoPath?: string;
+  photoPath: string;
+  productName: string;
 }
 
 interface RefundRequestViewDTO {
@@ -90,11 +91,30 @@ const AdminRefundReviewPage = () => {
       fetchRequests();
     } catch {
       toast({
-        title: "Failed to approve",
-        description: "An error occurred while approving the request.",
-        status: "error",
         duration: 3000,
         isClosable: true,
+        render: () => (
+          <Box
+            bg="darkBlue"
+            color="white"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+            maxW="sm"
+            mx="auto"
+          >
+            <HStack spacing={3}>
+              <Icon as={FiDollarSign} color="white" boxSize={5} />
+              <Box>
+                <Text fontWeight="bold" fontSize="md">
+                  Request Approved
+                </Text>
+                <Text fontSize="sm">Refund request approved successfully.</Text>
+              </Box>
+            </HStack>
+          </Box>
+        ),
       });
     }
   };
@@ -103,21 +123,61 @@ const AdminRefundReviewPage = () => {
     try {
       await axiosInstance.post(`/admin/refund-requests/${id}/reject`);
       toast({
-        title: "Request Rejected",
-        description: "The refund request has been rejected.",
-        status: "info",
         duration: 3000,
         isClosable: true,
+        render: () => (
+          <Box
+            bg="darkBlue"
+            color="white"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+            maxW="sm"
+            mx="auto"
+          >
+            <HStack spacing={3}>
+              <Icon as={FiEye} color="white" boxSize={5} />
+              <Box>
+                <Text fontWeight="bold" fontSize="md">
+                  Request Rejected
+                </Text>
+                <Text fontSize="sm">Refund request rejected successfully.</Text>
+              </Box>
+            </HStack>
+          </Box>
+        ),
       });
       setSelectedRequest(null);
       fetchRequests();
     } catch {
       toast({
-        title: "Failed to reject",
-        description: "An error occurred while rejecting the request.",
-        status: "error",
         duration: 3000,
         isClosable: true,
+        render: () => (
+          <Box
+            bg="darkBlue"
+            color="white"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+            maxW="sm"
+            mx="auto"
+          >
+            <HStack spacing={3}>
+              <Icon as={WarningIcon} color="white" boxSize={5} />
+              <Box>
+                <Text fontWeight="bold" fontSize="md">
+                  Error
+                </Text>
+                <Text fontSize="sm">
+                  Something went wrong. Please try again.
+                </Text>
+              </Box>
+            </HStack>
+          </Box>
+        ),
       });
     }
   };
@@ -314,7 +374,7 @@ const AdminRefundReviewPage = () => {
 
                         <HStack>
                           <Text fontSize="sm" color="gray.600">
-                            Method:
+                            Status:
                           </Text>
                           <Badge colorScheme="blue" variant="outline">
                             {req.refundMethod}

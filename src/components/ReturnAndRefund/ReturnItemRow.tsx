@@ -296,7 +296,7 @@ const ReturnItemRow: React.FC<ReturnItemRowProps> = ({
                 overflow="hidden"
                 bg="white"
                 shadow="sm"
-                height="40px" // Fixed preview height
+                height="40px"
                 width="60px"
               >
                 <Image

@@ -31,7 +31,9 @@ const CardRefundContainer: React.FC<Props> = ({
         invoiceNumber,
         refundMethod: "Card",
         totalAmount,
-        bankDetails,
+        accountHolderName: bankDetails.accountHolder,
+        bankName: bankDetails.bankName,
+        accountNumber: bankDetails.accountNumber,
         items: selectedItems.map((item) => ({
           itemId: item.id,
           quantity: item.returnQuantity,
@@ -81,7 +83,6 @@ const CardRefundContainer: React.FC<Props> = ({
       setIsSubmitting(false);
     }
   };
-
   return (
     <CardRefundForm
       onSubmitForm={handleSubmit}

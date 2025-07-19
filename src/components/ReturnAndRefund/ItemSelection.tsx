@@ -37,18 +37,27 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
   const headingColor = useColorModeValue("blue.700", "blue.300");
 
   const handleSubmit = () => {
-    const isValid = items.some(
-      (item) =>
-        item.returnQuantity > 0 &&
-        item.reason?.trim() !== "" &&
-        item.returnPhoto != null
-    );
+    const incompleteRows = items.filter((item) => {
+      const startedFilling =
+        item.returnQuantity > 0 ||
+        (item.reason && item.reason.trim() !== "") ||
+        item.returnPhoto;
 
-    if (!isValid) {
+      const incomplete =
+        startedFilling &&
+        (!item.returnQuantity ||
+          item.returnQuantity <= 0 ||
+          !item.reason?.trim() ||
+          !item.returnPhoto);
+
+      return incomplete;
+    });
+
+    if (incompleteRows.length > 0) {
       toast({
-        title: "Incomplete selection",
+        title: "Incomplete Item Detected",
         description:
-          "Please select at least one item with return quantity, reason, and photo.",
+          "Each item you start filling must include quantity, reason, and photo.",
         status: "warning",
         duration: 4000,
         isClosable: true,
@@ -107,7 +116,7 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
         <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
           <VStack align="start" spacing={1}>
             <Heading size="lg" color={headingColor} fontWeight="bold">
-              Return Items
+              Invoice Items
             </Heading>
             <Text fontSize="md" color="gray.600">
               Invoice #{invoiceData.invoiceNumber}

@@ -32,7 +32,7 @@ export const submitRefundRequestWithImages = async (
   });
 
   const response = await axiosInstance.post(
-    "http://localhost:8080/api/admin/refund-requests/initiate",
+    "http://localhost:8080/api/admin/refund-requests/submit-refund-request",
     formData,
     {
       headers: {
