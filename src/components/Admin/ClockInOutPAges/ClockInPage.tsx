@@ -1,17 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import bgImage from "../../../assets/1 1.png";
-import { Box, Flex, Button, Image, VStack, IconButton, Heading, Avatar, Text } from "@chakra-ui/react";
+import { Box, Flex, Button, Image, IconButton, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { CloseIcon } from "@chakra-ui/icons";
 import shiftFrontPage from "../../../assets/ShiftFrontPage.png";
 import logo from "../../../assets/logo.png";
 
-
 const ClockInPage: React.FC = () => {
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  React.useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -25,30 +24,51 @@ const ClockInPage: React.FC = () => {
     day: "numeric",
   });
 
-  const formattedTime = currentTime.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const formattedTime = currentTime.toLocaleTimeString("en-GB", { hour12: false });
 
   const handleClose = () => {
     navigate && navigate("/login");
     console.log("Closed tab, navigated to login page");
   };
 
-  // Example user info (replace with real data as needed)
-  const user = {
-    name: "Eleanor Pena",
-    id: "2377373",
-    role: "Cashier",
-    image: "https://bit.ly/dan-abramov",
+  // Send clock-in data to backend
+  const handleClockIn = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You are not logged in.");
+        return;
+      }
+
+      // You may want to update this payload to match your backend requirements
+      const response = await fetch("http://localhost:8080/api/attendances/clock-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          clockIn: formattedTime,
+          date: new Date().toISOString().split("T")[0],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        alert("Failed to clock in: " + errorMessage);
+        return;
+      }
+
+      alert("Clock-in successful at " + formattedTime);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Failed to send clock-in data", err);
+      alert("Error occurred while clocking in.");
+    }
   };
 
   return (
     <Box minH="100vh" width="100vw" position="relative" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
-      {/* Background image and overlay */}
-      <Image src={bgImage} alt="Background" objectFit="cover" position="absolute" top={0} left={0} w="100vw" h="100vh" zIndex={0} opacity={0.5} />
-      <Box position="absolute" top={0} left={0} w="100vw" h="100vh" bg="#003049" opacity={0.5} zIndex={0} />
       {/* Background image and overlay */}
       <Image src={bgImage} alt="Background" objectFit="cover" position="absolute" top={0} left={0} w="100vw" h="100vh" zIndex={0} opacity={0.5} />
       <Box position="absolute" top={0} left={0} w="100vw" h="100vh" bg="#003049" opacity={0.5} zIndex={0} />
@@ -82,61 +102,51 @@ const ClockInPage: React.FC = () => {
           _hover={{ bg: "gray.200" }}
           onClick={handleClose}
         />
-        {/* Left Panel - Image */}
-        <Box flex="1" bg="#003049" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 4 }}>
-          <Image src={shiftFrontPage} alt="Shift Front Page" maxH="90%" maxW="100%" objectFit="contain" borderRadius="lg" boxShadow="lg" />
+        {/* Left Panel - Image Section (larger, blue background) */}
+        <Box flex="0.8" bg="#003049" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 4 }}>
+          <Image src={shiftFrontPage} alt="Shift Front Page" maxH="100%" maxW="110%" objectFit="contain" borderRadius="lg" boxShadow="lg" />
         </Box>
-
-        {/* Right Panel - Employee Info and Clock In */}
-        <Flex flex="1" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" position="relative" justifyContent="space-between">
-          {/* Date and Time at the top */}
-          <Box textAlign="center" w="full" mb={2} mt={2}>
-            <Text fontSize={{ base: "sm", md: "lg" }} color="gray.500" fontWeight="medium">{formattedDate}</Text>
-            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold" color="gray.500" letterSpacing="wide" mt={1}>{formattedTime}</Text>
+        {/* Right Panel - Clock In Section (smaller, white background) */}
+        <Flex flex="0.7" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" position="relative" justifyContent="space-between">
+          {/* Title above date and time */}
+          <Box w="full" textAlign="left" mt={2} mb={4}>
+            <Text fontSize={{ base: "lg", md: "3xl" }} color="#003049" fontWeight="semibold" fontFamily="Poppins, sans-serif">
+              Welcome to
+            </Text>
+            <Text as="span" fontSize={{ base: "3xl", md: "3xl" }} color="#008ED8" fontWeight="bold" fontFamily="Poppins, sans-serif">
+              Point Edge
+            </Text>
           </Box>
-          {/* Employee Info centered vertically between top and bottom */}
-          <Flex flexDirection="column" alignItems="center" justifyContent="center" flex={0}>
-            <Heading size="lg" textAlign="center" color="gray.800" mb={6}>{user.name}</Heading>
-            <Avatar
-              size="xl"
-              name={user.name}
-              src={user.image}
-              border="3px"
-              borderColor="gray.200"
+          {/* Date and Time */}
+          <Box textAlign="center" w="full" mb={2} mt={20}>
+            <Text fontSize={{ base: "sm", md: "xl" }} color="gray.500" fontWeight="medium" mb={4}>
+              {formattedDate}
+            </Text>
+            <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="bold" color="gray.500" letterSpacing="wide" mt={1}>
+              {formattedTime}
+            </Text>
+          </Box>
+          {/* Clock In button at bottom */}
+          <Box flex="1" display="flex" alignItems="flex-end" justifyContent="center" w="full" mb={16}>
+            <Button
+              bg="#2f855a"
+              color="white"
+              _hover={{ bg: "#276749" }}
+              size="md"
+              w="full"
+              maxW="140px"
+              fontWeight="bold"
+              borderRadius="full"
+              fontSize={{ base: "sm", md: "md" }}
               boxShadow="md"
-              mb={2}
-            />
-            <VStack textAlign="center" spacing={1}>
-              <Text fontSize="lg" color="gray.600">ID - {user.id}</Text>
-              <Text fontSize="lg" color="gray.600">Role - {user.role}</Text>
-            </VStack>
-          </Flex>
-          {/* Clock In button at the bottom */}
-          <Button
-            bg="#2f855a"
-            color="white"
-            _hover={{ bg: "#276749" }}
-            size="sm"
-            w="full"
-            maxW="140px"
-            fontWeight="bold"
-            borderRadius="full"
-            fontSize={{ base: "sm", md: "md" }}
-            boxShadow="md"
-            onClick={() => {
-              // Record clock in date and time in localStorage
-              localStorage.setItem("clockInDate", formattedDate);
-              localStorage.setItem("clockInTime", formattedTime);
-              // Navigate to dashboard page
-              navigate("/dashboard");
-            }}
-            mb={2}
-          >
-            Clock In
-          </Button>
-          {/* POS Logo at bottom right */}
-          <Box position="absolute" bottom="6" right="6">
-            <Image src={logo} alt="POS Logo" h="10" w="auto" opacity={0.7} />
+              onClick={handleClockIn}
+            >
+              Clock In
+            </Button>
+          </Box>
+          {/* POS Logo at bottom right corner, aligned to border */}
+          <Box position="absolute" right={0} bottom={0} m={4}>
+            <Image src={logo} alt="POS Logo" h="12" w="auto" opacity={0.9} />
           </Box>
         </Flex>
       </Flex>
