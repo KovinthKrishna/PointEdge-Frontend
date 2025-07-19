@@ -9,6 +9,8 @@ import {
   Box,
   Image,
 } from "@chakra-ui/react";
+import useOrderSummaryStore from "../../store/useOrderSummaryStore";
+import { useEffect } from "react";
 
 interface OrderSummaryProps {
   orderDetails: {
@@ -50,6 +52,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       maximumFractionDigits: 2,
     });
   };
+
+  const { setAmount, setTotalDiscount, setTotal } = useOrderSummaryStore();
+
+  useEffect(() => {
+    setAmount(orderDetails.amount);
+    setTotalDiscount(orderDetails.totalDiscount);
+    setTotal(orderDetails.total);
+  }, [orderDetails, setAmount, setTotalDiscount, setTotal]);
 
   return (
     <VStack align="start" spacing={5} width="100%" height="100%">

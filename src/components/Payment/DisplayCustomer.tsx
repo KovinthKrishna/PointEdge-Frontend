@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Customer from "../../models/Customer";
 import PopupAlert from "../Common/PopupAlert";
 import { Text } from "@chakra-ui/react";
+import { useCustomerStore } from "../../store/useCustomerStore";
 
 interface DisplayCustomerProps {
   customer: Customer | null;
@@ -9,7 +10,7 @@ interface DisplayCustomerProps {
   onClose: () => void;
   totalDiscount: number;
   loading: boolean;
-  status: "success" | "error"; // Controlled from parent
+  status: "success" | "error";
 }
 
 const DisplayCustomer: React.FC<DisplayCustomerProps> = ({
@@ -20,6 +21,16 @@ const DisplayCustomer: React.FC<DisplayCustomerProps> = ({
   loading,
   status,
 }) => {
+  const { setCustomerInfo, clearCustomerInfo } = useCustomerStore();
+
+  useEffect(() => {
+    if (status === "success" && customer) {
+      setCustomerInfo({ name: customer.name, loyaltyPoints: customer.points });
+    } else if (status === "error") {
+      clearCustomerInfo();
+    }
+  }, [status, customer, setCustomerInfo, clearCustomerInfo]);
+
   let title = "";
   let description: React.ReactNode = "";
 
@@ -47,7 +58,7 @@ const DisplayCustomer: React.FC<DisplayCustomerProps> = ({
     <PopupAlert
       isOpen={isOpen}
       onClose={onClose}
-      status={status} // Controlled status
+      status={status}
       title={title}
       description={description}
     />

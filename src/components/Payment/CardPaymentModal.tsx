@@ -29,8 +29,6 @@ interface CardPaymentModalProps {
   onPaymentSuccess?: () => void;
   amount: number;
   currency: string;
-
-  // Add these:
   showSuccess: (title: string, desc: string) => void;
   showError: (title: string, desc: string) => void;
   setIsReceiptOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -64,14 +62,6 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
       setIsReceiptOpen(true);
     }
   };
-
-  const sampleItems = [
-    { name: "Item A", price: 50 },
-    { name: "Item B", price: 30 },
-  ];
-  const total = 80;
-  const discount = 10;
-  const finalTotal = total - discount;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,10 +291,6 @@ const CheckoutForm: React.FC<CardPaymentModalProps> = ({
         <ReceiptPopup
           isOpen={isReceiptOpen}
           onClose={() => setIsReceiptOpen(false)}
-          items={sampleItems}
-          total={total}
-          discount={discount}
-          finalTotal={finalTotal}
         />
       </Box>
     </Flex>
