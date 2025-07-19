@@ -83,12 +83,64 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="pagination-controls">
-              <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
-                Previous
+              {/* First Page Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(1)} 
+                disabled={currentPage === 1}
+                title="First Page"
+              >
+                &laquo;
               </button>
-              <span>Page {currentPage} of {totalPages}</span>
-              <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
-                Next
+              
+              {/* Previous Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} 
+                disabled={currentPage === 1}
+                title="Previous Page"
+              >
+                &lsaquo;
+              </button>
+
+              {/* Page Numbers */}
+              {(() => {
+                const pages = [];
+                const startPage = Math.max(1, currentPage - 2);
+                const endPage = Math.min(totalPages, currentPage + 2);
+
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      className={`pagination-button ${i === currentPage ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(i)}
+                    >
+                      {i}
+                    </button>
+                  );
+                }
+                return pages;
+              })()}
+
+              {/* Next Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} 
+                disabled={currentPage === totalPages}
+                title="Next Page"
+              >
+                &rsaquo;
+              </button>
+
+              {/* Last Page Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(totalPages)} 
+                disabled={currentPage === totalPages}
+                title="Last Page"
+              >
+                &raquo;
               </button>
             </div>
           )}

@@ -29,7 +29,11 @@ const AttendanceWorkHour: React.FC<AttendanceWorkHourProps> = ({
             className="input input-sm input-bg-white"
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            readOnly
+            style={{ 
+              backgroundColor: '#f7fafc', 
+              color: '#000000ff'
+            }}
           />
         </div>
         <div className="col-start-4">
@@ -38,7 +42,11 @@ const AttendanceWorkHour: React.FC<AttendanceWorkHourProps> = ({
             className="input input-sm input-bg-white"
             type="time"
             value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
+            readOnly
+            style={{ 
+              backgroundColor: '#f7fafc', 
+              color: '#000000ff'
+            }}
           />
         </div>
         <div>
@@ -47,7 +55,11 @@ const AttendanceWorkHour: React.FC<AttendanceWorkHourProps> = ({
             className="input input-sm input-bg-white"
             type="time"
             value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
+            readOnly
+            style={{ 
+              backgroundColor: '#f7fafc', 
+              color: '#000000ff'
+            }}
           />
         </div>
       </div>

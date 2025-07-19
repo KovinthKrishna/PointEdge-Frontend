@@ -34,7 +34,7 @@ const PerformanceSorting: React.FC<PerformanceSortingProps> = ({
               <span className="triangle-down"></span>
             )
           ) : (
-            <span className="triangle-down inactive"></span>
+            <span className="triangle-down inactive" title="Click to sort descending"></span>
           )}
         </div>
       </div>
