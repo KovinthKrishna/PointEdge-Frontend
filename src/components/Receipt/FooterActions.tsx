@@ -3,7 +3,7 @@ import { FiPrinter, FiMail } from "react-icons/fi";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useCustomerStore } from "../../store/useCustomerStore";
-import { saveOrder } from "../../hooks/useSaveOrder"; // ✅ Import your saveOrder hook
+import { saveOrder } from "../../hooks/useSaveOrder";
 
 const FooterActions = ({
   onClose,
@@ -39,7 +39,7 @@ const FooterActions = ({
 
   const handleNextStep = async () => {
     try {
-      await saveOrder(); // ✅ Save the order before moving forward
+      await saveOrder();
       toast({
         title: "Order Saved!",
         status: "success",
@@ -107,7 +107,7 @@ const FooterActions = ({
           bg="#2563EB"
           width="20%"
           size="lg"
-          onClick={handleNextStep} // ✅ Use the new handler here
+          onClick={handleNextStep}
           transition="all 0.3s"
           fontWeight="bold"
           letterSpacing="wide"

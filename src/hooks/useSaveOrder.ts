@@ -21,6 +21,7 @@ export async function saveOrder() {
     amount,
     totalDiscount,
     total,
+    employeeId: user.id,
     cashierName: `${user.firstName} ${user.lastName}`,
     orderDate: new Date().toISOString(),
     items: orderItems.map((item) => ({
