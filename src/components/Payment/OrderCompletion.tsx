@@ -1,113 +1,91 @@
 import React from "react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  Box,
-  Flex,
-  Text,
-  Button,
-  VStack,
-  Heading,
-} from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Box, Flex, Text, Button, Heading, ScaleFade } from "@chakra-ui/react";
+import ModelBoxPopup from "../Common/ModelBoxPopup";
 
 interface OrderCompletionProps {
   isOpen: boolean;
   onClose: () => void;
   orderData: any;
-  onDashboardClick: () => void;
-  onNextOrderClick: () => void;
 }
 
 const OrderCompletion: React.FC<OrderCompletionProps> = ({
   isOpen,
   onClose,
   orderData,
-  onDashboardClick,
-  onNextOrderClick,
 }) => {
-  const navigate = useNavigate();
-
-  const handleNextOrder = () => {
-    onClose(); // Close the modal first
-    onNextOrderClick();
-    navigate("/");
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
-      <ModalOverlay />
-      <ModalContent p={6}>
-        <Flex direction="column" align="center" justify="center">
-          <VStack spacing={1} w="full" mb={4}>
-            <Text color="#0096DB" fontWeight="medium" fontSize="lg">
+    <ModelBoxPopup isOpen={isOpen} onClose={onClose} maxW="600px">
+      <Box p={8} borderRadius="2xl">
+        {/* Content */}
+        <ScaleFade initialScale={0.8} in={isOpen}>
+          <Flex direction="column" align="center" justify="center">
+            <Text
+              color="#10B981"
+              fontWeight="semibold"
+              fontSize="sm"
+              textTransform="uppercase"
+              letterSpacing="wide"
+              mb={2}
+            >
               Order #{orderData.orderNumber}
             </Text>
             <Heading
               as="h1"
               fontSize="3xl"
               fontWeight="bold"
-              color="#003049"
+              color="#10B981"
               textAlign="center"
+              mb={4}
             >
               Completed Successfully!
             </Heading>
-          </VStack>
 
-          <Box
-            w="full"
-            h="240px"
-            bg="blue.50"
-            borderRadius="xl"
-            mb={6}
-            position="relative"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <img
-              src="/src/assets/orderCompl.png"
-              alt="Celebration"
-              style={{
-                maxHeight: 200,
-                maxWidth: "100%",
-                objectFit: "contain",
-                borderRadius: "1rem",
-              }}
-            />
-          </Box>
+            <Box mb={6}>
+              <img
+                src="/src/assets/orderCompl.png"
+                alt="Celebration"
+                style={{
+                  maxHeight: 320,
+                  borderRadius: "1rem",
+                }}
+              />
+            </Box>
 
-          <VStack spacing={6} w="full">
-            <Text color="#0096DB" fontWeight="bold" fontSize="lg">
-              Well done! You've completed {orderData.completedOrders} orders
-              today.
+            <Text
+              color="#2563EB"
+              fontWeight="bold"
+              fontSize="lg"
+              textAlign="center"
+              mb={6}
+            >
+              🎉 Well done! You've completed{" "}
+              <Text as="span" color="green.500" fontSize="xl">
+                {orderData.completedOrders}
+              </Text>{" "}
+              orders today.
             </Text>
 
             <Flex gap={4} justify="center">
               <Button
-                bg="gray.200"
-                color="gray.700"
-                size="md"
-                px={6}
-                onClick={onDashboardClick}
+                color="white"
+                bg={"#2563EB"}
+                width="100%"
+                size="lg"
+                onClick={() => {
+                  setTimeout(() => window.location.reload(), 50);
+                }}
+                transition="all 0.3s"
+                fontWeight="bold"
+                letterSpacing="wide"
+                borderRadius="xl"
               >
                 Dashboard
               </Button>
-              <Button
-                bg="#0096DB"
-                color="white"
-                size="md"
-                px={6}
-                onClick={handleNextOrder}
-              >
-                Next Order
-              </Button>
             </Flex>
-          </VStack>
-        </Flex>
-      </ModalContent>
-    </Modal>
+          </Flex>
+        </ScaleFade>
+      </Box>
+    </ModelBoxPopup>
   );
 };
 
