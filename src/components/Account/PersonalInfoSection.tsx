@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -7,6 +7,7 @@ import {
   Input,
   FormErrorMessage,
 } from "@chakra-ui/react";
+import { fetchCurrentUser } from "../../services/userService";
 
 interface PersonalInfoSectionProps {
   fullName: string;
@@ -15,10 +16,23 @@ interface PersonalInfoSectionProps {
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
-  fullName,
   error,
   onFullNameChange,
 }) => {
+  const [employeeName, setEmployeeName] = useState("");
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const user = await fetchCurrentUser();
+        setEmployeeName(`${user.name}`);
+      } catch (err) {
+        console.error("Failed to fetch employee:", err);
+      }
+    };
+    loadUser();
+  }, []);
+
   return (
     <Box
       bg="#ffffff"
@@ -30,12 +44,12 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
       <Text fontSize="18px" fontWeight="600" color="#2d3748" mb={6}>
         Personal Information
       </Text>
-      <FormControl isInvalid={!!error} isRequired mb={6}>
+      <FormControl isInvalid={!!error} mb={6}>
         <FormLabel fontSize="14px" fontWeight="600" color="#4a5568" mb={2}>
           Full Name
         </FormLabel>
         <Input
-          value={fullName}
+          value={employeeName}
           onChange={(e) => onFullNameChange(e.target.value)}
           placeholder="Enter your full name"
           bg="#f8fafc"

@@ -117,8 +117,8 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
   };
 
   const avatarSrc =
-    filePreview || // 1) uploaded image preview (most recent)
-    inputUrl || // 2) input URL (typed or backend URL)
+    filePreview || // uploaded image preview (most recent)
+    inputUrl || // input URL (typed or backend URL)
     undefined;
 
   return (
@@ -168,6 +168,7 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
           colorScheme="blue"
           size="sm"
           cursor="pointer"
+          color={"black"}
         >
           Upload Image
         </Button>

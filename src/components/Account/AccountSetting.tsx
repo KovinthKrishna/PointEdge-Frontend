@@ -34,16 +34,24 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ isOpen, onClose }) => {
 
   const validateForm = (): boolean => {
     const newErrors: ErrorsType = {};
-    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!formData.currentPassword.trim())
-      newErrors.currentPassword = "Current password is required";
-    if (formData.newPassword && formData.newPassword.length < 6)
-      newErrors.newPassword = "Password too short";
     if (
-      formData.newPassword &&
-      formData.newPassword !== formData.confirmPassword
-    )
-      newErrors.confirmPassword = "Passwords do not match";
+      !formData.fullName.trim() &&
+      !formData.avatarUrl.trim() &&
+      !formData.newPassword
+    ) {
+      newErrors.fullName = "Full name is required if changing name or avatar";
+    }
+
+    if (formData.newPassword) {
+      if (!formData.currentPassword.trim())
+        newErrors.currentPassword =
+          "Current password is required for changing password";
+      if (formData.newPassword.length < 6)
+        newErrors.newPassword = "Password too short";
+      if (formData.newPassword !== formData.confirmPassword)
+        newErrors.confirmPassword = "Passwords do not match";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -56,24 +64,47 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setLoading(true);
+
+    const token = localStorage.getItem("token");
+
     try {
-      await axios.post("http://localhost:8080/api/employees/modify-profile", {
-        fullName: formData.fullName,
-        currentPassword: formData.currentPassword,
-        newPassword: formData.newPassword,
-        avatar: formData.avatarUrl, // sending avatar URL string
-      });
+      if (formData.fullName.trim() || formData.avatarUrl) {
+        await axios.post(
+          "http://localhost:8080/api/employees/update-profile",
+          { name: formData.fullName, avatar: formData.avatarUrl },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
+      if (formData.newPassword) {
+        await axios.post(
+          "http://localhost:8080/api/employees/change-password",
+          {
+            confirmPassword: formData.currentPassword,
+            tempPassword: formData.newPassword,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
 
       toast({
         title: "Account updated successfully",
         status: "success",
         duration: 3000,
       });
-      handleClose();
+      window.location.reload();
     } catch (error: any) {
+      console.error("Update failed:", error);
+
+      const errorMessage = (() => {
+        if (error?.response?.data?.message) return error.response.data.message;
+        if (error?.response?.data) return JSON.stringify(error.response.data);
+        return "Error occurred";
+      })();
+
       toast({
         title: "Update failed",
-        description: error?.response?.data || "Error",
+        description: errorMessage,
         status: "error",
         duration: 5000,
       });
