@@ -9,12 +9,12 @@ import {
   PopoverTrigger,
   Portal,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 import profilePicture from "../assets/profile-picture.jpg";
+import { fetchCurrentUser } from "../services/userService";
 import theme from "../theme";
 import ProfileMenu from "./ProfileMenu";
-import { fetchCurrentUser } from "../services/userService";
 
 const ProfileButton = () => {
   const [menu, setMenu] = useState(false);

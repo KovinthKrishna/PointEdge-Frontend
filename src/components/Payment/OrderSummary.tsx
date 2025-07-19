@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import useOrderSummaryStore from "../../store/useOrderSummaryStore";
 import { useEffect } from "react";
+import { useCustomerStore } from "../../store/useCustomerStore";
 
 interface OrderSummaryProps {
   orderDetails: {
@@ -53,6 +54,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     });
   };
 
+  const setStoreDiscountCode = useCustomerStore(
+    (state) => state.setDiscountCode
+  );
   const { setAmount, setTotalDiscount, setTotal } = useOrderSummaryStore();
 
   useEffect(() => {
@@ -103,6 +107,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           color="white"
           _hover={{ bg: "#003b62" }}
           onClick={() => {
+            setStoreDiscountCode(discountCode);
             onApplyDiscount(discountCode);
             onDisplayCustomerDetails(discountCode);
           }}
