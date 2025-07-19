@@ -1,8 +1,9 @@
-import { Box, Button, Icon, VStack } from "@chakra-ui/react";
+import { Box, Button, Icon, VStack, useToast } from "@chakra-ui/react";
 import { FiPrinter, FiMail } from "react-icons/fi";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useCustomerStore } from "../../store/useCustomerStore";
+import { saveOrder } from "../../hooks/useSaveOrder";
 
 const FooterActions = ({
   onClose,
@@ -14,6 +15,7 @@ const FooterActions = ({
   const clearCustomerInfo = useCustomerStore(
     (state) => state.clearCustomerInfo
   );
+  const toast = useToast();
 
   const handlePrint = () => {
     const input = document.getElementById("printableArea");
@@ -33,6 +35,28 @@ const FooterActions = ({
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save("receipt.pdf");
     });
+  };
+
+  const handleNextStep = async () => {
+    try {
+      await saveOrder();
+      toast({
+        title: "Order Saved!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      clearCustomerInfo();
+      onNextStep();
+    } catch (error: any) {
+      toast({
+        title: "Failed to Save Order",
+        description: error.message || "An error occurred",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -80,13 +104,10 @@ const FooterActions = ({
 
         <Button
           color="white"
-          bg={"#2563EB"}
+          bg="#2563EB"
           width="20%"
           size="lg"
-          onClick={() => {
-            onNextStep();
-            clearCustomerInfo(); // ✅ Clear customer info when moving next
-          }}
+          onClick={handleNextStep}
           transition="all 0.3s"
           fontWeight="bold"
           letterSpacing="wide"
