@@ -1,5 +1,5 @@
-import axiosInstance from "../axiosConfig";
 import { InvoiceItem } from "../models/Invoice";
+import axiosInstance from "../axiosConfig";
 
 export const submitRefundRequestWithImages = async (
   invoiceNumber: string,
@@ -7,16 +7,23 @@ export const submitRefundRequestWithImages = async (
   items: InvoiceItem[]
 ): Promise<string> => {
   const formData = new FormData();
-
+  
   const requestPayload = {
     invoiceNumber,
     refundMethod,
     items: items.map((item) => ({
       itemId: item.id,
+      invoiceItemId: item.id, 
       quantity: item.returnQuantity,
       reason: item.reason,
+      unitPrice: item.price,
+      refundAmount: item.price * item.returnQuantity,
     })),
   };
+
+  // Add debugging
+  console.log("Request payload:", JSON.stringify(requestPayload, null, 2));
+  console.log("Items being sent:", requestPayload.items);
 
   formData.append(
     "data",
@@ -26,6 +33,7 @@ export const submitRefundRequestWithImages = async (
   );
 
   items.forEach((item, index) => {
+    console.log(`Image ${index}:`, item.returnPhoto ? "Present" : "Missing");
     if (item.returnPhoto) {
       formData.append("images", item.returnPhoto, `image_${index}.jpg`);
     }

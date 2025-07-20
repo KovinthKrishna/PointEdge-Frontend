@@ -30,25 +30,7 @@ import {
 import axiosInstance from "../../axiosConfig";
 import RefundRequestDetailsModal from "../../components/ReturnAndRefund/RefundRequestDetailsModal";
 import { WarningIcon } from "@chakra-ui/icons/Warning";
-
-export interface ReturnedItem {
-  itemId: number;
-  invoiceItemId: number;
-  quantity: number;
-  unitPrice: number;
-  reason: string;
-  photoPath: string;
-  productName: string;
-}
-
-interface RefundRequestViewDTO {
-  id: number;
-  invoiceNumber: string;
-  refundMethod: string;
-  totalRefundAmount: number;
-  createdAt: string;
-  items: ReturnedItem[];
-}
+import { ReturnedItem, RefundRequestViewDTO } from "../../models/ReturnTypes";
 
 const AdminRefundReviewPage = () => {
   const [requests, setRequests] = useState<RefundRequestViewDTO[]>([]);
@@ -79,17 +61,10 @@ const AdminRefundReviewPage = () => {
 
   const handleApprove = async (id: number) => {
     try {
-      await axiosInstance.post(`/admin/refund-requests/${id}/approve`);
-      toast({
-        title: "Request Approved",
-        description: "The refund request has been approved successfully.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
+      await axiosInstance.post(`/admin/refund-requests/approve-request`, null, {
+        params: { requestId: id },
       });
-      setSelectedRequest(null);
-      fetchRequests();
-    } catch {
+
       toast({
         duration: 3000,
         isClosable: true,
@@ -116,12 +91,20 @@ const AdminRefundReviewPage = () => {
           </Box>
         ),
       });
+
+      setSelectedRequest(null);
+      fetchRequests();
+    } catch {
+      // handle error toast if needed
     }
   };
 
   const handleReject = async (id: number) => {
     try {
-      await axiosInstance.post(`/admin/refund-requests/${id}/reject`);
+      await axiosInstance.post(`/admin/refund-requests/reject-request`, null, {
+        params: { requestId: id },
+      });
+
       toast({
         duration: 3000,
         isClosable: true,
@@ -148,6 +131,7 @@ const AdminRefundReviewPage = () => {
           </Box>
         ),
       });
+
       setSelectedRequest(null);
       fetchRequests();
     } catch {
@@ -181,7 +165,6 @@ const AdminRefundReviewPage = () => {
       });
     }
   };
-
   const handleRefresh = () => {
     fetchRequests(true);
   };
@@ -190,7 +173,7 @@ const AdminRefundReviewPage = () => {
     fetchRequests();
     const interval = setInterval(() => {
       fetchRequests();
-    }, 30000); // Increased to 30 seconds for better performance
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 

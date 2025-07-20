@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
@@ -37,9 +36,7 @@ const ReturnRefundPage: React.FC = () => {
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [itemSelections, setItemSelections] = useState<InvoiceItem[]>([]);
   const [showCardForm, setShowCardForm] = useState(false);
-  // const [replacementProduct, setReplacementProduct] = useState<Product | null>(
-  //   null
-  // );
+  const [refundRequestId, setRefundRequestId] = useState<number | null>(null);
 
   const toastUI = useToast();
 
@@ -68,6 +65,7 @@ const ReturnRefundPage: React.FC = () => {
         const info = response.data;
 
         const items = info.items.map((item: any) => ({
+          invoiceItemId: item.itemId,
           id: item.itemId,
           name: item.productName ?? "Unnamed Item",
           quantity: item.quantity,
@@ -109,7 +107,12 @@ const ReturnRefundPage: React.FC = () => {
     setTotalRefundAmount(total);
 
     try {
-      await submitRefundRequestWithImages(invoiceNumber!, "Pending", items);
+      const requestId = await submitRefundRequestWithImages(
+        invoiceNumber!,
+        "Pending",
+        items
+      );
+      setRefundRequestId(Number(requestId));
       setCurrentStep(RefundStep.WAITING_FOR_ADMIN_APPROVAL);
     } catch (error) {
       toastUI({
@@ -139,11 +142,28 @@ const ReturnRefundPage: React.FC = () => {
   const handleRefundMethodSelection = async (method: string) => {
     setRefundMethod(method);
 
-    if (method === "Card") {
-      setCurrentStep(RefundStep.CARD_REFUND_DETAILS);
-    } else {
-      await processRefund(method);
-      setCurrentStep(RefundStep.REFUND_RESULT);
+    try {
+      if (method === "Card") {
+        setShowCardForm(true); // CardRefundContainer will call process-approved
+      } else if (method === "Exchange") {
+        await axiosInstance.post(`/api/return-exchange/exchange`, {
+          invoiceNumber,
+          returnedItems: selectedItems,
+        });
+        setCurrentStep(RefundStep.REFUND_RESULT);
+      } else if (method === "Cash") {
+        await axiosInstance.post(
+          `/api/return-exchange/process-approved/${refundRequestId}`
+        );
+        setCurrentStep(RefundStep.REFUND_RESULT);
+      }
+    } catch (error) {
+      toastUI({
+        title: "Refund Failed",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -193,6 +213,7 @@ const ReturnRefundPage: React.FC = () => {
             invoiceNumber={invoiceNumber!}
             selectedItems={selectedItems}
             totalAmount={totalRefundAmount}
+            refundRequestId={refundRequestId!}
             onSuccess={() => {
               setRefundSuccess(true);
               setCurrentStep(RefundStep.REFUND_RESULT);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -18,25 +18,13 @@ import {
   Badge,
   Grid,
   GridItem,
+  Modal as ChakraModal,
+  ModalOverlay as ChakraModalOverlay,
+  ModalContent as ChakraModalContent,
+  ModalBody as ChakraModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
-
-interface ReturnedItem {
-  itemId: number;
-  productName: string;
-  quantity: number;
-  reason: string;
-  photoPath?: string;
-  refundAmount: number;
-}
-
-interface RefundRequestViewDTO {
-  id: number;
-  invoiceNumber: string;
-  refundMethod: string;
-  totalRefundAmount: number;
-  createdAt: string;
-  items: ReturnedItem[];
-}
+import { RefundRequestViewDTO } from "../../models/ReturnTypes";
 
 interface Props {
   request: RefundRequestViewDTO;
@@ -51,6 +39,8 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
   onApprove,
   onReject,
 }) => {
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   return (
     <Modal isOpen={true} onClose={onClose} size="2xl">
       <ModalOverlay bg="blackAlpha.600" />
@@ -146,6 +136,12 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
                         objectFit="cover"
                         border="1px solid"
                         borderColor="gray.200"
+                        cursor="pointer"
+                        onClick={() =>
+                          setPreviewImage(
+                            `http://localhost:8080/api/admin/refund-requests/image/${item.photoPath}`
+                          )
+                        }
                       />
                     ) : (
                       <Box
@@ -244,6 +240,28 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
           </HStack>
         </ModalFooter>
       </ModalContent>
+      {previewImage && (
+        <ChakraModal
+          isOpen={true}
+          onClose={() => setPreviewImage(null)}
+          size="xl"
+          isCentered
+        >
+          <ChakraModalOverlay />
+          <ChakraModalContent>
+            <ModalCloseButton />
+            <ChakraModalBody p={4}>
+              <Image
+                src={previewImage}
+                alt="Preview"
+                maxH="80vh"
+                mx="auto"
+                borderRadius="md"
+              />
+            </ChakraModalBody>
+          </ChakraModalContent>
+        </ChakraModal>
+      )}
     </Modal>
   );
 };

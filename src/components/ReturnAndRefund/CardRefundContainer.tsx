@@ -7,6 +7,7 @@ interface Props {
   invoiceNumber: string;
   selectedItems: InvoiceItem[];
   totalAmount: number;
+  refundRequestId: number;
   onSuccess: () => void;
   onFailure: () => void;
   onCancel: () => void;
@@ -16,6 +17,7 @@ const CardRefundContainer: React.FC<Props> = ({
   invoiceNumber,
   selectedItems,
   totalAmount,
+  refundRequestId,
   onSuccess,
   onFailure,
   onCancel,
@@ -31,6 +33,7 @@ const CardRefundContainer: React.FC<Props> = ({
         invoiceNumber,
         refundMethod: "Card",
         totalAmount,
+        requestId: refundRequestId,
         accountHolderName: bankDetails.accountHolder,
         bankName: bankDetails.bankName,
         accountNumber: bankDetails.accountNumber,

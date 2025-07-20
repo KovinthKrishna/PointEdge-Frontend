@@ -20,7 +20,7 @@ interface ItemSelectionProps {
   invoiceData: Invoice;
   selectedItems: InvoiceItem[];
   onSubmit: (items: InvoiceItem[]) => void;
-  onCancel: () => void; // Not used anymore but left for compatibility
+  onCancel: () => void;
 }
 
 const ItemSelection: React.FC<ItemSelectionProps> = ({
