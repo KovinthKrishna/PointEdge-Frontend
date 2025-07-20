@@ -27,7 +27,7 @@ import {
   FiDollarSign,
   FiFileText,
 } from "react-icons/fi";
-import axiosInstance from "../../axiosConfig";
+import axiosInstance from "../../services/verifyService";
 import RefundRequestDetailsModal from "../../components/ReturnAndRefund/RefundRequestDetailsModal";
 import { WarningIcon } from "@chakra-ui/icons/Warning";
 import { ReturnedItem, RefundRequestViewDTO } from "../../models/ReturnTypes";

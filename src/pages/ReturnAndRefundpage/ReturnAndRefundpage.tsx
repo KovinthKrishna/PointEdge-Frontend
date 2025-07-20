@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
-import axiosInstance from "../../axiosConfig";
+import axiosInstance from "../../services/verifyService";
 
 import CardRefundContainer from "../../components/ReturnAndRefund/CardRefundContainer";
 import ItemSelection from "../../components/ReturnAndRefund/ItemSelection";

@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
-import axiosInstance from "../../axiosConfig";
+import axiosInstance from "../../services/verifyService";
 
 // Animation for the pulse effect
 const pulse = keyframes`
