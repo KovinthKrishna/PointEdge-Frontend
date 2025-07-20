@@ -54,7 +54,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
                   currentSortField={sortField}
                   sortDirection={sortDirection}
                   onSort={handleSort}
-                  width="18%"
+                  width="19%"
                 />
                 <PerformanceSorting
                   title="Working Hours"

@@ -26,7 +26,6 @@ export const getEmployees = async () => {
   return response.data;
 };
 
-
 export const searchAttendances = async (searchData: any) => {
   const response = await api.post('/attendances/search', searchData);
   return response.data;
@@ -52,3 +51,35 @@ export const fetchTopPerformers = async () => {
   return response.data;
 };
 
+// ===== Shift Report APIs added below =====
+
+export const getAllEmployeesShiftReport = async () => {
+  const response = await api.get('/shift-reports/all');
+  return response.data;
+};
+
+export const getEmployeeShiftReport = async (employeeId: number | string) => {
+  const response = await api.get(`/shift-reports/employee/${employeeId}`);
+  return response.data;
+};
+
+export const getEmployeeShiftReportByDateRange = async (
+  employeeId: number | string,
+  startDate: string,
+  endDate: string
+) => {
+  const response = await api.get(
+    `/shift-reports/employee/${employeeId}/date-range?startDate=${startDate}&endDate=${endDate}`
+  );
+  return response.data;
+};
+
+export const getAllEmployeesShiftReportByDateRange = async (
+  startDate: string,
+  endDate: string
+) => {
+  const response = await api.get(
+    `/shift-reports/all/date-range?startDate=${startDate}&endDate=${endDate}`
+  );
+  return response.data;
+};
