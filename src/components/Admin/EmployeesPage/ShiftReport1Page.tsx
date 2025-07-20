@@ -1,11 +1,11 @@
 import React from "react";
-import ShiftReport2Page from "./ShiftReport2Page";
 import clockIcon from "../../../assets/clock-icon.png";
-import "./styles/ShiftReport1.css";
 import { useShiftReportData } from "../../../hooks/useShiftReportdata";
-import ShiftReportStatCard from "./ShiftStatCard";
-import ShiftReportSearchBar from "./ShiftSearchbar";
 import ShiftReportEmployeeTable from "./ShiftEmployeeTable";
+import ShiftReport2Page from "./ShiftReport2Page";
+import ShiftReportSearchBar from "./ShiftSearchbar";
+import ShiftReportStatCard from "./ShiftStatCard";
+import "./styles/ShiftReport1.css";
 
 const ShiftReport1Page: React.FC = () => {
   const {
@@ -17,11 +17,11 @@ const ShiftReport1Page: React.FC = () => {
     searchQuery,
     setSearchQuery,
     totalShifts,
-    totalHours,
+    // totalHours,
     workingDays,
     handleSearch,
     handleViewClick,
-    handleBackClick
+    handleBackClick,
   } = useShiftReportData();
 
   // If detailed report is being shown, render the ShiftReport2Page component
@@ -29,13 +29,15 @@ const ShiftReport1Page: React.FC = () => {
     // Convert id to string to match ShiftReport2Page's expected type
     const employeeForDetailView = {
       ...selectedEmployee,
-      id: selectedEmployee.id.toString()
+      id: selectedEmployee.id.toString(),
     };
-    
-    return <ShiftReport2Page 
-      employee={employeeForDetailView} 
-      onBackClick={handleBackClick} 
-    />;
+
+    return (
+      <ShiftReport2Page
+        employee={employeeForDetailView}
+        onBackClick={handleBackClick}
+      />
+    );
   }
 
   return (
@@ -68,20 +70,20 @@ const ShiftReport1Page: React.FC = () => {
               />
             }
             title="Working Days"
-            value={workingDays.toString()}          
+            value={workingDays.toString()}
           />
         </div>
 
         {/* Search Bar */}
-        <ShiftReportSearchBar 
-          searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery} 
-          handleSearch={handleSearch} 
+        <ShiftReportSearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
         />
 
         {/* Employee Shift Table */}
-        <ShiftReportEmployeeTable 
-          employees={employees|| []}
+        <ShiftReportEmployeeTable
+          employees={employees || []}
           loading={loading}
           error={error}
           onViewClick={handleViewClick}

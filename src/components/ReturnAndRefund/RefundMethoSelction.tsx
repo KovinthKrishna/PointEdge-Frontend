@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Box, VStack, Text, useToast, HStack } from "@chakra-ui/react";
+import { Box, HStack, Text, useToast, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { CreditCard, Repeat, Wallet } from "lucide-react";
+import React, { useState } from "react";
 import ActionButtons from "./ActionButtons";
 
 interface RefundMethodSelectionProps {
@@ -18,8 +18,8 @@ const RefundMethodSelection: React.FC<RefundMethodSelectionProps> = ({
   totalAmount,
   onSubmit,
   onCancel,
-  onExchangeSelect,
-  onCardPayment,
+  // onExchangeSelect,
+  // onCardPayment,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const toast = useToast();

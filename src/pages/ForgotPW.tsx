@@ -1,21 +1,21 @@
 import {
   Box,
-  Flex,
-  VStack,
-  Image,
-  Heading,
-  Text,
-  Input,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
+  Image,
+  Input,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import bgImage from "../assets/1 1.png";
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import PopupAlert from "../components/Common/PopupAlert";
 import axios from "axios";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import bgImage from "../assets/1 1.png";
+import PopupAlert from "../components/Common/PopupAlert";
 
 const ForgotPW: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -43,17 +43,14 @@ const ForgotPW: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/forgot-password",
-        {
-          email: username,
-        }
-      );
+      await axios.post("http://localhost:8080/api/auth/forgot-password", {
+        email: username,
+      });
 
       setPopupStatus("success");
       setPopupTitle("Verification mail sent.");
       setPopupDescription("Check your inbox.");
-    } catch (error) {
+    } catch {
       setPopupStatus("error");
       setPopupTitle("Verification failed.");
       setPopupDescription("Something went wrong. Try again.");

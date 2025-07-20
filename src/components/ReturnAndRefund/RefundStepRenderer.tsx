@@ -1,12 +1,11 @@
 import React from "react";
+import { Invoice, InvoiceItem } from "../../models/Invoice";
+import Product from "../../models/Product";
+import { RefundStep } from "../../models/RefundStep";
+import CardRefundContainer from "./CardRefundContainer";
 import ItemSelection from "./ItemSelection";
 import RefundMethodSelection from "./RefundMethoSelction";
 import RefundResult from "./RefundResults";
-import ExchangeProductSelector from "./ExchangeProductSelector";
-import { RefundStep } from "../../models/RefundStep";
-import { InvoiceItem, Invoice } from "../../models/Invoice";
-import Product from "../../models/Product";
-import CardRefundContainer from "./CardRefundContainer";
 
 interface RefundStepRendererProps {
   currentStep: number;
@@ -36,25 +35,25 @@ const RefundStepRenderer: React.FC<RefundStepRendererProps> = ({
   refundSuccess,
   onSelectItems,
   onSelectMethod,
-  onSelectReplacementProduct,
+  // onSelectReplacementProduct,
   onCancel,
   invoiceNumber,
   onBack,
-  isExchangeMode,
+  // isExchangeMode,
   setExchangeMode,
   showCardForm,
   setShowCardForm,
 }) => {
   // 1. Exchange product selector override
-  if (isExchangeMode) {
-    return (
-      <ExchangeProductSelector
-        onSelectReplacement={onSelectReplacementProduct}
-        onBack={onBack}
-        refundAmount={totalRefundAmount}
-      />
-    );
-  }
+  // if (isExchangeMode) {
+  //   return (
+  //     <ExchangeProductSelector
+  //       onSelectReplacement={onSelectReplacementProduct}
+  //       onBack={onBack}
+  //       refundAmount={totalRefundAmount}
+  //     />
+  //   );
+  // }
 
   // 2. Card refund form override
   if (showCardForm) {

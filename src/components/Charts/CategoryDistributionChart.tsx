@@ -1,5 +1,5 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Box, Heading, Text } from "@chakra-ui/react";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { CategoryDistribution } from "../../models/Analysis";
 
 const COLORS = ["#3182CE", "#38A169", "#D69E2E", "#E53E3E", "#805AD5"];
@@ -29,7 +29,7 @@ const CategoryDistributionChart = ({ data }: Props) => {
               outerRadius={100}
               label
             >
-              {data.map((entry, index) => (
+              {data.map((_entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
