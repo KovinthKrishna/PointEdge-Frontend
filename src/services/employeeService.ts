@@ -51,6 +51,11 @@ export const fetchTopPerformers = async () => {
   return response.data;
 };
 
+export const getEmployeeDashboardStats = async () => {
+  const response = await api.get('/dashboard/employee-stats');
+  return response.data;
+};
+
 // ===== Shift Report APIs added below =====
 
 export const getAllEmployeesShiftReport = async () => {

@@ -28,10 +28,10 @@ const PerformanceSorting: React.FC<PerformanceSortingProps> = ({
         {title}
         <div className="sort-icon">
           {currentSortField === field ? (
-            sortDirection === "asc" ? (
-              <span className="triangle-up"></span>
-            ) : (
+            sortDirection === "desc" ? (
               <span className="triangle-down"></span>
+            ) : (
+              <span className="triangle-up"></span>
             )
           ) : (
             <span className="triangle-down inactive" title="Click to sort descending"></span>

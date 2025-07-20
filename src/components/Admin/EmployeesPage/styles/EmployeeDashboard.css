@@ -420,6 +420,7 @@
   padding: 1rem;
   border-radius: 0.375rem;
   border: 1px solid #e2e8f0;
+  position: relative; /* Ensure stat card is relative for absolute children */
 }
 
 .stat-icon {
@@ -451,7 +452,12 @@
 }
 
 .mini-chart-container {
+  position: absolute;
+  bottom: 0.1rem;
+  right: 1rem;
   height: 40px;
+  display: flex;
+  align-items: flex-end;
 }
 
 .mini-chart-bar {
