@@ -1,10 +1,10 @@
+import { Box, Spinner, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Spinner, Box, VStack } from "@chakra-ui/react";
 
+import RefundStepRenderer from "./RefundStepRenderer";
 import StepHeader from "./StepHeader";
 import StepIndicator from "./StepIndicator";
-import RefundStepRenderer from "./RefundStepRenderer";
 
 import { useInvoiceData } from "../../hooks/useInvoiceData";
 import { useItemSelection } from "../../hooks/useItemSelection";
@@ -12,7 +12,6 @@ import useRefundProcessor from "../../hooks/useRefundProcessor";
 import { useReturnFlowSteps } from "../../hooks/UseReturnFlowSteps";
 
 import { InvoiceItem } from "../../models/Invoice";
-import Product from "../../models/Product";
 
 const ReturnRefundContainer: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -27,12 +26,12 @@ const ReturnRefundContainer: React.FC = () => {
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [isExchangeMode, setIsExchangeMode] = useState(false);
   const [showCardForm, setShowCardForm] = useState(false);
-  const [replacementProduct, setReplacementProduct] = useState<Product | null>(
-    null
-  );
+  // const [replacementProduct, setReplacementProduct] = useState<Product | null>(
+  //   null
+  // );
   const [refundMethod, setRefundMethod] = useState("");
 
-  const { processRefund, isProcessing } = useRefundProcessor({
+  const { processRefund } = useRefundProcessor({
     invoiceNumber: invoiceNumber!,
     selectedItems,
     totalAmount: totalRefundAmount,
@@ -58,10 +57,10 @@ const ReturnRefundContainer: React.FC = () => {
     }
   };
 
-  const handleReplacementProductSelect = async (product: Product) => {
-    setReplacementProduct(product);
+  const handleReplacementProductSelect = async () => {
+    // setReplacementProduct(product);
     if (invoiceNumber) {
-      await processRefund("Exchange", product);
+      await processRefund("Exchange");
       setIsExchangeMode(false);
       goToNext();
     }
@@ -77,7 +76,7 @@ const ReturnRefundContainer: React.FC = () => {
     setIsExchangeMode(false);
     setShowCardForm(false);
     setRefundMethod("");
-    setReplacementProduct(null);
+    // setReplacementProduct(null);
     reset();
   };
 
@@ -86,7 +85,7 @@ const ReturnRefundContainer: React.FC = () => {
     setIsExchangeMode(false);
     setShowCardForm(false);
     setRefundMethod("");
-    setReplacementProduct(null);
+    // setReplacementProduct(null);
     reset();
   };
 

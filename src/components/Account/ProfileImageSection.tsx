@@ -1,24 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
 import {
-  Box,
   Avatar,
-  VStack,
-  Text,
+  Box,
+  Button,
   FormLabel,
   Input,
+  Text,
   useToast,
-  Button,
+  VStack,
 } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState } from "react";
 import { fetchCurrentUser } from "../../services/userService";
 
 interface ProfileImageSectionProps {
   imagePreview: string | null;
   onUrlChange: (url: string) => void;
   onFileChange?: (file: File) => void;
-}
-
-interface User {
-  avatarUrl?: string;
 }
 
 const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
@@ -28,7 +24,6 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
 }) => {
   const [inputUrl, setInputUrl] = useState(imagePreview || "");
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const toast = useToast();
   const toastIdRef = useRef<string | number | undefined>(undefined);
 
@@ -37,7 +32,6 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
     const getUser = async () => {
       try {
         const data = await fetchCurrentUser();
-        setUser(data);
         if (data.avatar) {
           setInputUrl(data.avatar);
         }

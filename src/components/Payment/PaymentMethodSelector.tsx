@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from "react";
 import {
-  VStack,
-  Text,
+  Box,
   Button,
   Divider,
-  Switch,
-  Input,
-  Box,
   Flex,
+  Input,
+  Switch,
+  Text,
+  useRadio,
   useRadioGroup,
+  UseRadioProps,
+  VStack,
 } from "@chakra-ui/react";
-import { useRadio, UseRadioProps } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { usePaymentFlow } from "../../hooks/usePaymentFlow";
+import { OrderDetails } from "../../models/OrderDetails";
 import ModelBoxPopup from "../Common/ModelBoxPopup";
 import CardPaymentModal from "./CardPaymentModal";
 import CashPaymentModal from "./CashPaymentModal";
 import SplitPaymentModal from "./SplitPaymentModal";
-import { OrderDetails } from "../../models/OrderDetails";
-import { useNavigate } from "react-router-dom";
-import { usePaymentFlow } from "../../hooks/usePaymentFlow";
 
 // Custom Radio Button Component
 function CustomRadioButton(
@@ -91,7 +92,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
     onChange: (value) => setSelectedMethod(value as string),
   });
 
-  const group = getRootProps();
+  getRootProps();
 
   const [cashInput, setCashInput] = useState(cashAmount.toString());
   const [cardInput, setCardInput] = useState(cardAmount.toString());

@@ -1,22 +1,22 @@
+import { Box, SimpleGrid } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {
-  fetchTopSellingProducts,
-  fetchSalesOverTime,
-  fetchRevenueByProduct,
-  fetchReturnRates,
-  fetchCategoryDistribution,
-  TopSellingProduct,
-  SalesOverTime,
-  RevenueByProduct,
-  ReturnRate,
-  CategoryDistribution,
-} from "../../models/Analysis";
-import { SimpleGrid, Box, Heading } from "@chakra-ui/react";
-import TopSellingProductsChart from "../../components/Charts/TopSellingProducts";
-import SalesOverTimeChart from "../../components/Charts/SalesOverTimeChart";
-import RevenueByProductChart from "../../components/Charts/RevenueByProductsChart";
-import ReturnRateChart from "../../components/Charts/RerturnRateChart";
 import CategoryDistributionChart from "../../components/Charts/CategoryDistributionChart";
+import ReturnRateChart from "../../components/Charts/RerturnRateChart";
+import RevenueByProductChart from "../../components/Charts/RevenueByProductsChart";
+import SalesOverTimeChart from "../../components/Charts/SalesOverTimeChart";
+import TopSellingProductsChart from "../../components/Charts/TopSellingProducts";
+import {
+  CategoryDistribution,
+  fetchCategoryDistribution,
+  fetchReturnRates,
+  fetchRevenueByProduct,
+  fetchSalesOverTime,
+  fetchTopSellingProducts,
+  ReturnRate,
+  RevenueByProduct,
+  SalesOverTime,
+  TopSellingProduct,
+} from "../../models/Analysis";
 
 const AnalysisPage = () => {
   const [topSellingProducts, setTopSellingProducts] = useState<

@@ -22,7 +22,7 @@ const Sidebar = () => {
       >
         <Image src={logo} height={70} width={70} />
         <Heading fontSize={24} color="lightBlue">
-          Point Edge
+          PointEdge
         </Heading>
       </HStack>
       <Navbar />

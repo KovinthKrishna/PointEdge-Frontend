@@ -1,4 +1,4 @@
-interface OrderPayload {
+export default interface OrderPayload {
   customerName: string;
   customerPhone: string;
   loyaltyPoints: number;
