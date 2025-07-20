@@ -17,8 +17,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
   loading,
   sortField,
   sortDirection,
-  handleSort,
-  formatCurrency,
+  handleSort
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const rowsPerPage = 50;
@@ -99,7 +98,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
                     </td>
                     <td>{employee.role}</td>
                     <td>{employee.totalOrders} orders</td>
-                    <td>{formatCurrency(employee.totalSales)}</td>
+                    <td>{`Rs.${Number(employee.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</td>
                     <td>{employee.workingHours}</td>
                   </tr>
                 ))

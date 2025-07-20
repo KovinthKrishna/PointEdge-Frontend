@@ -15,8 +15,6 @@ const PerformanceSearch: React.FC<PerformanceSearchProps> = ({
   setSearchQuery,
   handleSearch,
   loading,
-  timeRange,
-  setTimeRange,
 }) => {
   const handleKeyPress = (e: React.KeyboardEvent): void => {
     if (e.key === "Enter") {
@@ -33,19 +31,7 @@ const PerformanceSearch: React.FC<PerformanceSearchProps> = ({
   return (
     <>
       {/* Filters and Search */}
-      <div className="filters-container">
-        <div>
-          <select
-            className="select"
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-          >
-            <option value="all">All Time</option>
-            <option value="lastMonth">Last Month</option>
-            <option value="lastWeek">Last Week</option>
-          </select>
-        </div>
-      </div>
+      
 
       {/* Search Input */}
       <div className="search-container">

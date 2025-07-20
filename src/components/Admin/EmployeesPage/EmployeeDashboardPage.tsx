@@ -80,7 +80,7 @@ const EmployeeDashboardPage: React.FC = () => {
   };
 
   // Format total sales as currency
-  const formattedSales = `$${Number(data.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+ const formattedSales = `Rs.${Number(data.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
     <div className="attendance-container">
