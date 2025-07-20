@@ -1,19 +1,18 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
 import axiosInstance from "../../axiosConfig";
 
+import CardRefundContainer from "../../components/ReturnAndRefund/CardRefundContainer";
 import ItemSelection from "../../components/ReturnAndRefund/ItemSelection";
 import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoSelction";
 import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
-import CardRefundContainer from "../../components/ReturnAndRefund/CardRefundContainer";
-import WaitingForAdminApproval from "../../components/ReturnAndRefund/WaitingForAdminAproval";
-
-import { InvoiceItem, Invoice } from "../../models/Invoice";
-import Product from "../../models/Product";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
+import { Invoice, InvoiceItem } from "../../models/Invoice";
+import WaitingForAdminApproval from "../../components/ReturnAndRefund/WaitingForAdminAproval";
 import { submitRefundRequestWithImages } from "../../services/imageService";
 
 enum RefundStep {
@@ -38,9 +37,9 @@ const ReturnRefundPage: React.FC = () => {
   const [refundSuccess, setRefundSuccess] = useState(false);
   const [itemSelections, setItemSelections] = useState<InvoiceItem[]>([]);
   const [showCardForm, setShowCardForm] = useState(false);
-  const [replacementProduct, setReplacementProduct] = useState<Product | null>(
-    null
-  );
+  // const [replacementProduct, setReplacementProduct] = useState<Product | null>(
+  //   null
+  // );
 
   const toastUI = useToast();
 

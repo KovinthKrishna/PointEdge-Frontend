@@ -1,5 +1,5 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Box, Heading, Text } from "@chakra-ui/react";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { CategoryDistribution } from "../../models/Analysis";
 
 const COLORS = ["#008ED8", "#008ED8", "#008ED8", "#008ED8", "#008ED8"];

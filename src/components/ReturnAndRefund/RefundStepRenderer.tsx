@@ -35,15 +35,26 @@ const RefundStepRenderer: React.FC<RefundStepRendererProps> = ({
   refundSuccess,
   onSelectItems,
   onSelectMethod,
-  onSelectReplacementProduct,
+  // onSelectReplacementProduct,
   onCancel,
   invoiceNumber,
   onBack,
-  isExchangeMode,
+  // isExchangeMode,
   setExchangeMode,
   showCardForm,
   setShowCardForm,
 }) => {
+  // 1. Exchange product selector override
+  // if (isExchangeMode) {
+  //   return (
+  //     <ExchangeProductSelector
+  //       onSelectReplacement={onSelectReplacementProduct}
+  //       onBack={onBack}
+  //       refundAmount={totalRefundAmount}
+  //     />
+  //   );
+  // }
+
   // 2. Card refund form override
   if (showCardForm) {
     return (

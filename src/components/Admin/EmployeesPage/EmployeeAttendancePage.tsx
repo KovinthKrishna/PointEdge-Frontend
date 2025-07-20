@@ -1,18 +1,21 @@
-import React, { ErrorInfo, ReactNode } from 'react';
-import './styles/EmployeeAttendance.css';
-import { useAttendanceData } from '../../../hooks/useAttendancedata';
-import AttendanceWorkHour from './AttendanceWorkHour';
-import AttendanceSearchBar from './AttendanceSearchBar';
-import AttendanceTable from './AttendanceTable';
+import React, { ErrorInfo, ReactNode } from "react";
+import { useAttendanceData } from "../../../hooks/useAttendancedata";
+import AttendanceSearchBar from "./AttendanceSearchBar";
+import AttendanceTable from "./AttendanceTable";
+import AttendanceWorkHour from "./AttendanceWorkHour";
+import "./styles/EmployeeAttendance.css";
 
 // Simple error boundary component
-class ErrorBoundary extends React.Component<{children: ReactNode}, {hasError: boolean}> {
-  constructor(props: {children: ReactNode}) {
+class ErrorBoundary extends React.Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -22,7 +25,11 @@ class ErrorBoundary extends React.Component<{children: ReactNode}, {hasError: bo
 
   render() {
     if (this.state.hasError) {
-      return <div className="error-fallback">Something went wrong. Please try again later.</div>;
+      return (
+        <div className="error-fallback">
+          Something went wrong. Please try again later.
+        </div>
+      );
     }
 
     return this.props.children;
@@ -30,27 +37,27 @@ class ErrorBoundary extends React.Component<{children: ReactNode}, {hasError: bo
 }
 
 // Inline Toast component
-interface ToastProps {
-  title: string;
-  message: string;
-  type: string;
-  onClose: () => void;
-}
+// interface ToastProps {
+//   title: string;
+//   message: string;
+//   type: string;
+//   onClose: () => void;
+// }
 
-const Toast: React.FC<ToastProps> = ({ title, message, type, onClose }) => {
-  return (
-    <div className={`toast toast-${type}`}>
-      <div className="font-medium">{title}</div>
-      <div>{message}</div>
-      <button 
-        className="toast-close-button"
-        onClick={onClose}
-      >
-        ×
-      </button>
-    </div>
-  );
-};
+// const Toast: React.FC<ToastProps> = ({ title, message, type, onClose }) => {
+//   return (
+//     <div className={`toast toast-${type}`}>
+//       <div className="font-medium">{title}</div>
+//       <div>{message}</div>
+//       <button
+//         className="toast-close-button"
+//         onClick={onClose}
+//       >
+//         ×
+//       </button>
+//     </div>
+//   );
+// };
 
 const EmployeeAttendancePage: React.FC = () => {
   const {
@@ -65,9 +72,9 @@ const EmployeeAttendancePage: React.FC = () => {
     searchQuery,
     setSearchQuery,
     errorMessage,
-    setErrorMessage,
+    // setErrorMessage,
     handleSearch,
-    getInitials
+    getInitials,
   } = useAttendanceData();
 
   // Fetch company start/end time from backend on mount
@@ -109,11 +116,7 @@ const EmployeeAttendancePage: React.FC = () => {
         />
 
         {/* Error message display */}
-        {errorMessage && (
-          <div className="error-message">
-            {errorMessage}
-          </div>
-        )}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
 
         {/* Table with Error Boundary */}
         <ErrorBoundary>

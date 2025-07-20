@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { usePaymentFlow } from "../../hooks/usePaymentFlow";
 import ModelBoxPopup from "../Common/ModelBoxPopup";
 import CardPaymentModal from "./CardPaymentModal";
-import { usePaymentFlow } from "../../hooks/usePaymentFlow";
 import SplitCash from "./SplitCash";
 
 interface SplitPaymentModalProps {
@@ -17,7 +17,7 @@ interface SplitPaymentModalProps {
 const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
   isOpen,
   onClose,
-  amount,
+  // amount,
   currency,
   cardAmount,
   cashAmount,

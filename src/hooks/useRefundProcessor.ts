@@ -1,7 +1,6 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { InvoiceItem } from "../models/Invoice";
-import Product from "../models/Product";
 
 interface UseRefundProcessorParams {
   invoiceNumber: string;
