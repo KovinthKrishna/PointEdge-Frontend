@@ -1,6 +1,6 @@
-// filepath: c:\Users\DELL\Desktop\PointEdge-Frontend\src\components\Admin\EmployeesPage\ShiftReportEmployeeInfo.tsx
 import React from 'react';
 import { Employee } from '../../../models/Employees';
+
 
 interface ShiftReportEmployeeInfoProps {
   employee: Employee;

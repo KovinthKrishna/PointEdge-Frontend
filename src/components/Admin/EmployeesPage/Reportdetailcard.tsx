@@ -6,7 +6,7 @@ interface ShiftReportDetailCardProps {
 }
 
 const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
-  // ✅ Format date for display
+  // Format date for display
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString();
@@ -15,7 +15,19 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
     }
   };
 
-  // ✅ Format currency for display
+  // Format time to HH:mm:ss (no milliseconds)
+  const formatTime = (timeString: string) => {
+    if (!timeString) return "N/A";
+    // If ISO string, extract time part
+    if (timeString.includes("T")) {
+      const timePart = timeString.split("T")[1];
+      return timePart ? timePart.substring(0, 8) : timeString;
+    }
+    // If already in HH:mm:ss or HH:mm format
+    return timeString.substring(0, 8);
+  };
+
+  // Format currency for display
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -38,7 +50,7 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
               <div className="detail-number">1</div>
               <div className="detail-content">
                 <div className="detail-label">Start Time:</div>
-                <div className="detail-value">{shift.startTime}</div>
+                <div className="detail-value">{formatTime(shift.startTime)}</div>
               </div>
             </div>
 
@@ -46,7 +58,7 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
               <div className="detail-number">2</div>
               <div className="detail-content">
                 <div className="detail-label">End Time:</div>
-                <div className="detail-value">{shift.endTime}</div>
+                <div className="detail-value">{formatTime(shift.endTime)}</div>
               </div>
             </div>
 
@@ -95,7 +107,7 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
               </div>
             </div>
 
-            {/* ✅ Add sales information */}
+            {/* Sales information */}
             <div className="shift-detail-item">
               <div className="detail-number">8</div>
               <div className="detail-content">
