@@ -11,7 +11,6 @@
   width: 100%;
 }
 
-
 .filters-container {
   display: flex;
   justify-content: space-between;
@@ -31,7 +30,6 @@
   background-position: right 0.75rem center;
   padding-right: 2rem;
 }
-
 
 .search-container {
   display: flex;
@@ -92,7 +90,6 @@
   position: relative;
 }
 
-
 .alert {
   display: flex;
   align-items: center;
@@ -109,7 +106,6 @@
 .alert-icon {
   margin-right: 0.5rem;
 }
-
 
 .table-container {
   background-color: white;
@@ -183,6 +179,7 @@
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 8px solid white;
+  transition: border-bottom-color 0.2s;
 }
 
 .triangle-down {
@@ -191,17 +188,21 @@
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 8px solid white;
+  transition: border-top-color 0.2s;
 }
 
 .inactive {
   opacity: 0.5;
 }
 
+.active {
+  opacity: 1;
+}
+
 .empty-table-message {
   text-align: center;
   padding: 1.5rem 0;
 }
-
 
 .employee-name-cell {
   display: flex;

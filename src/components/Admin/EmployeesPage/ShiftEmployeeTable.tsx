@@ -36,14 +36,13 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
             <th>Employee ID</th>
             <th>Employee name</th>
             <th>Role</th>
-            <th>Location</th>
             <th>Detailed Report</th>
           </tr>
         </thead>
         <tbody>
           {paginatedData.length === 0 ? (
             <tr>
-              <td colSpan={6} className="empty-table-message">No employees found</td>
+              <td colSpan={5} className="empty-table-message">No employees found</td>
             </tr>
           ) : (
             paginatedData.map((employee, index) => (
@@ -54,7 +53,6 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
                   <span className="employee-name">{employee.name}</span>
                 </td>
                 <td>{employee.role}</td>
-                <td>{employee.location}</td>
                 <td>
                   <button
                     className="view-button"
@@ -68,7 +66,6 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
           )}
         </tbody>
       </table>
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="pagination-controls">
           <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>

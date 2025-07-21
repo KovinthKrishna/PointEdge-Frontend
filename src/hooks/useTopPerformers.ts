@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { EmployeePerformance } from "../models/Performance";
-
-// Define types
 export type SortField = "orders" | "sales" | "workinghours";
 export type SortDirection = "asc" | "desc";
 export type TimeRange = "all" | "lastMonth" | "lastWeek";
 
 export const useTopPerformers = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortField, setSortField] = useState<SortField>("sales");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  // Use a single state object for sorting
+  const [sortState, setSortState] = useState<{ field: SortField; direction: SortDirection }>({
+    field: "sales",
+    direction: "desc",
+  });
   const [employees, setEmployees] = useState<EmployeePerformance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
 
-  // Common fetch function
   const fetchData = useCallback(async (url: string): Promise<void> => {
     setLoading(true);
     setErrorMessage(null);
@@ -40,12 +40,10 @@ export const useTopPerformers = () => {
     }
   }, []);
 
-  // Fetch data based on sort and filter options
   useEffect(() => {
     const buildUrl = (): string => {
-      let url = `http://localhost:8080/api/performance/top-performers?sortBy=${sortField}&sortDirection=${sortDirection}`;
+      let url = `http://localhost:8080/api/performance/top-performers?sortBy=${sortState.field}&sortDirection=${sortState.direction}`;
 
-      // Add date range filters if applicable
       if (timeRange === "lastMonth") {
         const today = new Date();
         const lastMonth = new Date();
@@ -63,7 +61,6 @@ export const useTopPerformers = () => {
           today.toISOString().split("T")[0]
         }`;
       } else if (timeRange === "all") {
-        // For "all" time, explicitly request all performance data without date restrictions
         url += `&includeAllData=true`;
       }
 
@@ -71,14 +68,19 @@ export const useTopPerformers = () => {
     };
 
     fetchData(buildUrl());
-  }, [sortField, sortDirection, timeRange, fetchData]);
+  }, [sortState, timeRange, fetchData]);
 
-  // Handle search
+  const handleSort = useCallback((field: SortField): void => {
+    setSortState((prev) => ({
+      field,
+      direction: prev.field === field ? (prev.direction === "desc" ? "asc" : "desc") : "desc",
+    }));
+  }, []);
+
   const handleSearch = useCallback(async (): Promise<void> => {
     if (!searchQuery.trim()) {
-      // If search is empty, fetch data with current filters
       const buildUrl = (): string => {
-        let url = `http://localhost:8080/api/performance/top-performers?sortBy=${sortField}&sortDirection=${sortDirection}`;
+        let url = `http://localhost:8080/api/performance/top-performers?sortBy=${sortState.field}&sortDirection=${sortState.direction}`;
 
         if (timeRange === "lastMonth") {
           const today = new Date();
@@ -107,7 +109,6 @@ export const useTopPerformers = () => {
       return;
     }
 
-    // Build search URL with time range filters
     let searchUrl = `http://localhost:8080/api/performance/search?query=${encodeURIComponent(
       searchQuery
     )}`;
@@ -133,42 +134,23 @@ export const useTopPerformers = () => {
     }
 
     await fetchData(searchUrl);
-  }, [searchQuery, sortField, sortDirection, timeRange, fetchData]);
+  }, [searchQuery, sortState, timeRange, fetchData]);
 
-  // Handle sorting
-  const handleSort = useCallback((field: SortField): void => {
-    setSortField((prevField) => {
-      setSortDirection((prevDirection) => {
-        if (prevField === field) {
-          return prevDirection === "asc" ? "desc" : "asc";
-        }
-        return "desc";
-      });
-      return field;
-    });
-  }, []);
-
-  // Format currency helper
   const formatCurrency = useCallback((amount: number): string => {
     return `$${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
   }, []);
 
   return {
-    // State
     employees,
     loading,
     errorMessage,
     searchQuery,
-    sortField,
-    sortDirection,
+    sortField: sortState.field,
+    sortDirection: sortState.direction,
     timeRange,
-
-    // Setters
     setSearchQuery,
     setTimeRange,
     setErrorMessage,
-
-    // Actions
     handleSearch,
     handleSort,
     formatCurrency,

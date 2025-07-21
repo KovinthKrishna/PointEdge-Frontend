@@ -8,33 +8,32 @@ export interface Employee {
   isFirstRow?: boolean;
 }
 
-// Dashboard data structures
 export interface EmployeeDashboardData {
-  // Overview Stats
   totalEmployees: number;
   activeEmployees: number;
-  onLeaveEmployees: number;
+  inactiveEmployees: number;
+  suspendEmployees: number;
   totalHoursWorked: string;
   employeeChangePercent: number;
   hoursChangePercent: number;
 
   totalOrders: number;
   totalSales: number;
-  
-  // Productivity Chart Data
+
   productivityData: {
     month: string;
     primary: number;
     secondary: number;
   }[];
-  
-  // Attendance Report Data
+
+  // Donut Chart Data
   activeCount: number;
-  leaveCount: number;
+  inactiveCount: number;
+  suspendCount: number;
   activePercentage: number;
-  leavePercentage: number;
-  
-  // Weekly Attendance Data
+  inactivePercentage: number;
+  suspendPercentage: number;
+
   weeklyAttendance: {
     date: string;
     dayOfWeek: string;

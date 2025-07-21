@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Tabs,
-  TabList,
-  Tab,
-  Button,
-  Flex,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import {Box,Tabs,TabList,Tab,Button,Flex,useBreakpointValue,} from "@chakra-ui/react";
 import EmployeeDashboardPage from "../../components/Admin/EmployeesPage/EmployeeDashboardPage";
 import EmployeeAttendancePage from "../../components/Admin/EmployeesPage/EmployeeAttendancePage";
 import TopPerformersPage from "../../components/Admin/EmployeesPage/TopPerformersPage";
@@ -17,7 +9,6 @@ import RegistrationForm from "../../components/RegistrationForm";
 const EmployeesPage = () => {
   const [activeTab, setActiveTab] = useState(0);
 
-  // Responsive values using Chakra UI
   const tabFontSize = useBreakpointValue({
     base: "12px",
     sm: "14px",
@@ -58,7 +49,6 @@ const EmployeesPage = () => {
     md: "5.5rem",
   });
 
-  // Responsive tab labels
   const tabLabels = useBreakpointValue({
     base: ["Dashboard", "Attendance", "Performers", "Reports"],
     sm: ["Dashboard", "Attendance", "Top Performers", "Shift Reports"],

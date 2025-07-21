@@ -18,10 +18,15 @@ const PerformanceSorting: React.FC<PerformanceSortingProps> = ({
   onSort,
   width,
 }) => {
+  // Toggle sort direction: if already sorted by this field, toggle direction; else set field and default to descending
+  const handleSort = () => {
+    onSort(field);
+  };
+
   return (
     <th
       style={{ width: width }}
-      onClick={() => onSort(field)}
+      onClick={handleSort}
       className="sortable-header"
     >
       <div className="header-content">
@@ -29,9 +34,9 @@ const PerformanceSorting: React.FC<PerformanceSortingProps> = ({
         <div className="sort-icon">
           {currentSortField === field ? (
             sortDirection === "desc" ? (
-              <span className="triangle-down"></span>
+              <span className="triangle-down active" title="Sorted descending"></span>
             ) : (
-              <span className="triangle-up"></span>
+              <span className="triangle-up active" title="Sorted ascending"></span>
             )
           ) : (
             <span className="triangle-down inactive" title="Click to sort descending"></span>

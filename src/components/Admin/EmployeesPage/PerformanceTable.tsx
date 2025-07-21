@@ -105,7 +105,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
               )}
             </tbody>
           </table>
-          {/* Pagination Controls */}
+
           {totalPages > 1 && (
             <div className="pagination-controls">
               <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
@@ -117,6 +117,7 @@ const PerformanceTable: React.FC<PerformanceTableProps> = ({
               </button>
             </div>
           )}
+          
         </>
       )}
     </div>

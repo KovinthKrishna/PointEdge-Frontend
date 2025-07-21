@@ -5,7 +5,7 @@ import AttendanceTable from "./AttendanceTable";
 import AttendanceWorkHour from "./AttendanceWorkHour";
 import "./styles/EmployeeAttendance.css";
 
-// Simple error boundary component
+
 class ErrorBoundary extends React.Component<
   { children: ReactNode },
   { hasError: boolean }
@@ -36,28 +36,6 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-// Inline Toast component
-// interface ToastProps {
-//   title: string;
-//   message: string;
-//   type: string;
-//   onClose: () => void;
-// }
-
-// const Toast: React.FC<ToastProps> = ({ title, message, type, onClose }) => {
-//   return (
-//     <div className={`toast toast-${type}`}>
-//       <div className="font-medium">{title}</div>
-//       <div>{message}</div>
-//       <button
-//         className="toast-close-button"
-//         onClick={onClose}
-//       >
-//         ×
-//       </button>
-//     </div>
-//   );
-// };
 
 const EmployeeAttendancePage: React.FC = () => {
   const {
@@ -72,7 +50,6 @@ const EmployeeAttendancePage: React.FC = () => {
     searchQuery,
     setSearchQuery,
     errorMessage,
-    // setErrorMessage,
     handleSearch,
     getInitials,
   } = useAttendanceData();
@@ -97,7 +74,7 @@ const EmployeeAttendancePage: React.FC = () => {
   return (
     <div className="attendance-container">
       <div className="attendance-content">
-        {/* Work Hour Section */}
+        
         <AttendanceWorkHour
           date={date}
           setDate={setDate}
@@ -107,7 +84,7 @@ const EmployeeAttendancePage: React.FC = () => {
           setEndTime={setEndTime}
         />
 
-        {/* Search Section */}
+        
         <AttendanceSearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -115,10 +92,10 @@ const EmployeeAttendancePage: React.FC = () => {
           loading={loading}
         />
 
-        {/* Error message display */}
+        
         {errorMessage && <div className="error-message">{errorMessage}</div>}
 
-        {/* Table with Error Boundary */}
+        
         <ErrorBoundary>
           <AttendanceTable
             employeeAttendances={employeeAttendances}

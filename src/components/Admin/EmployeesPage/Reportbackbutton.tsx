@@ -5,7 +5,6 @@ interface ShiftReportBackButtonProps {
 }
 
 const Reportbackbutton: React.FC<ShiftReportBackButtonProps> = ({ onBackClick }) => {
-  // Inline styles to ensure back button visibility
   const navBarStyle = {
     display: "flex",
     padding: "16px",

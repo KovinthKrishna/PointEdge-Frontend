@@ -14,10 +14,8 @@ const EmployeeDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<EmployeeDashboardData | null>(null);
 
-  // Get current year
   const currentYear = new Date().getFullYear();
 
-  // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -36,14 +34,12 @@ const EmployeeDashboardPage: React.FC = () => {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [currentYear]);
 
-  // Show loading state
   if (loading && !dashboardData) {
     return <div className="loading-container">Loading dashboard data...</div>;
   }
 
-  // Show error state
   if (error && !dashboardData) {
     return (
       <div className="error-message">
@@ -52,11 +48,11 @@ const EmployeeDashboardPage: React.FC = () => {
     );
   }
 
-  // Use default data if API call fails
   const data = dashboardData || {
     totalEmployees: 0,
     activeEmployees: 0,
-    onLeaveEmployees: 0,
+    inactiveEmployees: 0,
+    suspendEmployees: 0,
     totalHoursWorked: "0h",
     employeeChangePercent: 0,
     hoursChangePercent: 0,
@@ -68,9 +64,11 @@ const EmployeeDashboardPage: React.FC = () => {
       secondary: 0
     })),
     activeCount: 0,
-    leaveCount: 0,
+    inactiveCount: 0,
+    suspendCount: 0,
     activePercentage: 0,
-    leavePercentage: 0,
+    inactivePercentage: 0,
+    suspendPercentage: 0,
     weeklyAttendance: Array(7).fill(0).map(() => ({
       date: "",
       dayOfWeek: "",
@@ -79,8 +77,12 @@ const EmployeeDashboardPage: React.FC = () => {
     }))
   };
 
-  // Format total sales as currency
- const formattedSales = `Rs.${Number(data.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  // Ensure percentages are numbers (in case backend sends as string)
+  const activePercentage = Number(data.activePercentage) || 0;
+  const inactivePercentage = Number(data.inactivePercentage) || 0;
+  const suspendPercentage = Number(data.suspendPercentage) || 0;
+
+  const formattedSales = `Rs.${Number(data.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
     <div className="attendance-container">
@@ -131,9 +133,7 @@ const EmployeeDashboardPage: React.FC = () => {
           />
         </div>
 
-        {/* Charts Section */}
         <div className="grid grid-cols-3-1 gap-6">
-          {/* Main Chart */}
           <div className="bg-white rounded-md p-4 border border-blue-100">
             <div className="flex justify-between mb-4">
               <div className="font-medium">Employee Productivity</div>
@@ -142,7 +142,7 @@ const EmployeeDashboardPage: React.FC = () => {
               </div>
             </div>
             <DashboardSalesChart chartData={data.productivityData} />
-            {/* Employee Stats */}
+
             <div className="flex justify-between mt-16">
               <div className="flex items-center">
                 <div className="bg-blue-100 p-2 rounded-md mr-3">
@@ -197,8 +197,9 @@ const EmployeeDashboardPage: React.FC = () => {
           <div>
             <div className="flex flex-col gap-6">
               <DashboardDonutChart 
-                activePercentage={data.activePercentage}
-                leavePercentage={data.leavePercentage}
+                activePercentage={activePercentage}
+                inactivePercentage={inactivePercentage}
+                suspendPercentage={suspendPercentage}
               />
 
               <DashboardWeeklyAttendance
