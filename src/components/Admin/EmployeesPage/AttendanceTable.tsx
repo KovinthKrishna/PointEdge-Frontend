@@ -14,21 +14,24 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const rowsPerPage = 25;
-  const totalPages = Math.ceil(employeeAttendances.length / rowsPerPage);
-  
- 
+
+  // Show latest inserted data at the top
+  const reversedAttendances = [...employeeAttendances].reverse();
+
+  const totalPages = Math.ceil(reversedAttendances.length / rowsPerPage);
+
   React.useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [employeeAttendances.length, totalPages]);
-  
+  }, [reversedAttendances.length, totalPages]);
+
   const safePage = totalPages > 0 ? Math.min(Math.max(currentPage, 1), totalPages) : 1;
-  
+
   // Calculate pagination with safePage
   const startIndex = (safePage - 1) * rowsPerPage;
-  const endIndex = Math.min(startIndex + rowsPerPage, employeeAttendances.length);
-  const paginatedData = employeeAttendances.slice(startIndex, endIndex);
+  const endIndex = Math.min(startIndex + rowsPerPage, reversedAttendances.length);
+  const paginatedData = reversedAttendances.slice(startIndex, endIndex);
 
   return (
     <div className="box bg-white rounded-md overflow-hidden shadow-sm">
