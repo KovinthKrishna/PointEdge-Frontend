@@ -1,12 +1,16 @@
 export interface InvoiceItem {
-  id: string;
+  photoPath: any;
+  photoPreviewUrl: any;
+  returnPhoto: any;
+  id: string;                    
+  productId: string;             
   name: string;
   quantity: number;
   price: number;
-  returnQuantity: number; 
-  refundAmount: number; 
+  returnQuantity: number;
+  refundAmount: number;
   total: number;
-  reason?:string;
+  reason?: string;
 }
 
   

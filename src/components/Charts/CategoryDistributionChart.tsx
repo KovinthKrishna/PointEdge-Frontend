@@ -2,7 +2,7 @@ import { Box, Heading, Text } from "@chakra-ui/react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { CategoryDistribution } from "../../models/Analysis";
 
-const COLORS = ["#3182CE", "#38A169", "#D69E2E", "#E53E3E", "#805AD5"];
+const COLORS = ["#008ED8", "#008ED8", "#008ED8", "#008ED8", "#008ED8"];
 
 interface Props {
   data: CategoryDistribution[] | undefined;
@@ -13,10 +13,9 @@ const CategoryDistributionChart = ({ data }: Props) => {
 
   return (
     <Box p={4} bg="white" shadow="md" borderRadius="lg">
-      <Heading size="md" mb={4}>
+      <Heading size="md" mb={4} color="black">
         Product Category Distribution
       </Heading>
-
       {isValidData ? (
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -40,7 +39,7 @@ const CategoryDistributionChart = ({ data }: Props) => {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <Text>No category distribution data available.</Text>
+        <Text color="gray">No category distribution data available.</Text>
       )}
     </Box>
   );

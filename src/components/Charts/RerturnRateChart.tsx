@@ -18,21 +18,20 @@ const ReturnRateChart = ({ data }: Props) => {
 
   return (
     <Box p={4} bg="white" shadow="md" borderRadius="lg">
-      <Heading size="md" mb={4}>
+      <Heading size="md" mb={4} color="black">
         Return Rate by Product
       </Heading>
-
       {isValidData ? (
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <XAxis dataKey="productName" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="returnRate" fill="#E53E3E" />
+            <Bar dataKey="returnRate" fill="#008ED8" />
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <Text>No return rate data available.</Text>
+        <Text color="gray">No return rate data available.</Text>
       )}
     </Box>
   );
