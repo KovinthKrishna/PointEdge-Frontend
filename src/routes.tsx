@@ -120,7 +120,7 @@ const router = createBrowserRouter([
   // Catch-all route for undefined paths
   {
     path: "*",
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
 ]);
 
