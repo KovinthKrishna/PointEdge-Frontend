@@ -31,7 +31,6 @@ export const useShiftReportData = () => {
         role: emp.role || "Unknown",
         avatar: emp.avatar || "",
         status: emp.status || "Active",
-        location: emp.location || `Store ${(index % 3) + 1}`,
         isFirstRow: index === 0
       }));
       
@@ -110,7 +109,6 @@ export const useShiftReportData = () => {
         role: emp.role || "Unknown",
         avatar: emp.avatar || "",
         status: emp.status || "Active",
-        location: emp.location || `Store ${(index % 3) + 1}`,
         isFirstRow: index === 0
       }));
       

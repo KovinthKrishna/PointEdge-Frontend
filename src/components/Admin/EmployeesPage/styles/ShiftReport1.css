@@ -9,7 +9,6 @@
   margin: 0 auto;
 }
 
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -22,7 +21,6 @@
     grid-template-columns: 1fr;
   }
 }
-
 
 .stat-card {
   background-color: white;
@@ -74,7 +72,6 @@
   content: "↑ ";
 }
 
-
 .search-bar {
   display: flex;
   padding: 1rem;
@@ -123,7 +120,6 @@
 .search-button:hover {
   background-color: #00253a;
 }
-
 
 .table-container {
   background-color: white;

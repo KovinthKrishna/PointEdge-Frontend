@@ -50,15 +50,6 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
                 <div className="detail-value">{formatTime(shift.endTime)}</div>
               </div>
             </div>
-
-
-            <div className="shift-detail-item">
-              <div className="detail-number">3</div>
-              <div className="detail-content">
-                <div className="detail-label">Location:</div>
-                <div className="detail-value">{shift.location}</div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -86,7 +77,7 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
           <div className="notes-container">
             <div className="notes-header">Performance Summary</div>
             <div className="notes-content">
-              {shift.shiftType} at {shift.location} on {formatDate(shift.date)}.
+              {shift.shiftType} on {formatDate(shift.date)}.
               <br />
               Working time: {shift.totalHours} including {shift.otHours} overtime.
               <br />

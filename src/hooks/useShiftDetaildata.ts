@@ -33,7 +33,6 @@ export const useShiftDetailData = (employee: Employee) => {
           startTime: shiftReport.clockIn || "N/A",
           endTime: shiftReport.clockOut || "N/A",
           break: "00:30:00", 
-          location: employee.location || "Main Store",
           totalHours: shiftReport.workingHours || "00:00:00",
           orders: shiftReport.totalOrders?.toString() || "0",
           date: shiftReport.shiftDate || new Date().toISOString().split('T')[0]
