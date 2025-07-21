@@ -4,6 +4,7 @@ export interface ReturnedItem {
   returned:boolean;
   reason: string;
   refundAmount: number;
+  invoiceItemId: number;
 }
 
 export interface RefundRequest {

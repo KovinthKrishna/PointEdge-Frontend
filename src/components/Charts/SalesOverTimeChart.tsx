@@ -18,10 +18,9 @@ const SalesOverTimeChart = ({ data }: Props) => {
 
   return (
     <Box p={4} bg="white" shadow="md" borderRadius="lg">
-      <Heading size="md" mb={4}>
+      <Heading size="md" mb={4} color="black">
         Sales Over Time
       </Heading>
-
       {isValidData ? (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
@@ -31,13 +30,13 @@ const SalesOverTimeChart = ({ data }: Props) => {
             <Line
               type="monotone"
               dataKey="sales"
-              stroke="#38A169"
+              stroke="#008ED8"
               strokeWidth={2}
             />
           </LineChart>
         </ResponsiveContainer>
       ) : (
-        <Text>No sales data available.</Text>
+        <Text color="gray">No sales data available.</Text>
       )}
     </Box>
   );

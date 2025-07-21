@@ -3,7 +3,8 @@ import { create } from "zustand";
 interface ProductQuery {
   brandId?: number;
   categoryId?: number;
-  timeFilter?: string;
+  startDate?: string;
+  endDate?: string;
   search?: string;
   page: number;
 }
@@ -12,7 +13,7 @@ interface ProductQueryStore {
   productQuery: ProductQuery;
   setBrandId: (id?: number) => void;
   setCategoryId: (id?: number) => void;
-  setTimeFilter: (id?: string) => void;
+  setTimeFilter: (startDate?: string, endDate?: string) => void;
   setSearch: (search?: string) => void;
   setPage: (page: number) => void;
   resetAll: () => void;
@@ -41,11 +42,12 @@ const useProductQueryStore = create<ProductQueryStore>((set) => ({
       },
     })),
 
-  setTimeFilter: (id) =>
+  setTimeFilter: (startDate, endDate) =>
     set((store) => ({
       productQuery: {
         ...store.productQuery,
-        timeFilter: id,
+        startDate,
+        endDate,
         page: 0,
       },
     })),

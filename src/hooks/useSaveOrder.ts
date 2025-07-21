@@ -1,13 +1,15 @@
 import axios from "axios";
+import { fetchCurrentUser } from "../services/userService";
 import useCartStore from "../store/useCartStore";
 import { useCustomerStore } from "../store/useCustomerStore";
 import useOrderSummaryStore from "../store/useOrderSummaryStore";
-import { fetchCurrentUser } from "../services/userService";
 
 export async function saveOrder() {
   const { orderItems, clearCart } = useCartStore.getState();
-  const { customerInfo, discountCode, clearCustomerInfo, clearDiscountCode } = useCustomerStore.getState();
-  const { amount, totalDiscount, total, resetSummary } = useOrderSummaryStore.getState();
+  const { customerInfo, discountCode, clearCustomerInfo, clearDiscountCode } =
+    useCustomerStore.getState();
+  const { amount, totalDiscount, total, resetSummary } =
+    useOrderSummaryStore.getState();
 
   if (orderItems.length === 0) throw new Error("No items in cart.");
 
@@ -15,7 +17,7 @@ export async function saveOrder() {
 
   const payload = {
     customerName: customerInfo ? customerInfo.name : null,
-    customerPhone: discountCode || null,  // Replace with dynamic phone if available
+    customerPhone: discountCode || null, // Replace with dynamic phone if available
     loyaltyPoints: customerInfo ? customerInfo.loyaltyPoints : null,
     discountCode: discountCode || null,
     amount,
@@ -23,7 +25,6 @@ export async function saveOrder() {
     total,
     employeeId: user.id,
     cashierName: `${user.firstName} ${user.lastName}`,
-    orderDate: new Date().toISOString(),
     items: orderItems.map((item) => ({
       productId: item.product.id,
       quantity: item.quantity,
