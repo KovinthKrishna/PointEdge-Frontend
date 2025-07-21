@@ -1,120 +1,94 @@
-import { Box, Button, Icon, VStack, useToast } from "@chakra-ui/react";
+import { Box, Button, Icon, VStack } from "@chakra-ui/react";
 import { FiPrinter, FiMail } from "react-icons/fi";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { useCustomerStore } from "../../store/useCustomerStore";
 import { saveOrder } from "../../hooks/useSaveOrder";
+import { useState } from "react";
 
 const FooterActions = ({
   onClose,
   onNextStep,
+  onOrderSaved,
 }: {
   onClose: () => void;
   onNextStep: () => void;
+  onOrderSaved: (invoiceNumber: string) => void;
 }) => {
-  const clearCustomerInfo = useCustomerStore(
-    (state) => state.clearCustomerInfo
-  );
-  const toast = useToast();
+  // Track if order is saved
+  const [isOrderSaved, setIsOrderSaved] = useState(false);
+
+  const handleNextStep = async () => {
+    try {
+      const response = await saveOrder();
+      onOrderSaved(response); // Pass the entire response object
+      setIsOrderSaved(true);
+    } catch (error: any) {}
+  };
 
   const handlePrint = () => {
     const input = document.getElementById("printableArea");
     if (!input) return;
 
+    const previousDisplay = input.style.display;
+    input.style.display = "block";
+
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "pt",
-        format: "a4",
-      });
+      const pdf = new jsPDF("p", "pt", "a4");
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
       pdf.save("receipt.pdf");
-    });
-  };
 
-  const handleNextStep = async () => {
-    try {
-      await saveOrder();
-      toast({
-        title: "Order Saved!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      clearCustomerInfo();
-      onNextStep();
-    } catch (error: any) {
-      toast({
-        title: "Failed to Save Order",
-        description: error.message || "An error occurred",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      input.style.display = previousDisplay;
+    });
   };
 
   return (
     <Box p={6} bg="#F3F4F6" borderTop="1px" borderColor="#E5E7EB">
       <VStack spacing={4}>
-        <Button
-          leftIcon={<Icon as={FiPrinter} boxSize={5} />}
-          color="blue"
-          width="20%"
-          size="lg"
-          onClick={handlePrint}
-          _hover={{
-            color: "white",
-            transform: "translateY(-2px)",
-            boxShadow: "0 8px 25px rgba(59, 130, 246, 0.3)",
-            bgGradient: "linear(to-r, #3B82F6, #2563EB)",
-          }}
-          transition="all 0.3s"
-          fontWeight="bold"
-          letterSpacing="wide"
-          borderRadius="xl"
-        >
-          Download PDF
-        </Button>
+        {!isOrderSaved && (
+          <Button color="white" bg="#2563EB" onClick={handleNextStep}>
+            Next Step
+          </Button>
+        )}
 
-        <Button
-          leftIcon={<Icon as={FiMail} boxSize={5} />}
-          color="green"
-          width="20%"
-          size="lg"
-          onClick={onClose}
-          _hover={{
-            color: "white",
-            transform: "translateY(-2px)",
-            boxShadow: "0 8px 25px rgba(34, 197, 94, 0.3)",
-            bgGradient: "linear(to-r, #10B981, #059669)",
-          }}
-          transition="all 0.3s"
-          fontWeight="bold"
-          letterSpacing="wide"
-          borderRadius="xl"
-        >
-          Send E-Receipt
-        </Button>
-
-        <Button
-          color="white"
-          bg="#2563EB"
-          width="20%"
-          size="lg"
-          onClick={handleNextStep}
-          transition="all 0.3s"
-          fontWeight="bold"
-          letterSpacing="wide"
-          borderRadius="xl"
-        >
-          Next Step
-        </Button>
+        {isOrderSaved && (
+          <>
+            <Button
+              onClick={handlePrint}
+              leftIcon={<Icon as={FiPrinter} boxSize={5} />}
+            >
+              Download PDF
+            </Button>
+            <Button
+              onClick={onClose}
+              leftIcon={<Icon as={FiMail} boxSize={5} />}
+            >
+              Send E-Receipt
+            </Button>
+            <Button color="white" bg="#2563EB" onClick={onNextStep}>
+              Go Ahead
+            </Button>
+          </>
+        )}
       </VStack>
     </Box>
   );
