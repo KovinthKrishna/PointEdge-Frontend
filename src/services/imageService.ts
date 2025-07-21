@@ -1,5 +1,5 @@
 import { InvoiceItem } from "../models/Invoice";
-import axiosInstance from "../axiosConfig";
+import axiosInstance from "./verifyService";
 
 export const submitRefundRequestWithImages = async (
   invoiceNumber: string,
