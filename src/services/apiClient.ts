@@ -34,6 +34,11 @@ class APIClient<T> {
     return res.data;
   };
 
+  get = async (config: AxiosRequestConfig) => {
+    const res = await axiosInstance.get<T>(this.endpoint, config);
+    return res.data;
+  };
+
   getPaginated = async (config: AxiosRequestConfig) => {
     const res = await axiosInstance.get<PaginatedResponse<T>>(
       this.endpoint,

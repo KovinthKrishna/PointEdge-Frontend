@@ -1,4 +1,4 @@
-import { Heading, HStack, Image, VStack } from "@chakra-ui/react";
+import { Box, Image, VStack } from "@chakra-ui/react";
 import logo from "../../assets/logo.png";
 import Navbar from "./Navbar";
 
@@ -13,18 +13,15 @@ const Sidebar = () => {
       position="sticky"
       top={0}
     >
-      <HStack
-        padding={2}
+      <Box
         border="2px"
         borderColor="lightBlue"
         borderRadius={10}
         width="100%"
+        justifyItems="center"
       >
-        <Image src={logo} height={70} width={70} />
-        <Heading fontSize={24} color="lightBlue">
-          PointEdge
-        </Heading>
-      </HStack>
+        <Image src={logo} height={105} width={105} />
+      </Box>
       <Navbar />
     </VStack>
   );
