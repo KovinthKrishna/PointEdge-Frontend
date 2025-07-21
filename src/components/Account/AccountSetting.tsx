@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { VStack, useToast, Box } from "@chakra-ui/react";
+import { VStack, useToast, Box, Flex } from "@chakra-ui/react";
 import ModelBoxPopup from "../Common/ModelBoxPopup";
 import ProfileImageSection from "./ProfileImageSection";
 import PersonalInfoSection from "./PersonalInfoSection";
@@ -128,19 +128,21 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ isOpen, onClose }) => {
 
   return (
     <ModelBoxPopup isOpen={isOpen} onClose={handleClose}>
-      <Box maxH="80vh" overflowY="auto" p={8} bg="#fafafa">
+      <Box maxH="80vh" overflowY="auto" p={5} bg="#fafafa">
         <VStack spacing={6} align="stretch">
-          <ProfileImageSection
-            imagePreview={formData.avatarUrl || imagePreview}
-            onUrlChange={(url) => {
-              setFormData((prev) => ({ ...prev, avatarUrl: url }));
-              setImagePreview(url);
-            }}
-          />
+          <Flex align="center" justify="center">
+            <ProfileImageSection
+              imagePreview={formData.avatarUrl || imagePreview}
+              onUrlChange={(url) => {
+                setFormData((prev) => ({ ...prev, avatarUrl: url }));
+                setImagePreview(url);
+              }}
+            />
+          </Flex>
           <PersonalInfoSection
-            fullName={formData.fullName}
-            error={errors.fullName}
-            onFullNameChange={(value) => handleInputChange("fullName", value)}
+            fullName={formData.fullName} // controlled input value
+            error={errors.fullName} // error passed for validation
+            onFullNameChange={(value) => handleInputChange("fullName", value)} // updates formData.fullName
           />
           <SecuritySection
             currentPassword={formData.currentPassword}

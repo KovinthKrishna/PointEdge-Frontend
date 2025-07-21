@@ -10,7 +10,7 @@ const TransactionInfo = ({ currentTime }: { currentTime: string }) => {
     const loadUser = async () => {
       try {
         const user = await fetchCurrentUser();
-        setEmployeeName(`${user.firstName} ${user.lastName}`);
+        setEmployeeName(`${user.name}`);
       } catch (err) {
         console.error("Failed to fetch employee:", err);
       }

@@ -9,9 +9,18 @@ import {
 } from "@chakra-ui/react";
 import { FiGift } from "react-icons/fi";
 import useOrderSummaryStore from "../../store/useOrderSummaryStore";
+import usePaymentInfoStore from "../../store/usePaymentInfoStore";
 
 const TotalSummary = () => {
   const { amount, totalDiscount, total } = useOrderSummaryStore();
+  const { paymentInfo } = usePaymentInfoStore();
+
+  const cashAmount = paymentInfo?.cashAmount || 0;
+  const cardAmount = paymentInfo?.cardAmount || 0;
+
+  const isSplit = cashAmount > 0 && cardAmount > 0;
+  const isCashOnly = cashAmount > 0 && cardAmount === 0;
+  const isCardOnly = cardAmount > 0 && cashAmount === 0;
 
   return (
     <Box
@@ -48,6 +57,50 @@ const TotalSummary = () => {
         )}
 
         <Divider borderColor="#93C5FD" />
+
+        {isSplit && (
+          <>
+            <Flex justify="space-between">
+              <Text fontSize="sm" color="#4B5563" fontWeight="medium">
+                Cash Paid
+              </Text>
+              <Text fontSize="sm" fontWeight="bold" color="#1F2937">
+                LKR {cashAmount.toFixed(2)}
+              </Text>
+            </Flex>
+
+            <Flex justify="space-between">
+              <Text fontSize="sm" color="#4B5563" fontWeight="medium">
+                Card Paid
+              </Text>
+              <Text fontSize="sm" fontWeight="bold" color="#1F2937">
+                LKR {cardAmount.toFixed(2)}
+              </Text>
+            </Flex>
+          </>
+        )}
+
+        {isCashOnly && (
+          <Flex justify="space-between">
+            <Text fontSize="sm" color="#4B5563" fontWeight="medium">
+              Payment Method
+            </Text>
+            <Text fontSize="sm" fontWeight="bold" color="#1F2937">
+              Cash
+            </Text>
+          </Flex>
+        )}
+
+        {isCardOnly && (
+          <Flex justify="space-between">
+            <Text fontSize="sm" color="#4B5563" fontWeight="medium">
+              Payment Method
+            </Text>
+            <Text fontSize="sm" fontWeight="bold" color="#1F2937">
+              Card
+            </Text>
+          </Flex>
+        )}
 
         <Box
           p={3}

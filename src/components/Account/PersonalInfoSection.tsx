@@ -16,22 +16,26 @@ interface PersonalInfoSectionProps {
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
+  fullName,
   error,
   onFullNameChange,
 }) => {
-  const [employeeName, setEmployeeName] = useState("");
+  const [initialFetched, setInitialFetched] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const user = await fetchCurrentUser();
-        setEmployeeName(`${user.name}`);
+        if (!initialFetched && !fullName) {
+          onFullNameChange(user.name || "");
+          setInitialFetched(true);
+        }
       } catch (err) {
         console.error("Failed to fetch employee:", err);
       }
     };
     loadUser();
-  }, []);
+  }, [fullName, initialFetched, onFullNameChange]);
 
   return (
     <Box
@@ -49,7 +53,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
           Full Name
         </FormLabel>
         <Input
-          value={employeeName}
+          value={fullName}
           onChange={(e) => onFullNameChange(e.target.value)}
           placeholder="Enter your full name"
           bg="#f8fafc"
@@ -62,10 +66,6 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
             borderColor: "#667eea",
             boxShadow: "0 0 0 3px rgba(102, 126, 234, 0.1)",
             bg: "#ffffff",
-          }}
-          _invalid={{
-            borderColor: "#e53e3e",
-            boxShadow: "0 0 0 3px rgba(229, 62, 62, 0.1)",
           }}
           transition="all 0.2s ease"
         />
