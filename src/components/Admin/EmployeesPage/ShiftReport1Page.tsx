@@ -17,8 +17,9 @@ const ShiftReport1Page: React.FC = () => {
     searchQuery,
     setSearchQuery,
     totalShifts,
-    // totalHours,
+    totalHours, // ✅ Now using this from backend
     workingDays,
+    statsLoading,
     handleSearch,
     handleViewClick,
     handleBackClick,
@@ -54,23 +55,23 @@ const ShiftReport1Page: React.FC = () => {
               />
             }
             title="Total Shifts"
-            value={totalShifts.toString()}
+            value={statsLoading ? "Loading..." : totalShifts.toString()}
           />
           <ShiftReportStatCard
             icon={<img src={clockIcon} alt="Time Icon" className="stat-icon" />}
             title="Total Working Hours"
-            value={"8 h"}
+            value={statsLoading ? "Loading..." : totalHours} // ✅ Using backend data
           />
           <ShiftReportStatCard
             icon={
               <img
                 src="https://cdn-icons-png.flaticon.com/512/8997/8997159.png"
-                alt="Calender Icon"
+                alt="Calendar Icon"
                 className="stat-icon"
               />
             }
             title="Working Days"
-            value={workingDays.toString()}
+            value={statsLoading ? "Loading..." : workingDays.toString()}
           />
         </div>
 

@@ -1,6 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import { Employee } from "../models/Employees";
+import { 
+  getEmployees, 
+  searchEmployees, 
+  getAllEmployeesShiftReport,
+  getAllEmployeesShiftReportByDateRange 
+} from "../services/employeeService";
 
 export const useShiftReportData = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -18,10 +23,10 @@ export const useShiftReportData = () => {
   const fetchEmployees = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8080/api/employees");
+      const response = await getEmployees();
       
       // Transform the data to match your UI requirements
-      const transformedEmployees = response.data.map((emp: any, index: number) => ({
+      const transformedEmployees = response.map((emp: any, index: number) => ({
         id: emp.id,
         name: emp.name,
         role: emp.role || "Unknown",
@@ -41,30 +46,28 @@ export const useShiftReportData = () => {
     }
   }, []);
 
-  // Fetch attendance stats
-  const fetchAttendanceStats = useCallback(async () => {
+  // ✅ Updated to use shift reports API
+  const fetchShiftStats = useCallback(async () => {
     try {
       setStatsLoading(true);
       
-      // Get the first and last day of current month for filtering
+      // Get current month date range
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
       const startDate = firstDay.toISOString().split('T')[0];
       const endDate = now.toISOString().split('T')[0];
       
-      const attendanceResponse = await axios.get(
-        `http://localhost:8080/api/attendances?startDate=${startDate}&endDate=${endDate}`
-      );
-      const attendanceData = attendanceResponse.data;
+      // ✅ Use shift reports API instead of attendance API
+      const shiftReports = await getAllEmployeesShiftReportByDateRange(startDate, endDate);
       
-      // Calculate summary statistics
-      setTotalShifts(attendanceData.length);
+      // Calculate summary statistics from shift reports
+      setTotalShifts(shiftReports.length);
       
-      // Calculate total hours
+      // Calculate total hours from shift reports
       let totalMinutes = 0;
-      attendanceData.forEach((attendance: any) => {
-        if (attendance.totalHours) {
-          const timeParts = attendance.totalHours.split(':');
+      shiftReports.forEach((shift: any) => {
+        if (shift.workingHours) {
+          const timeParts = shift.workingHours.split(':');
           if (timeParts.length >= 2) {
             totalMinutes += parseInt(timeParts[0]) * 60;
             totalMinutes += parseInt(timeParts[1]);
@@ -78,12 +81,16 @@ export const useShiftReportData = () => {
       
       // Calculate working days (unique dates)
       const uniqueDates = new Set(
-        attendanceData.map((attendance: any) => attendance.date?.split('T')[0])
+        shiftReports.map((shift: any) => shift.shiftDate?.split('T')[0])
           .filter((date: string | undefined) => date)
       );
       setWorkingDays(uniqueDates.size);
     } catch (err) {
-      console.error("Error fetching attendance summary:", err);
+      console.error("Error fetching shift stats:", err);
+      // Fallback values
+      setTotalShifts(0);
+      setTotalHours("0h");
+      setWorkingDays(0);
     } finally {
       setStatsLoading(false);
     }
@@ -92,10 +99,10 @@ export const useShiftReportData = () => {
   // Initial data loading
   useEffect(() => {
     fetchEmployees();
-    fetchAttendanceStats();
-  }, [fetchEmployees, fetchAttendanceStats]);
+    fetchShiftStats();
+  }, [fetchEmployees, fetchShiftStats]);
 
-  // Search functionality
+  // ✅ Updated search functionality
   const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) {
       fetchEmployees();
@@ -104,9 +111,9 @@ export const useShiftReportData = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8080/api/employees/search?query=${searchQuery}`);
+      const response = await searchEmployees(searchQuery);
       
-      const transformedEmployees = response.data.map((emp: any, index: number) => ({
+      const transformedEmployees = response.map((emp: any, index: number) => ({
         id: emp.id,
         name: emp.name,
         role: emp.role || "Unknown",

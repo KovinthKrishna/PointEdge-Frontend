@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Employee } from "../models/Employees";
 import { ShiftData } from "../models/Shift";
-import { AttendanceDTO } from "../models/Attendance";
+import { getEmployeeShiftReport } from "../services/employeeService";
 
 export const useShiftDetailData = (employee: Employee) => {
   const [shifts, setShifts] = useState<ShiftData[]>([]);
@@ -10,48 +9,43 @@ export const useShiftDetailData = (employee: Employee) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch attendance data for the employee
-    const fetchAttendanceData = async () => {
+    const fetchShiftData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8080/api/attendances/employee/${employee.id}`);
         
-        // Transform attendance data to shift data format
-        const transformedShifts = response.data.map((attendance: AttendanceDTO) => {
-          // Determine shift type based on clock-in time
-          const clockInHour = parseInt(attendance.clockIn?.split(':')[0] || "0", 10);
-          let shiftType = "Regular Shift";
+        // ✅ Use the shift reports API
+        const response = await getEmployeeShiftReport(employee.id);
+        
+        // ✅ Transform shift report data to match ShiftData interface
+        const transformedShifts = response.map((shiftReport: any) => ({
+          // Backend fields
+          employeeId: shiftReport.employeeId,
+          employeeName: shiftReport.employeeName,
+          role: shiftReport.role,
+          shiftDate: shiftReport.shiftDate,
+          clockIn: shiftReport.clockIn,
+          clockOut: shiftReport.clockOut,
+          otHours: shiftReport.otHours || "00:00:00",
+          workingHours: shiftReport.workingHours || "00:00:00",
+          shiftType: shiftReport.shiftType || "Regular Shift",
+          totalOrders: shiftReport.totalOrders || 0,
+          totalSales: shiftReport.totalSales || 0.0,
+          totalWorkingHours: shiftReport.totalWorkingHours || "00:00:00",
           
-          if (clockInHour >= 5 && clockInHour < 12) {
-            shiftType = "Morning Shift";
-          } else if (clockInHour >= 12 && clockInHour < 17) {
-            shiftType = "Afternoon Shift";
-          } else if (clockInHour >= 17 && clockInHour < 22) {
-            shiftType = "Evening Shift";
-          } else {
-            shiftType = "Night Shift";
-          }
-          
-          // Use breakTime from backend
-          const breakTime = attendance.breakTime || "00:00:00";
-          
-          return {
-            shiftType,
-            startTime: attendance.clockIn || "N/A",
-            endTime: attendance.clockOut || "N/A",
-            break: breakTime,
-            otHours: attendance.otHours || "00:00:00",
-            location: employee.location,
-            totalHours: attendance.totalHours || "00:00:00",
-            orders: "N/A", // Orders data not available in current backend model
-            date: attendance.date // Store the date from attendance
-          };
-        });
+          // ✅ Computed fields for display compatibility
+          startTime: shiftReport.clockIn || "N/A",
+          endTime: shiftReport.clockOut || "N/A",
+          break: "00:30:00", // Default break time since backend doesn't have it
+          location: employee.location || "Main Store",
+          totalHours: shiftReport.workingHours || "00:00:00",
+          orders: shiftReport.totalOrders?.toString() || "0",
+          date: shiftReport.shiftDate || new Date().toISOString().split('T')[0]
+        }));
         
         setShifts(transformedShifts);
         setError(null);
       } catch (err) {
-        console.error("Error fetching attendance data:", err);
+        console.error("Error fetching shift data:", err);
         setError("Failed to load shift data. Please try again later.");
       } finally {
         setLoading(false);
@@ -59,7 +53,7 @@ export const useShiftDetailData = (employee: Employee) => {
     };
 
     if (employee && employee.id) {
-      fetchAttendanceData();
+      fetchShiftData();
     }
   }, [employee]);
 
