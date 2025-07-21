@@ -65,10 +65,10 @@ const OrderCompletion: React.FC<OrderCompletionProps> = ({
                   mb={6}
                 >
                   🎉 Well done! You've completed{" "}
-                  <Text as="span" color="green.500" fontSize="xl">
-                    {orderData.completedOrdersToday}
+                  <Text as="span" color="#10B981" fontSize={"20px"}>
+                    {orderData.completedOrdersToday} orders.
                   </Text>{" "}
-                  orders today.
+                  Keep hustling!
                 </Text>
               )}
             <Flex gap={4} justify="center">
