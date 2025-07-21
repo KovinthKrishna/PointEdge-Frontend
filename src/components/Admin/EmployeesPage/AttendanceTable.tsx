@@ -13,9 +13,23 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   getInitials
 }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
-  const rowsPerPage = 50;
+  const rowsPerPage = 25;
   const totalPages = Math.ceil(employeeAttendances.length / rowsPerPage);
-  const paginatedData = employeeAttendances.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+  
+  // Reset to page 1 when data changes or when current page exceeds total pages
+  React.useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [employeeAttendances.length, totalPages]);
+  
+  // Ensure currentPage doesn't exceed totalPages and isn't less than 1
+  const safePage = totalPages > 0 ? Math.min(Math.max(currentPage, 1), totalPages) : 1;
+  
+  // Calculate pagination with safePage
+  const startIndex = (safePage - 1) * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, employeeAttendances.length);
+  const paginatedData = employeeAttendances.slice(startIndex, endIndex);
 
   return (
     <div className="box bg-white rounded-md overflow-hidden shadow-sm">
@@ -43,13 +57,13 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
               {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="empty-table-message">
-                     No employees found
+                    No employees found
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((attendance, idx) => (
-                  <tr key={attendance.id}>
-                    <td>{(currentPage - 1) * rowsPerPage + idx + 1}</td>
+                  <tr key={`${attendance.id}-${startIndex + idx}`}>
+                    <td>{startIndex + idx + 1}</td>
                     <td>{attendance.id}</td>
                     <td>
                       <div className="flex align-center">
@@ -80,15 +94,68 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
               )}
             </tbody>
           </table>
+          
           {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="pagination-controls">
-              <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
-                Previous
+              {/* First Page Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(1)} 
+                disabled={safePage === 1}
+                title="First Page"
+              >
+                &laquo;
               </button>
-              <span>Page {currentPage} of {totalPages}</span>
-              <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
-                Next
+              
+              {/* Previous Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(safePage - 1)} 
+                disabled={safePage === 1}
+                title="Previous Page"
+              >
+                &lsaquo;
+              </button>
+
+              {/* Page Numbers */}
+              {(() => {
+                const pages = [];
+                const startPage = Math.max(1, safePage - 2);
+                const endPage = Math.min(totalPages, safePage + 2);
+
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      className={`pagination-button ${i === safePage ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(i)}
+                    >
+                      {i}
+                    </button>
+                  );
+                }
+                return pages;
+              })()}
+
+              {/* Next Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(safePage + 1)} 
+                disabled={safePage === totalPages}
+                title="Next Page"
+              >
+                &rsaquo;
+              </button>
+
+              {/* Last Page Button */}
+              <button 
+                className="pagination-button"
+                onClick={() => setCurrentPage(totalPages)} 
+                disabled={safePage === totalPages}
+                title="Last Page"
+              >
+                &raquo;
               </button>
             </div>
           )}
