@@ -129,7 +129,8 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
       <VStack align="start" spacing={3}>
         <Box position="relative">
           <Avatar
-            size="2xl"
+            width={"320px"}
+            height={"320px"}
             src={avatarSrc}
             bg="linear-gradient(135deg, #00146dff 0%, #006dc0ff 100%)"
             color="#ffffff"
@@ -140,6 +141,7 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
         <Input
           placeholder="Enter image URL"
           value={inputUrl}
+          width={"20%"}
           onChange={handleUrlChange}
           borderRadius="12px"
           size="md"
