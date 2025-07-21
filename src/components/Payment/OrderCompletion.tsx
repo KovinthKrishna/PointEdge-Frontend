@@ -5,7 +5,11 @@ import ModelBoxPopup from "../Common/ModelBoxPopup";
 interface OrderCompletionProps {
   isOpen: boolean;
   onClose: () => void;
-  orderData: any;
+  orderData: {
+    orderId: string;
+    invoiceNumber: string;
+    completedOrdersToday: number;
+  };
 }
 
 const OrderCompletion: React.FC<OrderCompletionProps> = ({
@@ -16,7 +20,6 @@ const OrderCompletion: React.FC<OrderCompletionProps> = ({
   return (
     <ModelBoxPopup isOpen={isOpen} onClose={onClose} maxW="600px">
       <Box p={8} borderRadius="2xl">
-        {/* Content */}
         <ScaleFade initialScale={0.8} in={isOpen}>
           <Flex direction="column" align="center" justify="center">
             <Text
@@ -27,8 +30,9 @@ const OrderCompletion: React.FC<OrderCompletionProps> = ({
               letterSpacing="wide"
               mb={2}
             >
-              Order #{orderData.orderNumber}
+              Order {orderData.orderId}
             </Text>
+
             <Heading
               as="h1"
               fontSize="3xl"
@@ -51,24 +55,26 @@ const OrderCompletion: React.FC<OrderCompletionProps> = ({
               />
             </Box>
 
-            <Text
-              color="#2563EB"
-              fontWeight="bold"
-              fontSize="lg"
-              textAlign="center"
-              mb={6}
-            >
-              🎉 Well done! You've completed{" "}
-              <Text as="span" color="green.500" fontSize="xl">
-                {orderData.completedOrders}
-              </Text>{" "}
-              orders today.
-            </Text>
-
+            {orderData &&
+              typeof orderData.completedOrdersToday === "number" && (
+                <Text
+                  color="#2563EB"
+                  fontWeight="bold"
+                  fontSize="lg"
+                  textAlign="center"
+                  mb={6}
+                >
+                  🎉 Well done! You've completed{" "}
+                  <Text as="span" color="green.500" fontSize="xl">
+                    {orderData.completedOrdersToday}
+                  </Text>{" "}
+                  orders today.
+                </Text>
+              )}
             <Flex gap={4} justify="center">
               <Button
                 color="white"
-                bg={"#2563EB"}
+                bg="#2563EB"
                 width="100%"
                 size="lg"
                 onClick={() => {

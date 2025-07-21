@@ -19,6 +19,7 @@ import ModelBoxPopup from "../Common/ModelBoxPopup";
 import CardPaymentModal from "./CardPaymentModal";
 import CashPaymentModal from "./CashPaymentModal";
 import SplitPaymentModal from "./SplitPaymentModal";
+import usePaymentInfoStore from "../../store/usePaymentInfoStore";
 
 // Custom Radio Button Component
 function CustomRadioButton(
@@ -119,7 +120,6 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
     }
   }, [selectedMethod, splitEnabled, totalAmount]);
 
-  // --- Split logic: auto-adjust fields ---
   useEffect(() => {
     if (splitEnabled) {
       // When cash changes, update card
@@ -192,6 +192,10 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   };
 
   const handleConfirmPayment = () => {
+    usePaymentInfoStore.getState().setPaymentInfo({
+      cashAmount: cashAmount,
+      cardAmount: cardAmount,
+    });
     setShowCashModal(false);
     setShowCardModal(false);
     setShowSplitModal(false);
