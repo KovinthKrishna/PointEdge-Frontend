@@ -1,36 +1,36 @@
-import { useEffect, useState } from "react";
+import { WarningIcon } from "@chakra-ui/icons/Warning";
 import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  Button,
-  useToast,
-  Badge,
-  Grid,
-  Flex,
-  HStack,
-  Container,
-  Spinner,
   Alert,
+  AlertDescription,
   AlertIcon,
   AlertTitle,
-  AlertDescription,
+  Badge,
+  Box,
+  Button,
   Card,
   CardBody,
+  Container,
+  Flex,
+  Grid,
+  Heading,
+  HStack,
   Icon,
+  Spinner,
+  Text,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import {
-  FiRefreshCw,
-  FiEye,
   FiClock,
   FiDollarSign,
+  FiEye,
   FiFileText,
+  FiRefreshCw,
 } from "react-icons/fi";
-import axiosInstance from "../../services/verifyService";
 import RefundRequestDetailsModal from "../../components/ReturnAndRefund/RefundRequestDetailsModal";
-import { WarningIcon } from "@chakra-ui/icons/Warning";
-import { ReturnedItem, RefundRequestViewDTO } from "../../models/ReturnTypes";
+import { RefundRequestViewDTO, ReturnedItem } from "../../models/ReturnTypes";
+import verifyService from "../../services/verifyService";
 
 const AdminRefundReviewPage = () => {
   const [requests, setRequests] = useState<RefundRequestViewDTO[]>([]);
@@ -43,7 +43,7 @@ const AdminRefundReviewPage = () => {
   const fetchRequests = async (showRefreshIndicator = false) => {
     try {
       if (showRefreshIndicator) setIsRefreshing(true);
-      const res = await axiosInstance.get("/admin/refund-requests/pending");
+      const res = await verifyService.get("/admin/refund-requests/pending");
       setRequests(res.data);
       setIsLoading(false);
     } catch (err) {
@@ -61,7 +61,7 @@ const AdminRefundReviewPage = () => {
 
   const handleApprove = async (id: number) => {
     try {
-      await axiosInstance.post(`/admin/refund-requests/approve-request`, null, {
+      await verifyService.post(`/admin/refund-requests/approve-request`, null, {
         params: { requestId: id },
       });
 
@@ -101,7 +101,7 @@ const AdminRefundReviewPage = () => {
 
   const handleReject = async (id: number) => {
     try {
-      await axiosInstance.post(`/admin/refund-requests/reject-request`, null, {
+      await verifyService.post(`/admin/refund-requests/reject-request`, null, {
         params: { requestId: id },
       });
 

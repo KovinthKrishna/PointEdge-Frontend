@@ -1,16 +1,16 @@
-import React, { useEffect, useRef } from "react";
 import {
-  Spinner,
-  VStack,
-  Text,
-  Box,
-  useToast,
-  Flex,
   Badge,
+  Box,
+  Flex,
   Icon,
+  Spinner,
+  Text,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
-import axiosInstance from "../../services/verifyService";
+import React, { useEffect, useRef } from "react";
+import verifyService from "../../services/verifyService";
 
 // Animation for the pulse effect
 const pulse = keyframes`
@@ -48,7 +48,7 @@ const WaitingForAdminApproval: React.FC<WaitingProps> = ({
 
     const pollStatus = async () => {
       try {
-        const res = await axiosInstance.get(
+        const res = await verifyService.get(
           `/admin/refund-requests/status/${invoiceNumber}`
         );
 

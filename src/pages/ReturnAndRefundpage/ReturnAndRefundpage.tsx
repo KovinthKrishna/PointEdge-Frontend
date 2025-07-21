@@ -1,7 +1,7 @@
+import { Box, Center, Spinner, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Spinner, Box, useToast, Center } from "@chakra-ui/react";
-import axiosInstance from "../../services/verifyService";
+import verifyService from "../../services/verifyService";
 
 import CardRefundContainer from "../../components/ReturnAndRefund/CardRefundContainer";
 import ItemSelection from "../../components/ReturnAndRefund/ItemSelection";
@@ -9,9 +9,9 @@ import RefundMethodSelection from "../../components/ReturnAndRefund/RefundMethoS
 import RefundResult from "../../components/ReturnAndRefund/RefundResults";
 import StepHeader from "../../components/ReturnAndRefund/StepHeader";
 import StepWrapper from "../../components/ReturnAndRefund/StepWrapper";
+import WaitingForAdminApproval from "../../components/ReturnAndRefund/WaitingForAdminAproval";
 import useRefundProcessor from "../../hooks/useRefundProcessor";
 import { Invoice, InvoiceItem } from "../../models/Invoice";
-import WaitingForAdminApproval from "../../components/ReturnAndRefund/WaitingForAdminAproval";
 import { submitRefundRequestWithImages } from "../../services/imageService";
 
 enum RefundStep {
@@ -59,7 +59,7 @@ const ReturnRefundPage: React.FC = () => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await verifyService.get(
           `http://localhost:8080/api/return-exchange/invoice/${invoiceNumber}`
         );
         const info = response.data;
@@ -146,13 +146,13 @@ const ReturnRefundPage: React.FC = () => {
       if (method === "Card") {
         setShowCardForm(true); // CardRefundContainer will call process-approved
       } else if (method === "Exchange") {
-        await axiosInstance.post(`/api/return-exchange/exchange`, {
+        await verifyService.post(`/api/return-exchange/exchange`, {
           invoiceNumber,
           returnedItems: selectedItems,
         });
         setCurrentStep(RefundStep.REFUND_RESULT);
       } else if (method === "Cash") {
-        await axiosInstance.post(
+        await verifyService.post(
           `/api/return-exchange/process-approved/${refundRequestId}`
         );
         setCurrentStep(RefundStep.REFUND_RESULT);
