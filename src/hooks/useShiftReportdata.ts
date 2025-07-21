@@ -19,13 +19,12 @@ export const useShiftReportData = () => {
   const [workingDays, setWorkingDays] = useState<number>(0);
   const [statsLoading, setStatsLoading] = useState<boolean>(true);
 
-  // Fetch employees data from backend
+
   const fetchEmployees = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getEmployees();
       
-      // Transform the data to match your UI requirements
       const transformedEmployees = response.map((emp: any, index: number) => ({
         id: emp.id,
         name: emp.name,
@@ -46,24 +45,19 @@ export const useShiftReportData = () => {
     }
   }, []);
 
-  // ✅ Updated to use shift reports API
   const fetchShiftStats = useCallback(async () => {
     try {
       setStatsLoading(true);
       
-      // Get current month date range
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
       const startDate = firstDay.toISOString().split('T')[0];
       const endDate = now.toISOString().split('T')[0];
       
-      // ✅ Use shift reports API instead of attendance API
       const shiftReports = await getAllEmployeesShiftReportByDateRange(startDate, endDate);
       
-      // Calculate summary statistics from shift reports
       setTotalShifts(shiftReports.length);
       
-      // Calculate total hours from shift reports
       let totalMinutes = 0;
       shiftReports.forEach((shift: any) => {
         if (shift.workingHours) {
@@ -79,7 +73,6 @@ export const useShiftReportData = () => {
       const minutes = totalMinutes % 60;
       setTotalHours(minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`);
       
-      // Calculate working days (unique dates)
       const uniqueDates = new Set(
         shiftReports.map((shift: any) => shift.shiftDate?.split('T')[0])
           .filter((date: string | undefined) => date)
@@ -87,7 +80,6 @@ export const useShiftReportData = () => {
       setWorkingDays(uniqueDates.size);
     } catch (err) {
       console.error("Error fetching shift stats:", err);
-      // Fallback values
       setTotalShifts(0);
       setTotalHours("0h");
       setWorkingDays(0);
@@ -96,13 +88,12 @@ export const useShiftReportData = () => {
     }
   }, []);
 
-  // Initial data loading
+
   useEffect(() => {
     fetchEmployees();
     fetchShiftStats();
   }, [fetchEmployees, fetchShiftStats]);
 
-  // ✅ Updated search functionality
   const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) {
       fetchEmployees();

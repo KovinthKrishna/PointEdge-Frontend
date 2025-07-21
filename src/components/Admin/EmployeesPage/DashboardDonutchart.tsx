@@ -15,7 +15,7 @@ const DashboardDonutChart: React.FC<DashboardDonutChartProps> = ({
         <div className="font-medium">Attendance Report</div>
       </div>
       <div className="relative flex justify-center donut-container">
-        {/* donut chart - use real percentages */}
+        
         <div className="donut-chart">
           <svg viewBox="0 0 100 100" width="100%" height="100%">
             <circle

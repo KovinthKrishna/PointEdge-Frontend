@@ -11,8 +11,6 @@ export interface ShiftData {
   totalOrders: number;
   totalSales: number;
   totalWorkingHours: string;
-  
-  // Computed fields for display
   startTime: string;
   endTime: string;
   break: string;

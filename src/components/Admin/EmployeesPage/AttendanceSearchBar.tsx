@@ -13,7 +13,7 @@ const AttendanceSearchBar: React.FC<AttendanceSearchBarProps> = ({
   handleSearch,
   loading
 }) => {
-  // Handle enter key press for search
+ 
   const handleKeyPress = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       handleSearch();

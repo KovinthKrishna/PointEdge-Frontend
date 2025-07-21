@@ -14,10 +14,10 @@ const EmployeeDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<EmployeeDashboardData | null>(null);
 
-  // Get current year
+ 
   const currentYear = new Date().getFullYear();
 
-  // Fetch dashboard data
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -38,12 +38,12 @@ const EmployeeDashboardPage: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  // Show loading state
+
   if (loading && !dashboardData) {
     return <div className="loading-container">Loading dashboard data...</div>;
   }
 
-  // Show error state
+
   if (error && !dashboardData) {
     return (
       <div className="error-message">
@@ -52,7 +52,7 @@ const EmployeeDashboardPage: React.FC = () => {
     );
   }
 
-  // Use default data if API call fails
+
   const data = dashboardData || {
     totalEmployees: 0,
     activeEmployees: 0,
@@ -79,7 +79,7 @@ const EmployeeDashboardPage: React.FC = () => {
     }))
   };
 
-  // Format total sales as currency
+
  const formattedSales = `Rs.${Number(data.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
@@ -131,9 +131,9 @@ const EmployeeDashboardPage: React.FC = () => {
           />
         </div>
 
-        {/* Charts Section */}
+
         <div className="grid grid-cols-3-1 gap-6">
-          {/* Main Chart */}
+  
           <div className="bg-white rounded-md p-4 border border-blue-100">
             <div className="flex justify-between mb-4">
               <div className="font-medium">Employee Productivity</div>
@@ -142,7 +142,7 @@ const EmployeeDashboardPage: React.FC = () => {
               </div>
             </div>
             <DashboardSalesChart chartData={data.productivityData} />
-            {/* Employee Stats */}
+  
             <div className="flex justify-between mt-16">
               <div className="flex items-center">
                 <div className="bg-blue-100 p-2 rounded-md mr-3">

@@ -93,7 +93,7 @@ const ClockOutPage: React.FC = () => {
       justifyContent="center"
       p={{ base: 2, md: 6 }}
     >
-      {/* Background image and overlay */}
+      
       <Image
         src={bgImage}
         alt="Background"
@@ -128,7 +128,7 @@ const ClockOutPage: React.FC = () => {
         position="relative"
         border="1px solid #e3e8ee"
       >
-        {/* Close Button at upper right corner */}
+        
         <IconButton
           aria-label="Close tab"
           icon={<CloseIcon boxSize={5} color="#003049" />}
@@ -146,13 +146,13 @@ const ClockOutPage: React.FC = () => {
           _hover={{ bg: "gray.200" }}
           onClick={handleClose}
         />
-        {/* Left Panel - Image Section (larger, blue background) */}
+        
         <Box flex="0.8" bg="#003049" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 4 }}>
           <Image src={shiftFrontPage} alt="Shift Front Page" maxH="100%" maxW="110%" objectFit="contain" borderRadius="lg" boxShadow="lg" />
         </Box>
-        {/* Right Panel - Clock Out Section (smaller, white background) */}
+        
         <Flex flex="0.7" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" position="relative" justifyContent="space-between">
-          {/* Title above date and time */}
+          
           <Box w="full" textAlign="left" mt={2} mb={4}>
             <Text fontSize={{ base: "lg", md: "3xl" }} color="#003049" fontWeight="semibold" fontFamily="Poppins, sans-serif">
               Welcome to
@@ -161,7 +161,7 @@ const ClockOutPage: React.FC = () => {
               Point Edge
             </Text>
           </Box>
-          {/* Date and Time */}
+          
           <Box textAlign="center" w="full" mb={2} mt={20}>
             <Text fontSize={{ base: "sm", md: "xl" }} color="gray.500" fontWeight="medium" mb={4}>
               {formattedDate}
@@ -170,7 +170,7 @@ const ClockOutPage: React.FC = () => {
               {formattedTime}
             </Text>
           </Box>
-          {/* Clock Out button at bottom */}
+          
           <Box flex="1" display="flex" alignItems="flex-end" justifyContent="center" w="full" mb={16}>
             <Button
               bg="#E53E3E"
@@ -190,10 +190,11 @@ const ClockOutPage: React.FC = () => {
               Clock Out
             </Button>
           </Box>
-          {/* POS Logo at bottom right corner, aligned to border */}
+
           <Box position="absolute" right={0} bottom={0} m={4}>
             <Image src={logo} alt="POS Logo" h="12" w="auto" opacity={0.9} />
           </Box>
+          
         </Flex>
       </Flex>
     </Box>

@@ -11,18 +11,15 @@ export const useAttendanceData = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Load data on component mount
   useEffect(() => {
     fetchData();
   }, []);
   
-  // Format date helper
   const formatDateForBackend = (dateString: string): string => {
     const date = new Date(dateString);
     return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
   };
   
-  // Fetch attendance data
   const fetchData = async (): Promise<void> => {
     setLoading(true);
     try {
@@ -50,11 +47,9 @@ export const useAttendanceData = () => {
     }
   };
   
-  // Handle search
   const handleSearch = async (): Promise<void> => {
     setLoading(true);
     try {
-      // Check if searchQuery is a number (employee ID)
       const isNumeric = /^\d+$/.test(searchQuery);
       
       const searchData: AttendanceSearchParams = {
@@ -90,7 +85,6 @@ export const useAttendanceData = () => {
     }
   };
 
-  // Get initials for avatar fallback
   const getInitials = (name: string): string => {
     return name
       .split(' ')

@@ -68,7 +68,6 @@ const ShiftEmployeeTable: React.FC<ShiftReportEmployeeTableProps> = ({
           )}
         </tbody>
       </table>
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="pagination-controls">
           <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>

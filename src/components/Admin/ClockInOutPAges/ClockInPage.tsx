@@ -31,7 +31,6 @@ const ClockInPage: React.FC = () => {
     console.log("Closed tab, navigated to login page");
   };
 
-  // Send clock-in data to backend
   const handleClockIn = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -40,7 +39,7 @@ const ClockInPage: React.FC = () => {
         return;
       }
 
-      // You may want to update this payload to match your backend requirements
+      
       const response = await fetch("http://localhost:8080/api/attendances/clock-in", {
         method: "POST",
         headers: {
@@ -69,7 +68,7 @@ const ClockInPage: React.FC = () => {
 
   return (
     <Box minH="100vh" width="100vw" position="relative" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 6 }}>
-      {/* Background image and overlay */}
+     
       <Image src={bgImage} alt="Background" objectFit="cover" position="absolute" top={0} left={0} w="100vw" h="100vh" zIndex={0} opacity={0.5} />
       <Box position="absolute" top={0} left={0} w="100vw" h="100vh" bg="#003049" opacity={0.5} zIndex={0} />
       <Flex
@@ -84,7 +83,7 @@ const ClockInPage: React.FC = () => {
         position="relative"
         border="1px solid #e3e8ee"
       >
-        {/* Close Button at upper right corner */}
+        
         <IconButton
           aria-label="Close tab"
           icon={<CloseIcon boxSize={5} color="#003049" />}
@@ -102,13 +101,13 @@ const ClockInPage: React.FC = () => {
           _hover={{ bg: "gray.200" }}
           onClick={handleClose}
         />
-        {/* Left Panel - Image Section (larger, blue background) */}
+        
         <Box flex="0.8" bg="#003049" display="flex" alignItems="center" justifyContent="center" p={{ base: 2, md: 4 }}>
           <Image src={shiftFrontPage} alt="Shift Front Page" maxH="100%" maxW="110%" objectFit="contain" borderRadius="lg" boxShadow="lg" />
         </Box>
-        {/* Right Panel - Clock In Section (smaller, white background) */}
+        
         <Flex flex="0.7" bg="white" p={{ base: 6, md: 10 }} flexDirection="column" alignItems="center" position="relative" justifyContent="space-between">
-          {/* Title above date and time */}
+          
           <Box w="full" textAlign="left" mt={2} mb={4}>
             <Text fontSize={{ base: "lg", md: "3xl" }} color="#003049" fontWeight="semibold" fontFamily="Poppins, sans-serif">
               Welcome to
@@ -117,7 +116,7 @@ const ClockInPage: React.FC = () => {
               Point Edge
             </Text>
           </Box>
-          {/* Date and Time */}
+          
           <Box textAlign="center" w="full" mb={2} mt={20}>
             <Text fontSize={{ base: "sm", md: "xl" }} color="gray.500" fontWeight="medium" mb={4}>
               {formattedDate}
@@ -126,7 +125,7 @@ const ClockInPage: React.FC = () => {
               {formattedTime}
             </Text>
           </Box>
-          {/* Clock In button at bottom */}
+          
           <Box flex="1" display="flex" alignItems="flex-end" justifyContent="center" w="full" mb={16}>
             <Button
               bg="#2f855a"
@@ -144,7 +143,6 @@ const ClockInPage: React.FC = () => {
               Clock In
             </Button>
           </Box>
-          {/* POS Logo at bottom right corner, aligned to border */}
           <Box position="absolute" right={0} bottom={0} m={4}>
             <Image src={logo} alt="POS Logo" h="12" w="auto" opacity={0.9} />
           </Box>

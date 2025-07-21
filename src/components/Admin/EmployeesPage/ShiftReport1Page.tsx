@@ -17,7 +17,7 @@ const ShiftReport1Page: React.FC = () => {
     searchQuery,
     setSearchQuery,
     totalShifts,
-    totalHours, // ✅ Now using this from backend
+    totalHours, 
     workingDays,
     statsLoading,
     handleSearch,
@@ -25,7 +25,6 @@ const ShiftReport1Page: React.FC = () => {
     handleBackClick,
   } = useShiftReportData();
 
-  // If detailed report is being shown, render the ShiftReport2Page component
   if (showDetailedReport && selectedEmployee) {
     // Convert id to string to match ShiftReport2Page's expected type
     const employeeForDetailView = {
@@ -44,7 +43,6 @@ const ShiftReport1Page: React.FC = () => {
   return (
     <div className="shift-report-container">
       <div className="shift-report-content">
-        {/* Stats Cards */}
         <div className="stats-grid">
           <ShiftReportStatCard
             icon={
@@ -75,14 +73,12 @@ const ShiftReport1Page: React.FC = () => {
           />
         </div>
 
-        {/* Search Bar */}
         <ShiftReportSearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           handleSearch={handleSearch}
         />
 
-        {/* Employee Shift Table */}
         <ShiftReportEmployeeTable
           employees={employees || []}
           loading={loading}

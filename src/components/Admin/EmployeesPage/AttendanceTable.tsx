@@ -16,14 +16,13 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const rowsPerPage = 25;
   const totalPages = Math.ceil(employeeAttendances.length / rowsPerPage);
   
-  // Reset to page 1 when data changes or when current page exceeds total pages
+ 
   React.useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
   }, [employeeAttendances.length, totalPages]);
   
-  // Ensure currentPage doesn't exceed totalPages and isn't less than 1
   const safePage = totalPages > 0 ? Math.min(Math.max(currentPage, 1), totalPages) : 1;
   
   // Calculate pagination with safePage
@@ -95,10 +94,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
             </tbody>
           </table>
           
-          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="pagination-controls">
-              {/* First Page Button */}
+              
               <button 
                 className="pagination-button"
                 onClick={() => setCurrentPage(1)} 
@@ -108,7 +106,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 &laquo;
               </button>
               
-              {/* Previous Button */}
               <button 
                 className="pagination-button"
                 onClick={() => setCurrentPage(safePage - 1)} 
@@ -118,7 +115,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 &lsaquo;
               </button>
 
-              {/* Page Numbers */}
               {(() => {
                 const pages = [];
                 const startPage = Math.max(1, safePage - 2);
@@ -137,8 +133,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 }
                 return pages;
               })()}
-
-              {/* Next Button */}
+           
               <button 
                 className="pagination-button"
                 onClick={() => setCurrentPage(safePage + 1)} 
@@ -148,7 +143,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 &rsaquo;
               </button>
 
-              {/* Last Page Button */}
               <button 
                 className="pagination-button"
                 onClick={() => setCurrentPage(totalPages)} 

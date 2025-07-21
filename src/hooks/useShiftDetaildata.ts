@@ -13,12 +13,11 @@ export const useShiftDetailData = (employee: Employee) => {
       try {
         setLoading(true);
         
-        // ✅ Use the shift reports API
         const response = await getEmployeeShiftReport(employee.id);
         
-        // ✅ Transform shift report data to match ShiftData interface
+        //Transform shift report data to match ShiftData interface
         const transformedShifts = response.map((shiftReport: any) => ({
-          // Backend fields
+  
           employeeId: shiftReport.employeeId,
           employeeName: shiftReport.employeeName,
           role: shiftReport.role,
@@ -31,11 +30,9 @@ export const useShiftDetailData = (employee: Employee) => {
           totalOrders: shiftReport.totalOrders || 0,
           totalSales: shiftReport.totalSales || 0.0,
           totalWorkingHours: shiftReport.totalWorkingHours || "00:00:00",
-          
-          // ✅ Computed fields for display compatibility
           startTime: shiftReport.clockIn || "N/A",
           endTime: shiftReport.clockOut || "N/A",
-          break: "00:30:00", // Default break time since backend doesn't have it
+          break: "00:30:00", 
           location: employee.location || "Main Store",
           totalHours: shiftReport.workingHours || "00:00:00",
           orders: shiftReport.totalOrders?.toString() || "0",

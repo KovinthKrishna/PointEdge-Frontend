@@ -2,7 +2,7 @@ import React from 'react';
 
 interface ChartData {
   month: string;
-  primary: number;   // Productivity percentage (0-100%)
+  primary: number;   
   secondary: number; // Total valid OT hours (max 4h per employee)
 }
 
@@ -11,20 +11,18 @@ interface DashboardProductivityChartProps {
 }
 
 const DashboardProductivityChart: React.FC<DashboardProductivityChartProps> = ({ chartData }) => {
-  // Separate normalization for different data types
-  const maxProductivity = Math.max(...chartData.map(item => item.primary)); // Max productivity percentage
-  const maxOTHours = Math.max(...chartData.map(item => item.secondary)); // Max OT hours
+
+  const maxProductivity = Math.max(...chartData.map(item => item.primary)); 
+  const maxOTHours = Math.max(...chartData.map(item => item.secondary)); 
   
-  // Calculate height for productivity percentage (primary bar)
+  // Calculate height for productivity percentage 
   const getProductivityBarHeight = (value: number): string => {
-    // Normalize against 100% productivity for consistent scaling
     const normalizedMax = Math.max(maxProductivity, 100);
     return `${(value / normalizedMax) * 150}px`;
   };
 
-  // Calculate height for OT hours (secondary bar) 
+  // Calculate height for OT hours 
   const getOTBarHeight = (value: number): string => {
-    // Normalize OT hours against maximum OT hours found in data
     if (maxOTHours === 0) return '0px';
     return `${(value / maxOTHours) * 150}px`;
   };
@@ -45,7 +43,7 @@ const DashboardProductivityChart: React.FC<DashboardProductivityChartProps> = ({
       </div>
 
       <div className="chart-container">
-        {/* Chart grid lines - fixed positioning */}
+        
         <div className="chart-grid-lines">
           {[...Array(6)].map((_, i) => (
             <div 
@@ -56,12 +54,12 @@ const DashboardProductivityChart: React.FC<DashboardProductivityChartProps> = ({
           ))}
         </div>
 
-        {/* Chart bars - improved layout */}
+       
         <div className="chart-bars-container">
           {chartData.map((data, index) => (
             <div key={index} className="chart-month-column">
               <div className="chart-bars-wrapper">
-                {/* Primary bar - Productivity Percentage */}
+               
                 <div 
                   className="chart-bar-primary productivity-bar"
                   style={{ height: getProductivityBarHeight(data.primary) }}
@@ -69,7 +67,6 @@ const DashboardProductivityChart: React.FC<DashboardProductivityChartProps> = ({
                 >
                 </div>
                 
-                {/* Secondary bar - OT Hours (Dark Blue) */}
                 <div 
                   className="chart-bar-secondary ot-hours-bar"
                   style={{ height: getOTBarHeight(data.secondary) }}
