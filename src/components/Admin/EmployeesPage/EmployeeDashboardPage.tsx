@@ -3,7 +3,7 @@ import axios from "axios";
 import employeeIcon from "../../../assets/employee-icon.png";
 import clockIcon from "../../../assets/clock-icon.png";
 import "./styles/EmployeeDashboard.css";
-import { EmployeeDashboardData, OrderStats } from "../../../models/Employees";
+import { EmployeeDashboardData } from "../../../models/Employees";
 import DashboardStatCard from "./DashboardStatCard";
 import DashboardSalesChart from "./DashboardSalesChart";
 import DashboardDonutChart from "./DashboardDonutchart";
@@ -13,8 +13,7 @@ const EmployeeDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<EmployeeDashboardData | null>(null);
-  const [orderStats, setOrderStats] = useState<OrderStats>({ totalOrders: 0, orderChangePercent: 0 });
-  
+
   // Get current year
   const currentYear = new Date().getFullYear();
 
@@ -27,20 +26,6 @@ const EmployeeDashboardPage: React.FC = () => {
           `http://localhost:8080/api/dashboard/employee-stats?year=${currentYear}`
         );
         setDashboardData(response.data);
-        
-        // Also fetch order stats (assuming you have this endpoint)
-        try {
-          const orderResponse = await axios.get<OrderStats>("http://localhost:8080/api/dashboard/order-stats");
-          setOrderStats(orderResponse.data);
-        } catch (orderErr) {
-          console.error("Error fetching order stats:", orderErr);
-          // Use default values for orders if endpoint not available
-          setOrderStats({
-            totalOrders: 1256,
-            orderChangePercent: 10
-          });
-        }
-        
         setError(null);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -51,7 +36,7 @@ const EmployeeDashboardPage: React.FC = () => {
     };
 
     fetchDashboardData();
-  }, []); // No dependencies needed as we only fetch once on mount
+  }, []);
 
   // Show loading state
   if (loading && !dashboardData) {
@@ -75,6 +60,8 @@ const EmployeeDashboardPage: React.FC = () => {
     totalHoursWorked: "0h",
     employeeChangePercent: 0,
     hoursChangePercent: 0,
+    totalOrders: 0,
+    totalSales: 0,
     productivityData: Array(12).fill(0).map((_, i) => ({
       month: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][i],
       primary: 0,
@@ -91,6 +78,9 @@ const EmployeeDashboardPage: React.FC = () => {
       height: 0
     }))
   };
+
+  // Format total sales as currency
+ const formattedSales = `Rs.${Number(data.totalSales).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
     <div className="attendance-container">
@@ -121,8 +111,8 @@ const EmployeeDashboardPage: React.FC = () => {
               />
             }
             title="Total Sales"
-            value="$0"
-            change={-0.5}
+            value={formattedSales}
+            change={0}
             chartData={[20, 15, 25, 18]}
           />
           <DashboardStatCard
@@ -135,8 +125,8 @@ const EmployeeDashboardPage: React.FC = () => {
               />
             }
             title="Total Order"
-            value={orderStats.totalOrders.toString()}
-            change={orderStats.orderChangePercent}
+            value={data.totalOrders.toString()}
+            change={0}
             chartData={[15, 18, 25, 20]}
           />
         </div>

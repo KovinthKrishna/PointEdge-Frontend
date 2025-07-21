@@ -17,6 +17,9 @@ export interface EmployeeDashboardData {
   totalHoursWorked: string;
   employeeChangePercent: number;
   hoursChangePercent: number;
+
+  totalOrders: number;
+  totalSales: number;
   
   // Productivity Chart Data
   productivityData: {

@@ -10,11 +10,17 @@ import Login from "./pages/Login";
 import ForgotPW from "./pages/ForgotPW";
 import ReturnRefundPage from "./pages/ReturnAndRefundpage/ReturnAndRefundpage";
 import SalesDashboard from "./pages/SalesDashboard";
-import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
+import EmployeeDashboardPage from "./components/Admin/EmployeesPage/EmployeeDashboardPage";
+import EmployeeAttendancePage from "./components/Admin/EmployeesPage/EmployeeAttendancePage";
+import TopPerformersPage from "./components/Admin/EmployeesPage/TopPerformersPage";
+import ShiftReport1Page from "./components/Admin/EmployeesPage/ShiftReport1Page";
 import ClockInPage from "./components/Admin/ClockInOutPAges/ClockInPage";
+import ClockOutPage from "./components/Admin/ClockInOutPAges/ClockOutPage";
+
 import ProtectedRoute from "./components/Login/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 import ResetPW from "./pages/ResetPW";
+import AdminRefundRequestsPage from "./pages/Admin/RefundRequestReview";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +67,6 @@ const router = createBrowserRouter([
         element: <ReturnRefundPage />,
         errorElement: <ErrorPage />,
       },
-
       {
         path: "clock-in",
         element: <ClockInPage />,
@@ -78,39 +83,41 @@ const router = createBrowserRouter([
   // Admin-only protected route
 
   {
-    path: "admin",
-    element: (
-      // This wrapper protects all /admin routes: must be authenticated
-      <ProtectedRoute />
-    ),
-    errorElement: <ErrorPage />,
+    element: <ProtectedRoute requiredRole="ADMIN" />,
     children: [
       {
-        element: <AdminLayout />, // layout for all admin pages
+        path: "admin",
+        element: <AdminLayout />,
+        errorElement: <ErrorPage />,
         children: [
-          // Admin only routes
+          { index: true, element: <AdminDashboard /> },
+          { path: "analysis", element: <AnalysisPage /> },
+          { path: "inventory", element: <InventoryPage /> },
           {
-            element: <ProtectedRoute requiredRole="ADMIN" />,
+            path: "discounts",
             children: [
-              { index: true, element: <AdminDashboard /> },
-              { path: "analysis", element: <AnalysisPage /> },
-              { path: "inventory", element: <InventoryPage /> },
-              { path: "discounts", index: true, element: <DiscountsPage /> },
-              { path: "employees", element: <EmployeesPage /> },
-            ],
-          },
-
-          // discounts/customers accessible by admin and salesperson only
-          {
-            path: "discounts/customers",
-            element: <ProtectedRoute allowForUserOnly={true} />,
-            children: [
+              { index: true, element: <DiscountsPage /> },
               {
-                index: true,
+                path: "customers",
                 element: <DiscountsPage />,
                 handle: { showCustomerModal: true },
               },
             ],
+          },
+          {
+            path: "employees",
+            element: <EmployeesPage />,
+            children: [
+              { index: true, element: <EmployeeDashboardPage /> },
+              { path: "attendance", element: <EmployeeAttendancePage /> },
+              { path: "top-performers", element: <TopPerformersPage /> },
+              { path: "shift-reports", element: <ShiftReport1Page /> },
+            ],
+          },
+          {
+            path: "refundRequest",
+            element: <AdminRefundRequestsPage />,
+            errorElement: <ErrorPage />,
           },
         ],
       },

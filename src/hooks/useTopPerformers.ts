@@ -2,13 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { EmployeePerformance } from "../models/Performance";
 
 // Define types
-export type SortField = "totalOrders" | "totalSales" | "workingHours";
+export type SortField = "orders" | "sales" | "workinghours";
 export type SortDirection = "asc" | "desc";
 export type TimeRange = "all" | "lastMonth" | "lastWeek";
 
 export const useTopPerformers = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortField, setSortField] = useState<SortField>("totalSales");
+  const [sortField, setSortField] = useState<SortField>("sales");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [employees, setEmployees] = useState<EmployeePerformance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
