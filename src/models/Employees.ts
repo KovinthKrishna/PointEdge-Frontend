@@ -9,28 +9,31 @@ export interface Employee {
 }
 
 export interface EmployeeDashboardData {
-
   totalEmployees: number;
   activeEmployees: number;
-  onLeaveEmployees: number;
+  inactiveEmployees: number;
+  suspendEmployees: number;
   totalHoursWorked: string;
   employeeChangePercent: number;
   hoursChangePercent: number;
 
   totalOrders: number;
   totalSales: number;
-  
+
   productivityData: {
     month: string;
     primary: number;
     secondary: number;
   }[];
-  
+
+  // Donut Chart Data
   activeCount: number;
-  leaveCount: number;
+  inactiveCount: number;
+  suspendCount: number;
   activePercentage: number;
-  leavePercentage: number;
-  
+  inactivePercentage: number;
+  suspendPercentage: number;
+
   weeklyAttendance: {
     date: string;
     dayOfWeek: string;

@@ -505,7 +505,11 @@
   background-color: #2C5282;
 }
 
-.donut-indicator-leave {
+.donut-indicator-inactive {
+  background-color: #458cbbff;
+}
+
+.donut-indicator-suspend {
   background-color: #B8B8B8;
 }
 
