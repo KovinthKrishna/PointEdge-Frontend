@@ -31,7 +31,7 @@ const ReceiptPopup: React.FC<ReceiptPopupProps> = ({ isOpen, onClose }) => {
   const handleOrderSaved = (responseData: any) => {
     setSavedOrderId(responseData.orderId);
     setSavedInvoiceNumber(responseData.invoiceNumber);
-    setSavedOrderCount(responseData.completedOrdersToday ?? 0);
+    setSavedOrderCount(responseData.totalOrdersByEmployee ?? 0);
   };
 
   return (
