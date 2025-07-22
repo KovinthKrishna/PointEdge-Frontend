@@ -8,9 +8,13 @@ export interface OrderItem {
   pricePerUnit: number;
 }
 
+interface ToastFns {
+  error: (msg: string) => void;
+}
+
 interface CartStore {
   orderItems: OrderItem[];
-  addProduct: (product: Product) => void;
+  addProduct: (product: Product, toast: ToastFns) => void;
   removeProduct: (product: Product) => void;
   increaseQuantity: (product: Product) => void;
   decreaseQuantity: (product: Product) => void;
@@ -20,11 +24,18 @@ interface CartStore {
 const useCartStore = create<CartStore>((set) => ({
   orderItems: [],
 
-  addProduct: (product) =>
+  addProduct: (product, toast) =>
     set((store) => {
       const existingItem = store.orderItems.find(
         (item) => item.product.id === product.id
       );
+
+      if ((existingItem?.quantity ?? 0) + 1 > product.stockQuantity) {
+        toast.error(
+          product.stockQuantity ? "Not enough stock" : "Out of stock"
+        );
+        return {};
+      }
 
       if (existingItem) {
         return {
@@ -39,7 +50,7 @@ const useCartStore = create<CartStore>((set) => ({
       return {
         orderItems: [
           ...store.orderItems,
-          { 
+          {
             id: product.id,
             product,
             quantity: 1,

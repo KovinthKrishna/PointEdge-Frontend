@@ -1,12 +1,13 @@
 import { Box, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { MdRemoveShoppingCart } from "react-icons/md";
+import useCustomToast from "../../hooks/useCustomToast";
 import productService from "../../services/productService";
 import useCartStore from "../../store/useCartStore";
 import useProductFormStore from "../../store/useProductFormStore";
 import theme from "../../theme";
-import CartList from "./CartList";
 import PayAndRenderPayment from "../Payment/PayAndRenderPayment";
+import CartList from "./CartList";
 
 const CartPanel = () => {
   const orderItems = useCartStore((s) => s.orderItems);
@@ -14,6 +15,7 @@ const CartPanel = () => {
   const clearCart = useCartStore((s) => s.clearCart);
   const barcode = useProductFormStore((s) => s.barcode);
   const setFormData = useProductFormStore((s) => s.setFormData);
+  const toast = useCustomToast();
 
   useEffect(() => {
     const getProductByBarcode = async (barcode: string) => {
@@ -21,7 +23,7 @@ const CartPanel = () => {
 
       const product = await productService.getByKey(barcode);
       if (product) {
-        addProduct(product);
+        addProduct(product, toast);
         setFormData("barcode", null);
       }
     };
@@ -29,7 +31,7 @@ const CartPanel = () => {
     if (barcode) {
       getProductByBarcode(barcode);
     }
-  }, [addProduct, barcode, setFormData]);
+  }, [addProduct, barcode, setFormData, toast]);
 
   return (
     <Box height="100vh" paddingY={10} position="sticky" top={0}>
