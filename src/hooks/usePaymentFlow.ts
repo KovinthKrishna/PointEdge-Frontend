@@ -20,7 +20,6 @@ export const usePaymentFlow = () => {
 
   const handleAlertClose = () => {
     setIsAlertOpen(false);
-    // Only open receipt if success
     if (alertTitle.toLowerCase().includes("success")) {
       setIsReceiptOpen(true);
     }

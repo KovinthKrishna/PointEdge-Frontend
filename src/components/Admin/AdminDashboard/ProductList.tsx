@@ -22,9 +22,9 @@ const ProductList = () => {
         >
           Item
         </Text>
-        <ProductListText value="Orders" />
-        <ProductListText value="PPU" />
-        <ProductListText value="Revenue" />
+        <ProductListText value="Qty Sold" />
+        <ProductListText value="Unit Price" />
+        <ProductListText value="Line Total" />
       </HStack>
       {salesData && salesData.content.length > 0 ? (
         <>

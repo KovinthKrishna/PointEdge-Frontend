@@ -10,9 +10,8 @@ const ReceiptHeader = ({ receiptNumber }: { receiptNumber: string }) => (
           Receipt
         </Text>
         <Badge
-          colorScheme="blue"
+          color="#002c78ff"
           variant="solid"
-          bg="#60A5FA"
           fontSize="xs"
           px={3}
           py={1}
