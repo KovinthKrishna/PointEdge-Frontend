@@ -95,14 +95,7 @@ const router = createBrowserRouter([
           { path: "inventory", element: <InventoryPage /> },
           {
             path: "discounts",
-            children: [
-              { index: true, element: <DiscountsPage /> },
-              {
-                path: "customers",
-                element: <DiscountsPage />,
-                handle: { showCustomerModal: true },
-              },
-            ],
+            children: [{ index: true, element: <DiscountsPage /> }],
           },
           {
             path: "employees",
@@ -124,10 +117,23 @@ const router = createBrowserRouter([
     ],
   },
 
+  // Special access for salesperson
+
+  {
+    element: <ProtectedRoute allowForUserOnly={true} />,
+    children: [
+      {
+        path: "admin/discounts/customers",
+        element: <DiscountsPage />,
+        handle: { showCustomerModal: true },
+      },
+    ],
+  },
+
   // Catch-all route for undefined paths
   {
     path: "*",
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
 ]);
 

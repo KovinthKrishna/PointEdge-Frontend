@@ -1,13 +1,13 @@
 import React from 'react';
 
-// StatCard Component Interface
+
 interface StatCardProps {
   icon: React.ReactNode;
   title: string;
   value: string;
   chartData: number[];
   customMessage?: string;
-  change?: number; // Now optional
+  change?: number; 
 }
 
 const DashboardStatCard: React.FC<StatCardProps> = ({
@@ -26,7 +26,6 @@ const DashboardStatCard: React.FC<StatCardProps> = ({
         </div>
       </div>
       <div className="relative mt-2">
-        {/* Mini chart - bottom right corner */}
         <div className="mini-chart-container">
           <div className="flex items-end gap-1 mini-chart-container">
             {chartData.map((height, i) => (
@@ -57,7 +56,6 @@ const DashboardStatCard: React.FC<StatCardProps> = ({
               customMessage
             ) : (
               <>
-                {/* Only show arrow if change is provided */}
                 {change !== undefined && (
                   <span className={change >= 0 ? 'stat-arrow-up' : 'stat-arrow-down'}></span>
                 )}

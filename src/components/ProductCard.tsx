@@ -41,9 +41,7 @@ const ProductCard = ({ product, isAdmin }: Props) => {
           onClick={
             isAdmin
               ? () => openUpdateProductModal(product.id)
-              : product.stockQuantity > 0
-              ? () => addProduct(product)
-              : () => toast.error("Out of stock")
+              : () => addProduct(product, toast)
           }
         >
           <Image

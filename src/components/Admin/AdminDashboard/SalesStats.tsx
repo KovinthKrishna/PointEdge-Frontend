@@ -2,22 +2,12 @@ import { SimpleGrid } from "@chakra-ui/react";
 import { FaShoppingBag } from "react-icons/fa";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { IoPricetag } from "react-icons/io5";
-import useProductOrderQuantities from "../../../hooks/useProductOrderQuantities";
+import useOrderStats from "../../../hooks/useOrderStats";
 import priceFormatter from "../../../utils/priceFormatter";
 import SalesStatCard from "./SalesStatCard";
 
 const SalesStats = () => {
-  const { data } = useProductOrderQuantities();
-  const totalOrders = data
-    ? data.content.reduce((sum, item) => sum + item.totalQuantity, 0)
-    : 0;
-  const totalRevenue = data
-    ? data.content.reduce(
-        (sum, item) => sum + item.totalQuantity * item.pricePerUnit,
-        0
-      )
-    : 0;
-  const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+  const { data } = useOrderStats();
 
   return (
     <SimpleGrid
@@ -28,17 +18,19 @@ const SalesStats = () => {
     >
       <SalesStatCard
         icon={FaShoppingBag}
-        statValue={`${totalOrders}`}
+        statValue={`${data?.totalOrders ?? 0}`}
         statLabel="Total Orders"
       />
       <SalesStatCard
         icon={GiTakeMyMoney}
-        statValue={priceFormatter(totalRevenue)}
+        statValue={priceFormatter(data?.totalRevenue ?? 0)}
         statLabel="Total Revenue"
       />
       <SalesStatCard
         icon={IoPricetag}
-        statValue={priceFormatter(averageOrderValue)}
+        statValue={priceFormatter(
+          data ? data.totalRevenue / (data.totalOrders || 1) : 0
+        )}
         statLabel="Average Order Value"
       />
     </SimpleGrid>

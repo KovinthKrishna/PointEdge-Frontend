@@ -11,11 +11,8 @@ interface AttendanceWorkHourProps {
 
 const AttendanceWorkHour: React.FC<AttendanceWorkHourProps> = ({
   date,
-  setDate,
   startTime,
-  setStartTime,
   endTime,
-  setEndTime
 }) => {
   return (
     <div className="work-hour-section">

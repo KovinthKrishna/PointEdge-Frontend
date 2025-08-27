@@ -14,7 +14,7 @@
   grid-template-columns: 2fr 1fr;
 }
 
-/* Responsive grid classes */
+
 .grid-cols-responsive {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
@@ -196,7 +196,7 @@
   width: 100%;
 }
 
-/* Responsive width utilities */
+
 .w-full {
   width: 100%;
 }
@@ -205,7 +205,7 @@
   width: auto;
 }
 
-/* Responsive overflow handling */
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -218,7 +218,7 @@
   overflow-y: auto;
 }
 
-/* Responsive display utilities */
+
 .block {
   display: block;
 }
@@ -251,7 +251,7 @@
   }
 }
 
-/* Updated Productivity Chart Styles */
+
 .productivity-chart-container {
   background: white;
   border-radius: 0.375rem;
@@ -293,11 +293,11 @@
 }
 
 .productivity-color {
-  background-color: #3b82f6; /* Blue for productivity percentage */
+  background-color: #3b82f6; 
 }
 
 .ot-color {
-  background-color: #1e3a8a; /* Dark blue for OT hours */
+  background-color: #1e3a8a; 
 }
 
 .chart-container {
@@ -349,10 +349,10 @@
   height: 100%;
 }
 
-/* Updated Productivity Chart Bars */
+
 .chart-bar-primary,
 .productivity-bar {
-  background-color: #3b82f6; /* Blue for productivity percentage */
+  background-color: #3b82f6; 
   border-radius: 3px 3px 0 0;
   width: 20px;
   position: relative;
@@ -362,7 +362,7 @@
 
 .chart-bar-secondary,
 .ot-hours-bar {
-  background-color: #1e3a8a; /* Dark blue for OT hours */
+  background-color: #1e3a8a; 
   border-radius: 3px 3px 0 0;
   width: 20px;
   position: relative;
@@ -420,7 +420,7 @@
   padding: 1rem;
   border-radius: 0.375rem;
   border: 1px solid #e2e8f0;
-  position: relative; /* Ensure stat card is relative for absolute children */
+  position: relative; 
 }
 
 .stat-icon {
@@ -505,7 +505,11 @@
   background-color: #2C5282;
 }
 
-.donut-indicator-leave {
+.donut-indicator-inactive {
+  background-color: #458cbbff;
+}
+
+.donut-indicator-suspend {
   background-color: #B8B8B8;
 }
 
@@ -539,7 +543,7 @@
   border-radius: 2px;
 }
 
-/* Responsive adjustments for productivity chart */
+
 @media (max-width: 768px) {
   .chart-header {
     flex-direction: column;
@@ -563,7 +567,7 @@
   }
 }
 
-/* Additional responsive breakpoints */
+
 @media (max-width: 1200px) {
   .gap-6 {
     gap: 1rem;
@@ -840,7 +844,6 @@
   }
 }
 
-/* Container queries for better responsive behavior */
 @container (max-width: 400px) {
   .grid-cols-3 {
     grid-template-columns: 1fr;

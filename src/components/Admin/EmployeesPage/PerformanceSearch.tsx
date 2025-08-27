@@ -29,11 +29,7 @@ const PerformanceSearch: React.FC<PerformanceSearchProps> = ({
   };
 
   return (
-    <>
-      {/* Filters and Search */}
-      
-
-      {/* Search Input */}
+    
       <div className="search-container">
         <div className="input-group">
           <div className="input-left-element">
@@ -81,7 +77,6 @@ const PerformanceSearch: React.FC<PerformanceSearchProps> = ({
           )}
         </div>
       </div>
-    </>
   );
 };
 

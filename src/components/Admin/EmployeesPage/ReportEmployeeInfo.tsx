@@ -13,8 +13,7 @@ const ReportEmployeeInfo: React.FC<ShiftReportEmployeeInfoProps> = ({ shift, emp
       <div
         className="employee-avatar"
         style={{
-          marginLeft: '150px', // moves avatar to the right from the left edge
-          marginRight: '60px',
+          marginLeft: '150px', 
           width: '200px',
           height: '200px',
           borderRadius: '50%',

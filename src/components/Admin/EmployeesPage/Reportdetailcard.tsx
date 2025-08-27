@@ -6,7 +6,6 @@ interface ShiftReportDetailCardProps {
 }
 
 const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
-  // Format date for display
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString();
@@ -15,15 +14,14 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
     }
   };
 
-  // Format time to HH:mm:ss (no milliseconds)
+  // Format time to HH:mm:ss 
   const formatTime = (timeString: string) => {
     if (!timeString) return "N/A";
-    // If ISO string, extract time part
     if (timeString.includes("T")) {
       const timePart = timeString.split("T")[1];
       return timePart ? timePart.substring(0, 8) : timeString;
     }
-    // If already in HH:mm:ss or HH:mm format
+  
     return timeString.substring(0, 8);
   };
 
@@ -35,7 +33,6 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
       </div>
 
       <div className="shift-details-grid">
-        {/* Left Column */}
         <div className="shift-column">
           <div className="shift-detail-grid">
             <div className="shift-detail-item">
@@ -53,19 +50,9 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
                 <div className="detail-value">{formatTime(shift.endTime)}</div>
               </div>
             </div>
-
-
-            <div className="shift-detail-item">
-              <div className="detail-number">3</div>
-              <div className="detail-content">
-                <div className="detail-label">Location:</div>
-                <div className="detail-value">{shift.location}</div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Middle Column */}
         <div className="shift-column">
           <div className="shift-detail-grid">
             <div className="shift-detail-item">
@@ -83,16 +70,14 @@ const Reportdetailcard: React.FC<ShiftReportDetailCardProps> = ({ shift }) => {
                 <div className="detail-value">{shift.totalHours}</div>
               </div>
             </div>
-            {/* Orders and Sales columns removed as requested */}
           </div>
         </div>
 
-        {/* Right Column - Notes */}
         <div className="shift-column">
           <div className="notes-container">
             <div className="notes-header">Performance Summary</div>
             <div className="notes-content">
-              {shift.shiftType} at {shift.location} on {formatDate(shift.date)}.
+              {shift.shiftType} on {formatDate(shift.date)}.
               <br />
               Working time: {shift.totalHours} including {shift.otHours} overtime.
               <br />

@@ -32,7 +32,6 @@ const TopPerformersPage: React.FC = () => {
           setTimeRange={setTimeRange}
         />
 
-        {/* Error message display */}
         {errorMessage && (
           <div className="error-message">
             {errorMessage}

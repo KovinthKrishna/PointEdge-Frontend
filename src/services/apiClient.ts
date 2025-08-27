@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-const baseURL = "http://localhost:8080";
+export const baseURL = "http://localhost:8080";
 
 const axiosInstance = axios.create({
   baseURL,
@@ -31,6 +31,11 @@ class APIClient<T> {
 
   getAll = async (config: AxiosRequestConfig) => {
     const res = await axiosInstance.get<T[]>(this.endpoint, config);
+    return res.data;
+  };
+
+  get = async (config: AxiosRequestConfig) => {
+    const res = await axiosInstance.get<T>(this.endpoint, config);
     return res.data;
   };
 

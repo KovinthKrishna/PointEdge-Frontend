@@ -9,25 +9,22 @@ import {
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa6";
 import { IoMdRemoveCircle } from "react-icons/io";
+import Brand from "../models/Brand";
+import Category from "../models/Category";
 
-interface Option<T> {
-  id: T;
-  name: string;
+interface Props {
+  filterType: "Brand" | "Category";
+  options: (Brand | Category)[];
+  selectedOptionId?: number;
+  setSelectedOptionId: (id?: number) => void;
 }
 
-interface Props<T> {
-  filterType: "Brand" | "Category" | "Time";
-  options: Option<T>[];
-  selectedOptionId?: T;
-  setSelectedOptionId: (id?: T) => void;
-}
-
-const FilterMenu = <T extends number | string>({
+const FilterMenu = ({
   filterType,
   options,
   selectedOptionId,
   setSelectedOptionId,
-}: Props<T>) => {
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedOption = options.find(

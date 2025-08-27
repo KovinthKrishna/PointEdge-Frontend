@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
+const verifyService = axios.create({
   baseURL: "http://localhost:8080/api",
   // No need for `withCredentials` since you are using token-based auth
 });
 
 // Attach token from localStorage to every request
-axiosInstance.interceptors.request.use(
+verifyService.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token && config.headers) {
@@ -17,8 +17,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-
-axiosInstance.interceptors.response.use(
+verifyService.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
@@ -31,4 +30,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance;
+export default verifyService;

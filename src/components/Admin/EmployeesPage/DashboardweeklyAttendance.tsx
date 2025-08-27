@@ -24,7 +24,6 @@ const DashboardWeeklyAttendance: React.FC<DashboardWeeklyAttendanceProps> = ({
       </div>
       <div className="weekly-chart-container">
         <div className="relative mt-3">
-          {/* Mini chart with percentage labels */}
           <div className="flex justify-between items-end weekly-bars-container" style={{ height: '160px' }}>
             {weeklyAttendance.map((day, i) => (
               <div key={i} className="weekly-bar-container flex flex-col justify-end">
