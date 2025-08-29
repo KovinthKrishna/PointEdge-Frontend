@@ -1,4 +1,10 @@
-import { Box, HStack, Image, SimpleGrid } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Image,
+  SimpleGrid,
+  useDisclosure,
+} from "@chakra-ui/react";
 import logo from "../../assets/logo.png";
 import BarcodeButton from "../BarcodeButton";
 import BrandFilter from "../BrandFilter";
@@ -6,6 +12,7 @@ import CategoryFilter from "../CategoryFilter";
 import ProfileButton from "../ProfileButton";
 import SearchBox from "../SearchBox";
 import ReturnRefundManager from "../ReturnAndRefund/ReturnRefundManager";
+import RefundRequestsButton from "../ReturnAndRefund/RefundRequestButton";
 
 const ProductsPanelTop = () => {
   return (
@@ -28,6 +35,7 @@ const ProductsPanelTop = () => {
           <BrandFilter />
           <CategoryFilter />
         </SimpleGrid>
+        <RefundRequestsButton />
         <ProfileButton />
       </HStack>
     </Box>

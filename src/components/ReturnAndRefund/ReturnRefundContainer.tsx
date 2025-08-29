@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import RefundStepRenderer from "./RefundStepRenderer";
-import StepHeader from "./StepHeader";
-import StepIndicator from "./StepIndicator";
+import StepHeader from "./StepManagement/StepHeader";
+import StepIndicator from "./StepManagement/StepIndicator";
 
 import { useInvoiceData } from "../../hooks/useInvoiceData";
 import { useItemSelection } from "../../hooks/useItemSelection";

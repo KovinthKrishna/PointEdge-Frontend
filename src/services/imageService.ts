@@ -6,7 +6,8 @@ import verifyService from "./verifyService";
 export const submitRefundRequestWithImages = async (
   invoiceNumber: string,
   refundMethod: string,
-  items: InvoiceItem[]
+  items: InvoiceItem[],
+  employeeId: number
 ): Promise<string> => {
   const formData = new FormData();
 
@@ -14,8 +15,13 @@ export const submitRefundRequestWithImages = async (
     invoiceNumber,
     refundMethod,
     items: items.map((item) => ({
+<<<<<<< Updated upstream
       itemId: item.id,
       invoiceItemId: item.id,
+=======
+      itemId: item.productId,
+      invoiceItemId: item.invoiceItemId,
+>>>>>>> Stashed changes
       quantity: item.returnQuantity,
       reason: item.reason,
       unitPrice: item.price,
@@ -23,7 +29,6 @@ export const submitRefundRequestWithImages = async (
     })),
   };
 
-  // Add debugging
   console.log("Request payload:", JSON.stringify(requestPayload, null, 2));
   console.log("Items being sent:", requestPayload.items);
 
@@ -35,14 +40,18 @@ export const submitRefundRequestWithImages = async (
   );
 
   items.forEach((item, index) => {
-    console.log(`Image ${index}:`, item.returnPhoto ? "Present" : "Missing");
     if (item.returnPhoto) {
       formData.append("images", item.returnPhoto, `image_${index}.jpg`);
     }
   });
 
+<<<<<<< Updated upstream
   const response = await verifyService.post(
     "http://localhost:8080/api/admin/refund-requests/submit-refund-request",
+=======
+  const response = await axiosInstance.post(
+    `http://localhost:8080/api/admin/refund-requests/submit-refund-request?employeeId=${employeeId}`,
+>>>>>>> Stashed changes
     formData,
     {
       headers: {

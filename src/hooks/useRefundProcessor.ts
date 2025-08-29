@@ -26,10 +26,10 @@ const useRefundProcessor = ({
     try {
       const isExchange = method === "Exchange";
       const url = isExchange
-        ? "http://localhost:8080/api/return-exchange/exchange"
+        ? `http://localhost:8080/api/return-exchange/finalize-exchange/${invoiceNumber}`
         : method === "Card"
-        ? "http://localhost:8080/api/return-exchange/card-refund"
-        : "http://localhost:8080/api/return-exchange/refund";
+        ? `http://localhost:8080/api/return-exchange/finalize-card/${invoiceNumber}`
+        : `http://localhost:8080/api/return-exchange/finalize-cash/${invoiceNumber}`;
 
         const payload: any = isExchange
         ? {

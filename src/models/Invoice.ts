@@ -1,4 +1,5 @@
 export interface InvoiceItem {
+  invoiceItemId: any;
   photoPath: any;
   photoPreviewUrl: any;
   returnPhoto: any;
@@ -16,7 +17,7 @@ export interface InvoiceItem {
   
 export interface Invoice {
   invoiceNumber: string;
-  date: string;
+  date: Date;
   items: InvoiceItem[];
   totalAmount: number;
 }

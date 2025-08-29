@@ -1,11 +1,11 @@
 import React from "react";
-import ItemSelection from "./ItemSelection";
+import ItemSelection from "./ItemSelection/ItemSelection";
 import RefundMethodSelection from "./RefundMethoSelction";
 import RefundResult from "./RefundResults";
 import { RefundStep } from "../../models/RefundStep";
 import { InvoiceItem, Invoice } from "../../models/Invoice";
 import Product from "../../models/Product";
-import CardRefundContainer from "./CardRefundContainer";
+import CardRefundContainer from "./CardRefund/CardRefundContainer";
 
 interface RefundStepRendererProps {
   currentStep: number;
@@ -62,7 +62,6 @@ const RefundStepRenderer: React.FC<RefundStepRendererProps> = ({
         onCancel={function (): void {
           throw new Error("Function not implemented.");
         }}
-        refundRequestId={0}
       />
     );
   }

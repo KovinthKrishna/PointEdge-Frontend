@@ -46,7 +46,6 @@ const AnalysisPage = () => {
         <SalesOverTimeChart data={salesOverTime} />
         <RevenueByProductChart data={revenueByProduct} />
         <ReturnRateChart data={returnRates} />
-        <CategoryDistributionChart data={categoryDistribution} />
       </SimpleGrid>
     </Box>
   );

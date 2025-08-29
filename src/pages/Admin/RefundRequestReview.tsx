@@ -29,8 +29,14 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import RefundRequestDetailsModal from "../../components/ReturnAndRefund/RefundRequestDetailsModal";
+<<<<<<< Updated upstream
 import { RefundRequestViewDTO, ReturnedItem } from "../../models/ReturnTypes";
 import verifyService from "../../services/verifyService";
+=======
+import { WarningIcon } from "@chakra-ui/icons/Warning";
+import { ReturnedItem, RefundRequestViewDTO } from "../../models/ReturnTypes";
+import { useRefundStore } from "../../store/useRefundRequestStore";
+>>>>>>> Stashed changes
 
 const AdminRefundReviewPage = () => {
   const [requests, setRequests] = useState<RefundRequestViewDTO[]>([]);
@@ -39,6 +45,7 @@ const AdminRefundReviewPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const toast = useToast();
+  const { setRefundRequestId } = useRefundStore();
 
   const fetchRequests = async (showRefreshIndicator = false) => {
     try {
@@ -46,6 +53,10 @@ const AdminRefundReviewPage = () => {
       const res = await verifyService.get("/admin/refund-requests/pending");
       setRequests(res.data);
       setIsLoading(false);
+      console.log("Fetched refund requests:", res.data[0].id);
+      if (res.data.length > 0) {
+        setRefundRequestId(res.data[0].id);
+      }
     } catch (err) {
       toast({
         title: "Failed to load refund requests",
@@ -59,10 +70,15 @@ const AdminRefundReviewPage = () => {
     }
   };
 
-  const handleApprove = async (id: number) => {
+  const handleApprove = async (id: number, adminId: number) => {
     try {
+<<<<<<< Updated upstream
       await verifyService.post(`/admin/refund-requests/approve-request`, null, {
         params: { requestId: id },
+=======
+      await axiosInstance.post(`/admin/refund-requests/approve-request`, null, {
+        params: { requestId: id, adminId: 1 },
+>>>>>>> Stashed changes
       });
 
       toast({
@@ -415,7 +431,7 @@ const AdminRefundReviewPage = () => {
         <RefundRequestDetailsModal
           request={selectedRequest}
           onClose={() => setSelectedRequest(null)}
-          onApprove={() => handleApprove(selectedRequest.id)}
+          onApprove={() => handleApprove(selectedRequest.id, 1)}
           onReject={() => handleReject(selectedRequest.id)}
         />
       )}

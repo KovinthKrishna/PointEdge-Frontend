@@ -12,9 +12,10 @@ import {
   Badge,
   Flex,
 } from "@chakra-ui/react";
-import { Invoice, InvoiceItem } from "../../models/Invoice";
+import { Invoice, InvoiceItem } from "../../../models/Invoice";
 import ItemTable from "./ItemTable";
 import { useNavigate } from "react-router-dom";
+import InvoiceSummary from "./InvoiceSummary";
 
 interface ItemSelectionProps {
   invoiceData: Invoice;
@@ -113,14 +114,12 @@ const ItemSelection: React.FC<ItemSelectionProps> = ({
       overflow="hidden"
     >
       <VStack spacing={6} align="stretch">
+        <InvoiceSummary invoice={invoiceData} />
         <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
           <VStack align="start" spacing={1}>
             <Heading size="lg" color={headingColor} fontWeight="bold">
               Invoice Items
             </Heading>
-            <Text fontSize="md" color="gray.600">
-              Invoice #{invoiceData.invoiceNumber}
-            </Text>
           </VStack>
 
           <HStack spacing={4}>
