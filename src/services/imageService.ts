@@ -11,17 +11,12 @@ export const submitRefundRequestWithImages = async (
 ): Promise<string> => {
   const formData = new FormData();
 
-  const requestPayload = {
+    const requestPayload = {
     invoiceNumber,
     refundMethod,
+    employeeId,
     items: items.map((item) => ({
-<<<<<<< Updated upstream
-      itemId: item.id,
-      invoiceItemId: item.id,
-=======
-      itemId: item.productId,
       invoiceItemId: item.invoiceItemId,
->>>>>>> Stashed changes
       quantity: item.returnQuantity,
       reason: item.reason,
       unitPrice: item.price,
@@ -45,13 +40,8 @@ export const submitRefundRequestWithImages = async (
     }
   });
 
-<<<<<<< Updated upstream
   const response = await verifyService.post(
-    "http://localhost:8080/api/admin/refund-requests/submit-refund-request",
-=======
-  const response = await axiosInstance.post(
     `http://localhost:8080/api/admin/refund-requests/submit-refund-request?employeeId=${employeeId}`,
->>>>>>> Stashed changes
     formData,
     {
       headers: {

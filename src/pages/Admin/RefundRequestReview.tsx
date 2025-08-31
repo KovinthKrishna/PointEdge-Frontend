@@ -29,14 +29,10 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import RefundRequestDetailsModal from "../../components/ReturnAndRefund/RefundRequestDetailsModal";
-<<<<<<< Updated upstream
-import { RefundRequestViewDTO, ReturnedItem } from "../../models/ReturnTypes";
-import verifyService from "../../services/verifyService";
-=======
-import { WarningIcon } from "@chakra-ui/icons/Warning";
 import { ReturnedItem, RefundRequestViewDTO } from "../../models/ReturnTypes";
 import { useRefundStore } from "../../store/useRefundRequestStore";
->>>>>>> Stashed changes
+import verifyService from "../../services/verifyService";
+import axiosInstance from "../../services/verifyService";
 
 const AdminRefundReviewPage = () => {
   const [requests, setRequests] = useState<RefundRequestViewDTO[]>([]);
@@ -72,13 +68,8 @@ const AdminRefundReviewPage = () => {
 
   const handleApprove = async (id: number, adminId: number) => {
     try {
-<<<<<<< Updated upstream
-      await verifyService.post(`/admin/refund-requests/approve-request`, null, {
-        params: { requestId: id },
-=======
       await axiosInstance.post(`/admin/refund-requests/approve-request`, null, {
         params: { requestId: id, adminId: 1 },
->>>>>>> Stashed changes
       });
 
       toast({

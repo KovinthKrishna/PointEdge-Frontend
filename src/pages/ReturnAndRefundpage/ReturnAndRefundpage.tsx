@@ -190,17 +190,16 @@ const ReturnRefundPage: React.FC = () => {
       if (method === "Card") {
         setShowCardForm(true); // CardRefundContainer will call process-approved
       } else if (method === "Exchange") {
-        await axiosInstance.post(`/api/return-exchange/exchange`, {
-          invoiceNumber,
-          returnedItems: selectedItems,
-        });
+        await axiosInstance.post(
+          `/return-exchange/finalize-exchange/${refundRequestId}`
+        );
         setRefundState((prev) => ({
           ...prev,
           currentStep: RefundStep.REFUND_RESULT,
         }));
       } else if (method === "Cash") {
         await axiosInstance.post(
-          `/api/return-exchange/process-approved/${refundRequestId}`
+          `/return-exchange/finalize-cash/${refundRequestId}`
         );
         setRefundState((prev) => ({
           ...prev,

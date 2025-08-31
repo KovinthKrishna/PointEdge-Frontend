@@ -41,7 +41,8 @@ const CardRefundContainer: React.FC<Props> = ({
         bankName: bankDetails.bankName,
         accountNumber: bankDetails.accountNumber,
         items: selectedItems.map((item) => ({
-          productId: item.productId,
+          itemId: item.productId,
+          invoiceItemId: item.invoiceItemId,
           productName: item.name,
           unitPrice: item.price,
           quantity: item.returnQuantity,
