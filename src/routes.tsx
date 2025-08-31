@@ -68,6 +68,11 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
+        path: "refund-process",
+        element: <ReturnRefundPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
         path: "clock-in",
         element: <ClockInPage />,
         errorElement: <ErrorPage />,

@@ -1,4 +1,5 @@
 export interface ReturnedItem {
+    productId: number;
     itemId: number;
     invoiceItemId: number;
     quantity: number;

@@ -18,7 +18,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ChangeEvent, useRef, useState } from "react";
-import { InvoiceItem } from "../../models/Invoice";
+import { InvoiceItem } from "../../../models/Invoice";
 import { FiUpload, FiCheck, FiAlertCircle } from "react-icons/fi";
 
 interface ReturnItemRowProps {

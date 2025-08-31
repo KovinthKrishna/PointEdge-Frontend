@@ -6,16 +6,17 @@ import verifyService from "./verifyService";
 export const submitRefundRequestWithImages = async (
   invoiceNumber: string,
   refundMethod: string,
-  items: InvoiceItem[]
+  items: InvoiceItem[],
+  employeeId: number
 ): Promise<string> => {
   const formData = new FormData();
 
-  const requestPayload = {
+    const requestPayload = {
     invoiceNumber,
     refundMethod,
+    employeeId,
     items: items.map((item) => ({
-      itemId: item.id,
-      invoiceItemId: item.id,
+      invoiceItemId: item.invoiceItemId,
       quantity: item.returnQuantity,
       reason: item.reason,
       unitPrice: item.price,
@@ -23,7 +24,6 @@ export const submitRefundRequestWithImages = async (
     })),
   };
 
-  // Add debugging
   console.log("Request payload:", JSON.stringify(requestPayload, null, 2));
   console.log("Items being sent:", requestPayload.items);
 
@@ -35,14 +35,13 @@ export const submitRefundRequestWithImages = async (
   );
 
   items.forEach((item, index) => {
-    console.log(`Image ${index}:`, item.returnPhoto ? "Present" : "Missing");
     if (item.returnPhoto) {
       formData.append("images", item.returnPhoto, `image_${index}.jpg`);
     }
   });
 
   const response = await verifyService.post(
-    "http://localhost:8080/api/admin/refund-requests/submit-refund-request",
+    `http://localhost:8080/api/admin/refund-requests/submit-refund-request?employeeId=${employeeId}`,
     formData,
     {
       headers: {

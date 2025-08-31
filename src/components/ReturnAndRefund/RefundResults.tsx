@@ -9,11 +9,10 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
+import { useRefundStore } from "../../store/useRefundRequestStore";
 
 interface RefundResultProps {
   success: boolean;
-  amount: number;
-  method: string;
   invoiceNumber: string;
   onClose: () => void;
   onPrint: () => void;
@@ -22,16 +21,16 @@ interface RefundResultProps {
 
 const RefundResult: React.FC<RefundResultProps> = ({
   success,
-  amount,
-  method,
   invoiceNumber,
   onClose,
   onPrint,
   onBack,
 }) => {
-  const displayAmount = method === "Exchange" ? 0 : amount;
+  const { refundAmount, refundMethod } = useRefundStore();
+
+  const displayAmount = refundMethod === "Exchange" ? 0 : refundAmount;
   const amountLabel =
-    method === "Exchange" ? "Amount Adjusted" : "Amount Refunded";
+    refundMethod === "Exchange" ? "Amount Adjusted" : "Amount Refunded";
 
   return (
     <Box
@@ -64,15 +63,15 @@ const RefundResult: React.FC<RefundResultProps> = ({
           {amountLabel}:{" "}
           <Text
             as="span"
-            color={method === "Exchange" ? "blue.500" : "green.500"}
+            color={refundMethod === "Exchange" ? "blue.500" : "green.500"}
             fontWeight="bold"
           >
-            Rs {displayAmount.toFixed(2)}
+            Rs {refundAmount.toFixed(2)}
           </Text>
         </Text>
 
         <Text fontSize="md" color="darkBlue">
-          Refund Method: <strong>{method}</strong>
+          Refund Method: <strong>{refundMethod}</strong>
         </Text>
 
         <HStack spacing={4} pt={4}>

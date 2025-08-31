@@ -244,19 +244,27 @@ const RefundRequestDetailsModal: React.FC<Props> = ({
         <ChakraModal
           isOpen={true}
           onClose={() => setPreviewImage(null)}
-          size="xl"
+          size="6xl" // Larger modal size
           isCentered
+          motionPreset="scale"
         >
           <ChakraModalOverlay />
-          <ChakraModalContent>
+          <ChakraModalContent bg="white">
             <ModalCloseButton />
-            <ChakraModalBody p={4}>
+            <ChakraModalBody
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              p={6}
+            >
               <Image
                 src={previewImage}
                 alt="Preview"
-                maxH="80vh"
-                mx="auto"
-                borderRadius="md"
+                maxH="90vh"
+                maxW="100%"
+                borderRadius="lg"
+                objectFit="contain"
+                boxShadow="lg"
               />
             </ChakraModalBody>
           </ChakraModalContent>

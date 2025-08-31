@@ -63,7 +63,13 @@ const CardRefundForm: React.FC<Props> = ({
             <FormLabel>Bank Name</FormLabel>
             <Input
               placeholder="Ex: People's Bank"
-              {...register("bankName", { required: "Bank name is required" })}
+              {...register("bankName", {
+                required: "Bank name is required",
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message: "Name must contain only letters and spaces",
+                },
+              })}
             />
             <FormErrorMessage>{errors.bankName?.message}</FormErrorMessage>
           </FormControl>
@@ -90,6 +96,10 @@ const CardRefundForm: React.FC<Props> = ({
               placeholder="Ex: John Perera"
               {...register("accountHolder", {
                 required: "Account holder name is required",
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message: "Name must contain only letters and spaces",
+                },
               })}
             />
             <FormErrorMessage>{errors.accountHolder?.message}</FormErrorMessage>

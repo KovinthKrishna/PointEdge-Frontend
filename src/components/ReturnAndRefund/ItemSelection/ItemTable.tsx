@@ -6,7 +6,7 @@ import {
   Th,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { InvoiceItem } from "../../models/Invoice";
+import { InvoiceItem } from "../../../models/Invoice";
 import ReturnItemRow from "./ReturnItemRow";
 
 interface ItemTableProps {
